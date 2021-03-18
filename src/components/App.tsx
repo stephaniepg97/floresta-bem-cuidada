@@ -86,6 +86,7 @@ const App = () => {
           ...restOptions.headers
         },
         ...restOptions,
+        referrerPolicy: 'unsafe-url',
         ...(method === 'POST' || method === 'PUT') && {body: (typeof body !== 'string') ? JSON.stringify(body) : body}
       }, result : ResultFetchApi = {
         response: null,
