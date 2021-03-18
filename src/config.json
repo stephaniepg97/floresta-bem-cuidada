@@ -1,5 +1,5 @@
 {
-    "WEB_API_URL": "http://localhost:2018/WebApi/",
-    "COMPANY": "DEMO2",
+    "WEB_API_URL": "http://192.168.1.72:2018/WebApi/",
+    "COMPANY": "DEMO",
     "INSTANCE": "Default"
 }
