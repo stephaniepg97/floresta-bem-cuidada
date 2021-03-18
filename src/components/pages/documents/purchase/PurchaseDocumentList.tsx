@@ -15,7 +15,7 @@ export const PurchaseDocumentList: ComponentType<RouteComponentProps & RP<any>> 
         {...props}
         contentProps={{className: "content"}}
         bottomButtonsProps={{centered: true, fixed: true}}
-        fetchApiOptions={{route: "Plataforma/Listas/CarregaLista/adhoc?listId=7EA25455-2587-EB11-81AF-706655E33B46&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%", credentials: 'include', referrerPolicy: 'unsafe-url'}}
+        fetchApiOptions={{route: "Plataforma/Listas/CarregaLista/adhoc?listId=7EA25455-2587-EB11-81AF-706655E33B46&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%",  referrerPolicy: 'unsafe-url'}}
         fields={[ 
         {
             label: "Data",
