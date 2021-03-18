@@ -1,0 +1,16 @@
+.ion-detail-item, .ion-list-item {
+    box-shadow: 0 1px 5px grey;
+    border-radius: 10px;
+} 
+
+.ion-list-item:hover {
+    cursor: pointer;
+}
+
+.button-item-list {
+    --border-radius: 50px;
+}
+
+.button-item-list:hover {
+    opacity: 0.95;
+}

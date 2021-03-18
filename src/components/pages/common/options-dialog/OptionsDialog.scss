@@ -1,0 +1,18 @@
+
+.dialog {
+    --box-shadow: 0 1px 5px grey;
+    --max-height: 60% !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    margin-top: -40% !important;
+    margin-left: -50% !important;
+}
+
+.region-dialog {
+    --min-width: 50%;
+}
+
+.supplier-dialog {
+    --min-width: 80%;
+}

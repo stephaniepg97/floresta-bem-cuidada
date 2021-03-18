@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Portal do Colaborador",
+  "name": "Corkart",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,14 +8,14 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "./assets/img/logo75.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "75x55"
     },
     {
-      "src": "logo512.png",
+      "src": "./assets/img/logo400.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "400x85"
     }
   ],
   "start_url": ".",

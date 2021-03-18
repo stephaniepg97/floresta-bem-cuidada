@@ -1,0 +1,274 @@
+/* Core CSS required for Ionic components to work properly */
+@import '~@ionic/react/css/core.css';
+
+/* Basic CSS for apps built with Ionic */
+@import '~@ionic/react/css/normalize.css';
+@import '~@ionic/react/css/structure.css';
+@import '~@ionic/react/css/typography.css';
+
+/* Optional CSS utils that can be commented out */
+@import '~@ionic/react/css/padding.css';
+@import '~@ionic/react/css/float-elements.css';
+@import '~@ionic/react/css/text-alignment.css';
+@import '~@ionic/react/css/text-transformation.css';
+@import '~@ionic/react/css/flex-utils.css';
+@import '~@ionic/react/css/display.css';
+
+/**************************** VARIABLES ****************************/
+:root {
+    /** primary **/
+    --ion-color-primary: #1d4b8b;
+    --ion-color-primary-rgb: 108, 20, 86;
+    --ion-color-primary-contrast: #ffffff;
+    --ion-color-primary-contrast-rgb: 255, 255, 255;
+    --ion-color-primary-shade: #00419c;
+    --ion-color-primary-tint: #2e6dc5;
+
+    /** secondary **/
+    --ion-color-secondary: #bd5f00;
+    --ion-color-secondary-rgb: 146, 27, 117;
+    --ion-color-secondary-contrast: #ffffff;
+    --ion-color-secondary-contrast-rgb: 255, 255, 255;
+    --ion-color-secondary-shade: #944b00;
+    --ion-color-secondary-tint: #ff8100;
+
+    /** tertiary **/
+    --ion-color-tertiary: #ffffff;
+    --ion-color-tertiary-rgb: 255, 255, 255;
+    --ion-color-tertiary-contrast: #000000;
+    --ion-color-tertiary-contrast-rgb: 0, 0, 0;
+    --ion-color-tertiary-shade: #e0e0e0;
+    --ion-color-tertiary-tint: #ffffff;
+
+    /** success **/
+    --ion-color-success: #10dc60;
+    --ion-color-success-rgb: 16, 220, 96;
+    --ion-color-success-contrast: #ffffff;
+    --ion-color-success-contrast-rgb: 255, 255, 255;
+    --ion-color-success-shade: #0ec254;
+    --ion-color-success-tint: #28e070;
+
+    /** warning **/
+    --ion-color-warning: #ffce00;
+    --ion-color-warning-rgb: 255, 206, 0;
+    --ion-color-warning-contrast: #ffffff;
+    --ion-color-warning-contrast-rgb: 255, 255, 255;
+    --ion-color-warning-shade: #e0b500;
+    --ion-color-warning-tint: #ffd31a;
+
+    /** danger **/
+    --ion-color-danger: #f04141;
+    --ion-color-danger-rgb: 245, 61, 61;
+    --ion-color-danger-contrast: #ffffff;
+    --ion-color-danger-contrast-rgb: 255, 255, 255;
+    --ion-color-danger-shade: #d33939;
+    --ion-color-danger-tint: #f25454;
+
+    /** dark **/
+    --ion-color-dark: #444242;
+    --ion-color-dark-rgb: 68, 66, 66;
+    --ion-color-dark-contrast: #ffffff;
+    --ion-color-dark-contrast-rgb: 255, 255, 255;
+    --ion-color-dark-shade: #3c3a3a;
+    --ion-color-dark-tint: #575555;
+
+    /** medium **/
+    --ion-color-medium: #969594;
+    --ion-color-medium-rgb: 150, 149, 148;
+    --ion-color-medium-contrast: #000000;
+    --ion-color-medium-contrast-rgb: 0, 0, 0;
+    --ion-color-medium-shade: #848382;
+    --ion-color-medium-tint: #a1a09f;
+
+    /** light **/
+    --ion-color-light: #edeef0;
+    --ion-color-light-rgb: 237, 238, 240;
+    --ion-color-light-contrast: #000000;
+    --ion-color-light-contrast-rgb: 0, 0, 0;
+    --ion-color-light-shade: #d1d1d3;
+    --ion-color-light-tint: #eff0f2;
+
+    /** white **/
+    --ion-color-white: #ffffff;
+    --ion-color-white-rgb: 255, 255, 255;
+    --ion-color-white-contrast: #000000;
+    --ion-color-white-contrast-rgb: 0, 0, 0;
+    --ion-color-white-shade: #e0e0e0;
+    --ion-color-white-tint: #ffffff;
+}
+
+/**************************** GERAL ****************************/
+body {
+    font-size: 14px;
+}
+
+.break-lines {
+    white-space: pre-wrap;
+}
+
+.margin-top-2x {
+    margin-top: 32px;
+}
+
+.margin-top-4x {
+    margin-top: 64px;
+}
+
+.pull-up {
+    top: -200px;
+}
+
+.pull-down {
+    --ion-safe-area-top: 65px;
+}
+
+ion-toast:focus {
+    outline: none;
+}
+
+.page-title {
+    margin-top: 13px;
+}
+
+.content {
+    --padding-top: 60px;
+}
+
+.searchPlaceholder {
+    font-style: italic;
+}
+
+.searchToolbar {
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    text-align: center;
+}
+
+.filterList {
+    border-style: dotted;
+    border-width: 0.01rem;
+    border-color: var(--ion-color-light-shade);
+    margin: 1rem;
+    padding: 0.7rem;
+}
+
+.sem-resultados {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+ion-infinite-scroll {
+    margin-top: 20px;
+}
+
+.action-sheet-icon {
+    min-width: 1em;
+}
+
+.ion-color-white {
+    --ion-color-base: var(--ion-color-white) !important;
+    --ion-color-base-rgb: var(--ion-color-white-rgb) !important;
+    --ion-color-contrast: var(--ion-color-white-contrast) !important;
+    --ion-color-contrast-rgb: var(--ion-color-white-contrast-rgb) !important;
+    --ion-color-shade: var(--ion-color-white-shade) !important;
+    --ion-color-tint: var(--ion-color-white-tint) !important;
+}
+
+.mainList {
+    margin-bottom: 5rem;
+    word-wrap: normal;
+    div {
+        margin: 0.5rem 0 0.5rem 0;
+        align-items: center;
+    }
+    h6 {
+        text-transform: uppercase;
+        margin: 0 0 0.2rem 0;
+    }
+    p {
+        font-size: 0.8rem;
+        color: grey;
+        margin: 0.1rem 0 0.1rem 0;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-height: 1rem;
+        max-height: 3rem;
+        -webkit-box-orient: vertical;
+    }
+    ion-fab,
+    ion-fab-button,
+    ion-icon {
+        text-align: center;
+    }
+    ion-grid {
+        padding-top: 0.2rem;
+        padding-bottom: 0.2rem;
+    }
+}
+
+.listDetailsToolbar {
+    ion-toolbar {
+        border: 0;
+        padding: 0;
+        margin: 0;
+        align-items: center;
+        text-align: center;
+        text-transform: uppercase;
+    }
+    h6 {
+        text-align: center;
+        text-transform: uppercase;
+        margin: 1rem 1rem;
+    }
+}
+
+.listDetails {
+    ion-list {
+        padding: 0 1rem;
+    }
+    small {
+        color: var(--ion-color-medium-shade);
+    }
+    p {
+        font-size: 0.8rem;
+        margin-top: 0.2rem;
+        margin-bottom: 0.2rem;
+        color: initial;
+    }
+}
+
+/***************************** FORMS *******************************/
+
+.ion-invalid.ion-touched {
+    font-weight: bold;
+}
+
+.invalid-feedback {
+    color: #ff0000;
+}
+
+/* adicionar scrollbar a popup de select boxes/drop down lists */
+.alert-radio-group::-webkit-scrollbar,
+.alert-checkbox-group::-webkit-scrollbar {
+    width: 0.5em;
+    display: block !important;
+}
+
+.alert-radio-group::-webkit-scrollbar-track,
+.alert-checkbox-group::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.alert-radio-group::-webkit-scrollbar-thumb,
+.alert-checkbox-group::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+}
+.ion-input {
+    font-size: 80%;
+}

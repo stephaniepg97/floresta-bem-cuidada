@@ -1,0 +1,60 @@
+.label-fixed.sc-ion-label-md-h {
+    -ms-flex: 0 0 90px;
+    flex: 0 0 90px;
+    width: 90px;
+    min-width: 90px;
+    max-width: 200px;
+}
+
+ion-textarea {
+    font-size: 80%;
+}
+
+.ion-item {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+
+    small {
+        color: var(--ion-color-medium-shade);
+    }
+}
+
+.ion-item-group {
+    --inner-padding-bottom: 10px;
+}
+
+.ion-icon {
+    --padding-end: 0.5em;
+}
+
+.ion-selectable:hover {
+    cursor: pointer;
+} 
+
+.invalid-feedback {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.latitude-longitude-wrapper {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 100%;
+
+    ion-label {
+        margin-left: 5px;
+    }
+}
+
+.selectbox {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 8px;
+    --placeholder-opacity: 0.5;
+    font-size: 80%;
+}
+
+ionic-selectable.selectbox {
+    --padding-start: -11px;
+    --placeholder-color: #0000007f;
+}

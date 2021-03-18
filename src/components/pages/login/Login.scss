@@ -1,0 +1,35 @@
+#loginLogo {
+    width: 75px;
+    margin: auto;
+}
+
+#loginTitle {
+    font-size: large;
+}
+
+#title {
+    color: dimgrey;
+}
+
+#loginFooter {
+    font-size: 0.6rem;
+    color: dimgrey;
+}
+
+#loginVerticalAlign {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.loginFormWrapper {
+    width: 500px;
+    margin: 0px auto;
+}
+
+.password-toggle {
+    cursor: pointer;
+}
