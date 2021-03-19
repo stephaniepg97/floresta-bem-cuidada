@@ -186,9 +186,9 @@ const App = () => {
   }, [token, me, login]);
 
   const AuthRoute: FC<RouteProps> = (props) => (
-    !token
+    /*!token
       ? <Redirect to="/login" />
-      : <Route {...props}>{props.children}</Route>
+      :*/ <Route {...props}>{props.children}</Route>
   );
   const sideMenu: Array<{header: string | undefined; items: Array<MenuItemProps>}> = [{
     header: "Documentos",
