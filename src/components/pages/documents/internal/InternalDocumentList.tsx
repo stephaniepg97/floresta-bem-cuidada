@@ -9,8 +9,9 @@ import { RouteComponentProps } from "../../../types/RouteComponentProps"
 import { InternalDocument } from "../../../models/InternalDocument";
 import { Item } from "../../../models/Item";
 import { IonDatetime } from '@ionic/react';
+import { AppContextProps } from '../../../types/AppContextProps';
 
-export const InternalDocumentList: FC<RouteComponentProps & RP> = (props) => (
+export const InternalDocumentList: FC<RouteComponentProps & AppContextProps & RP<any>> = (props) => (
     <List<InternalDocument, Item, any> 
         {...props}
         contentProps={{className: "content"}}

@@ -1,18 +1,19 @@
 import React, { ComponentType } from 'react';
 import { IonDatetime } from "@ionic/react"
-import { RouteComponentProps as RP } from "react-router";
+import {
+    RouteComponentProps as RP
+  } from "react-router";
 
 import { Form } from "../../common/form/Form"
 import { OptionsDialog } from '../../common/options-dialog/OptionsDialog';
 
-import { FormState } from '../../../types/FormProps';
-import { RouteComponentProps } from '../../../types/RouteComponentProps';
-
 import { Item } from "../../../models/Item"
 import { Supplier } from '../../../models/Supplier';
 import { InternalDocument } from '../../../models/InternalDocument';
+import { AppContextProps } from '../../../types/AppContextProps';
+import { InternalDocumentFormProps } from '../../../types/InternalDocumentFormProps';
 
-export const InternalDocumentForm: ComponentType<FormState<InternalDocument, Item> & RouteComponentProps & RP> = ({model, ...props}) => (
+export const InternalDocumentForm: ComponentType<InternalDocumentFormProps & AppContextProps & RP<any>> = ({model, ...props}) => (
     <Form<InternalDocument, Item> 
         {...props}
         model={model}

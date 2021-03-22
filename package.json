@@ -1,5 +1,6 @@
 {
   "name": "employee-portal-corkart",
+  "proxy": "http://localhost:2018/WebApi",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

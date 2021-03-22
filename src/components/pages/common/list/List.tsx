@@ -17,8 +17,9 @@ import { InputProps } from '../../../types/InputProps';
 import { ButtonProps } from '../../../types/ButtonProps';
 
 import "./List.scss";
+import { AppContextProps } from '../../../types/AppContextProps';
 
-export const List = <T extends Model, D1 extends Model, D2 extends Model>({bottomButtons, ...props}: ListProps<T, D1, D2> & RouteComponentProps) => {
+export const List = <T extends Model, D1 extends Model, D2 extends Model>({bottomButtons, ...props}: ListProps<T, D1, D2> & RouteComponentProps & AppContextProps) => {
     const [showLoading, setShowLoading] = useState<boolean>(true);
     const [data, setData] = useReducer<Reducer<Array<T> | null, Array<T> | null>>((oldValue, newValue) => {
         //!!newValue && console.log("hide loading")
@@ -52,7 +53,7 @@ export const List = <T extends Model, D1 extends Model, D2 extends Model>({botto
     );
 }
 
-export const ListContent = <T extends Model, D1 extends Model, D2 extends Model> ({setButtons, bottomButtons, data, ...props}: ListProps<T, D1, D2> & RouteComponentProps & {
+export const ListContent = <T extends Model, D1 extends Model, D2 extends Model> ({setButtons, bottomButtons, data, ...props}: ListProps<T, D1, D2> & RouteComponentProps & AppContextProps & {
     setButtons?: (value: Array<ButtonProps> | undefined) => void; 
     data: Array<T> | null;
 }) => {

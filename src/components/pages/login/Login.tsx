@@ -1,6 +1,6 @@
 import React, {  useState, ComponentType } from 'react';
 import { useForm, Controller, RegisterOptions } from "react-hook-form";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps as RP } from "react-router";
 import "./Login.scss";
 import {
     IonContent,
@@ -17,13 +17,13 @@ import {
 import { Loading } from "../common/Loading";
 import { LoginProps } from "../../types/LoginProps";
 import logo from "../../../assets/img/logo75.png";
+import { AppContextProps } from '../../types/AppContextProps';
 
 type FormData = {
     username: string;
     password: string;
 };
-
-export const Login: ComponentType<LoginProps & RouteComponentProps<any>> = ({
+export const Login: ComponentType<LoginProps & AppContextProps & RP<any>> = ({
     login,
     me,
     ...props

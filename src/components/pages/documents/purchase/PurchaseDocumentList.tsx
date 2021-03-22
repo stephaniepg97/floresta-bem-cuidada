@@ -9,13 +9,14 @@ import { RouteComponentProps } from "../../../types/RouteComponentProps"
 import { Item } from "../../../models/Item";
 import { PurchaseDocument } from '../../../models/PurchaseDocument';
 import { IonDatetime } from '@ionic/react';
+import { AppContextProps } from '../../../types/AppContextProps';
 
-export const PurchaseDocumentList: ComponentType<RouteComponentProps & RP<any>> = (props) => (
+export const PurchaseDocumentList: ComponentType<RouteComponentProps & AppContextProps & RP<any>> = (props) => (
     <List<PurchaseDocument, Item, any> 
         {...props}
         contentProps={{className: "content"}}
         bottomButtonsProps={{centered: true, fixed: true}}
-        fetchApiOptions={{route: "Plataforma/Listas/CarregaLista/adhoc?listId=B8E2A04C-B485-EB11-81AB-706655E33B46&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%",  referrerPolicy: 'unsafe-url'}}
+        fetchApiOptions={{route: "Plataforma/Listas/CarregaLista/adhoc?listId=B8E2A04C-B485-EB11-81AB-706655E33B46&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%", mode: 'cors'}}
         fields={[ 
         {
             label: "Data",
