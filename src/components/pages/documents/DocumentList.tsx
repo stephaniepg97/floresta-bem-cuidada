@@ -2,18 +2,20 @@ import React, { FC } from 'react';
 import { Redirect, RouteComponentProps as RP } from "react-router";
 import { add, pencilSharp } from 'ionicons/icons';
 
-import { List } from "../../common/list/List"
+import { List } from "../common/list/List"
 
-import { RouteComponentProps } from "../../../types/RouteComponentProps"
+import { RouteComponentProps } from "../../types/RouteComponentProps"
 
-import { InternalDocument } from "../../../models/InternalDocument";
-import { Item } from "../../../models/Item";
+import { _Document } from "../../models/Document";
+import { Item } from "../../models/Item";
 import { IonDatetime } from '@ionic/react';
-import { AppContextProps } from '../../../types/AppContextProps';
-import { Button } from '../../common/buttons/Button';
+import { AppContextProps } from '../../types/AppContextProps';
+import { Button } from '../common/buttons/Button';
+import { InternalDocument } from '../../models/InternalDocument';
+import { PurchaseDocument } from '../../models/PurchaseDocument';
 
-export const InternalDocumentList: FC<RouteComponentProps & AppContextProps & RP<any>> = (props) => (
-    <List<InternalDocument, Item, any> 
+export const DocumentList = <D extends _Document = InternalDocument | PurchaseDocument> (props: RouteComponentProps & AppContextProps & RP<any>) => (
+    <List<D, Item, any> 
         {...props}
         contentProps={{className: "content"}}
         fetchApiOptions={{route: "Plataforma/Listas/CarregaLista/adhoc?listId=D935093C-2587-EB11-81AF-706655E33B46&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%"}}

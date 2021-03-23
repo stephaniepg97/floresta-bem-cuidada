@@ -1,8 +1,9 @@
 import { ButtonProps } from "./ButtonProps";
 import React, { ComponentProps } from "react";
 import { IonHeader } from "@ionic/react"
-import { RouteComponentProps } from "react-router";
+import { FabButtonProps } from "./FabButtonProps";
 
 export type HeaderProps = ComponentProps<typeof IonHeader> & {
     endButton?: ButtonProps;
+    fabButton?: FabButtonProps;
 }

@@ -11,7 +11,7 @@ export const AppRoute = <T extends RouteComponentProps = RouteComponentProps> ({
     componentProps = {} as T, 
     contextProps,
     exact = false,
-    path
+    path,
 }: AppRouteProps<T>) => (
     <Route exact={exact} path={path} render={(routeComponentProps) => (
         (auth && !contextProps.token) || (!auth && !!contextProps.token)

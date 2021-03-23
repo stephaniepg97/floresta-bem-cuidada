@@ -1,6 +1,6 @@
 import React, { ComponentType } from 'react';
 import { RouteComponentProps as RP } from "react-router";
-import { save, arrowBackCircle } from 'ionicons/icons';
+import { add, pencilSharp } from 'ionicons/icons';
 
 import { List } from "../../common/list/List"
 
@@ -10,12 +10,12 @@ import { Item } from "../../../models/Item";
 import { PurchaseDocument } from '../../../models/PurchaseDocument';
 import { IonDatetime } from '@ionic/react';
 import { AppContextProps } from '../../../types/AppContextProps';
+import { Button } from '../../common/buttons/Button';
 
 export const PurchaseDocumentList: ComponentType<RouteComponentProps & AppContextProps & RP<any>> = (props) => (
     <List<PurchaseDocument, Item, any> 
         {...props}
         contentProps={{className: "content"}}
-        bottomButtonsProps={{centered: true, fixed: true}}
         fetchApiOptions={{route: "Plataforma/Listas/CarregaLista/adhoc?listId=B8E2A04C-B485-EB11-81AB-706655E33B46&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%", mode: 'cors'}}
         fields={[ 
         {
@@ -53,44 +53,44 @@ export const PurchaseDocumentList: ComponentType<RouteComponentProps & AppContex
                 name: "TotalMerc",
                 readonly: true
             },
+        }, {
+            label: "",
+            Field: () => (
+                <Button
+                    visible 
+                    icon={{
+                        icon: pencilSharp,
+                        color: "dark"
+                    }}
+                    button={{
+                        fill: "clear",
+                        onClick: () => {}, //edit
+                        className: "end-button"
+                    }}
+                />
+            ),
+            xfield: null
         }]}
         headerProps={{
             ...props,
             title: "Encomendas",
+            fabButton: {
+                fab: {
+                    slot: "icon-only",
+                    vertical: "center",
+                    horizontal: "end",
+                },
+                icon: {
+                    icon: add,
+                    color: "white",
+                },
+                button: {
+                    color: "primary",
+                    routerLink: "/despesas/form",
+                },
+                visible: true
+            }
         }}
-        bottomButtons={[{
-            text: "Gravar",
-            icon: {
-                icon: save,
-                color: "white",
-            },
-            label: {
-                color: "white"
-            },
-            button: {
-                slot: "fixed",
-                color: "dark",
-                title: "save",
-                onClick: () => {},
-            },
-            visible: false,
-        }, {
-            text: "Corrigir Transporte",
-            icon: {
-                icon: arrowBackCircle,
-                color: "white",
-            },
-            label: {
-                color: "white"
-            },
-            button: {
-                slot: "fixed",
-                color: "danger",
-                title: "reset",
-                onClick: () => {},
-            },
-            visible: false,
-        }]}
         details={{
             fetchApiOptions: (row) => {
                 return {

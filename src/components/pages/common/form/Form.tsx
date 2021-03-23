@@ -21,7 +21,7 @@ import { ButtonProps } from '../../../types/ButtonProps';
 export const Form = <T, D> (props: FormProps<T, D> & RouteComponentProps) => {
     const bottomButtonsRef = useRef<Array<ButtonProps> | undefined>(props.bottomButtons);
     return (
-        <Page 
+        <Page
             {...props} 
             Content={() => <FormContent<T> model={props.model} form={props.form} /> }
             bottomButtons={bottomButtonsRef}

@@ -17,14 +17,14 @@ export const Item = <C,>({itemProps, colProps, Children, fields: columns}: {
     <IonItem {...itemProps}>
         <IonGrid>
             <IonRow>
-                {columns.map((col, index) =>
+                {columns.map((col, index) => (
                     <IonCol
                         size={col.size}
                         {...colProps}
                         key={index}>
                         <Children {...col} />
                     </IonCol>
-                )}
+                ))}
             </IonRow>
         </IonGrid>
     </IonItem>

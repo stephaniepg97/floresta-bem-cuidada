@@ -128,6 +128,7 @@ const ItemChild = <T extends Model> ({
     setShowDetails, 
     selected,
     setEndButtons,
+    xfield,
     ...props 
 }: ColumnProps<T> & {
     model: T;
@@ -145,11 +146,11 @@ const ItemChild = <T extends Model> ({
                 <IonCheckbox  
                     checked={selected.current.includes(modelRef.current)} 
                     onIonChange={() => {
-                        let last = selected.current.length === 0;
+                        //let last = selected.current.length === 0;
                         if (selected.current.includes(modelRef.current)) selected.current.splice(selected.current.indexOf(modelRef.current), 1);
                         else selected.current.push(modelRef.current);
                         //console.log(last || selected.current.length !== 0)
-                        setEndButtons(["create", "reset"], last || selected.current.length !== 0); 
+                        //setEndButtons(["create", "reset"], last || selected.current.length !== 0); 
                     }}
                 /> : 
                 <Input<T>
@@ -160,11 +161,12 @@ const ItemChild = <T extends Model> ({
                             onIonChange: (event) => {
                                 if (!inputProps?.name) return;
                                 modelRef.current = {...modelRef.current, [inputProps.name]: event.detail.value}
-                                setEndButtons(["save"], true);
+                                //setEndButtons(["save"], true);
                             },
                         }
                     } : {
-                        Field: Field ? Field : () => <></>
+                        Field: Field ? Field : () => <></>,
+                        xfield: xfield || null
                     }}
                 />
             }

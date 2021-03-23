@@ -6,13 +6,14 @@ type CommonInputProps<T extends Model> = {
     OptionsDialog?: React.ComponentType<PopoverProps>;
     label:string;
     required?:boolean;
-    xfield?: keyof T;
 }
 
 export type InputProps<T extends Model> = (CommonInputProps<T> & {
     inputProps: React.ComponentProps<typeof IonInput> & {name: keyof T};
     Field?: undefined;
+    xfield?: undefined;
 }) | (CommonInputProps<T> & {
     inputProps?: undefined;
     Field: React.ComponentType<{value?: object}>;
+    <T1>(xfield: T1 | undefined): keyof T | keyof T1 | null;
 });

@@ -14,7 +14,7 @@ export const Input = <T extends Model> ({
         model, 
         xfield
 }: InputProps<T> & {model: T}) => {
-    const value = useCallback<(<C, >(key: keyof C, object: C) => object)>((key0, object) => !!object && Object.entries(object).find(([key, value]) => key === key0)?.[1], []);
+    const value = useCallback<(<C, >(_: keyof C, __: C) => object)>((key, object) => !!object && Object.entries(object).find(([k, value]) => key === k)?.[1], []);
     const [showDialog, setShowDialog] = useState<boolean>(false);
     return (
         <>
@@ -26,7 +26,7 @@ export const Input = <T extends Model> ({
                     clearOnEdit={false} 
                     value={String(value<T>(inputProps.name, model) ?? "")}
                 />
-                : xfield && Field && <Field value={value<T>(xfield, model)} />
+                : (xfield !== undefined) && Field && <Field {...xfield !== null && {value: value<T>(xfield, model)}} />
             }
             {OptionsDialog && (
                 <>

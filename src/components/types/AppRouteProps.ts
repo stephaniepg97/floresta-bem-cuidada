@@ -7,8 +7,8 @@ import {
   } from "react-router";
 
 export type AppRouteProps<T extends RouteComponentProps = RouteComponentProps> = {
-    Component: ComponentType<T & AppContextProps & RP<any>>
+    Component: ComponentType<T & AppContextProps & RP<any>>;
     contextProps: AppContextProps
     auth?: boolean; 
-    componentProps?: T; 
+    componentProps: T; 
 } & Pick<RouteProps, 'path' | 'exact'>

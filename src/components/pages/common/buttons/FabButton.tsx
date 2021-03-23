@@ -6,12 +6,10 @@ import {
 } from '@ionic/react';
 import {FabButtonProps} from '../../../types/FabButtonProps'
 
-export const FabButton: ComponentType<FabButtonProps> = ({fab, button, icon, visible}) => (
+export const FabButton: ComponentType<FabButtonProps> = ({fab = {slot: "fixed"}, button, icon, visible}) => (
     <>
         {visible && 
-            <IonFab 
-                {...fab}
-                slot="fixed">
+            <IonFab {...fab}>
                 <IonFabButton {...button}>
                     <IonIcon {...icon} />
                 </IonFabButton>

@@ -31,17 +31,17 @@ export const List = <T extends Model, D1 extends Model, D2 extends Model>({botto
     useEffect(() => {
         if (!data && showLoading && !!props.fetchApiOptions) {
             console.log(props.fetchApiOptions.route)
-            props.fetchApi(props.fetchApiOptions).then(result => {
+            /*props.fetchApi(props.fetchApiOptions).then(result => {
                 console.log(result)
                 setData(result.response?.Data || [])
-            });
-            //setData([{} as T, {} as T])
+            });*/
+            setData([{} as T, {} as T])
         }
     }, [data, showLoading, props]);
 
     return (
         <Page 
-            {...props} 
+            {...props}
             bottomButtons={bottomButtonsRef}
             Content={({setButtons}) => (
                 <>
@@ -80,7 +80,7 @@ export const ListContent = <T extends Model, D1 extends Model, D2 extends Model>
             <Item<T>
                 {...props}
                 itemProps={{color: "light"}}
-                colProps={{className: "ion-text-uppercase ion-text-center" }}
+                colProps={{className: "ion-text-center col-title" }}
                 Children={(col) => <h6>{col.label}</h6>} 
             />
             {data && data.length

@@ -110,19 +110,6 @@ export const InternalDocumentForm: ComponentType<InternalDocumentFormProps & App
                                     name: "NumContrib",
                                 }
                             }],
-                            bottomButtons: [{
-                                text: "Confirmar",
-                                button: {
-                                    onClick: () => {}
-                                },
-                                visible: true,
-                            }, {
-                                text: "Cancelar",
-                                button: {
-                                    onClick: () => {},
-                                },
-                                visible: true,
-                            }]
                         }}
                     />,
             }]
@@ -130,7 +117,7 @@ export const InternalDocumentForm: ComponentType<InternalDocumentFormProps & App
         fetchApiOptions={{route: "document/create"}}
         headerProps={{
             ...props,
-            title: "Despesas"
+            title: "Registo de Despesa"
         }} 
     />
 );

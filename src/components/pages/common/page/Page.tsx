@@ -30,7 +30,7 @@ export const Page: ComponentType<RouteComponentProps & Pick<CommonPageProps, "Co
     }, bottomButtons.current ? [...bottomButtons.current] : undefined);
     //console.log(buttons)
     return (    
-        <IonContent {...props.contentProps}>
+        <IonContent key={props.str_key} {...props.contentProps}>
             <IonRefresher slot="fixed" onIonRefresh={() => { }}>
                 <IonRefresherContent
                     pullingIcon={chevronDownCircleOutline}

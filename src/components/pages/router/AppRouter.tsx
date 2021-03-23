@@ -15,6 +15,7 @@ import { AppRoute } from "./AppRoute";
 import { AppRouteProps } from "../../types/AppRouteProps";
 import { InternalDocumentFormProps } from "../../types/InternalDocumentFormProps";
 import { InternalDocument } from "../../models/InternalDocument";
+import { RouteComponentProps } from "../../types/RouteComponentProps";
 
 export const AppRouter: ComponentType<AppContextProps & {loginProps: LoginProps}> = ({loginProps, ...contextProps}) => {
   const menuProps: ComponentProps<typeof MenuPage> = {
@@ -72,11 +73,12 @@ export const AppRouter: ComponentType<AppContextProps & {loginProps: LoginProps}
     }],
     history: contextProps.history
   };
-  const routes: Array<AppRouteProps<any | LoginProps | InternalDocumentFormProps>> = [{
+  const routes: Array<AppRouteProps<RouteComponentProps> | AppRouteProps<LoginProps> | AppRouteProps<InternalDocumentFormProps>> = [{
     Component: Home,
     contextProps: contextProps,
     exact: true,
-    path: "/"
+    path: "/",
+    componentProps: {str_key: 'home'}
   }, {
     Component: Login,
     contextProps: contextProps,
@@ -86,20 +88,24 @@ export const AppRouter: ComponentType<AppContextProps & {loginProps: LoginProps}
   }, {
     Component: Password,
     contextProps: contextProps,
-    path: "/password/reset"
+    path: "/password/reset",
+    componentProps: {str_key: 'password'}
   }, {
     Component: PurchaseDocumentList,
     contextProps: contextProps,
-    path: "/encomendas/all"
+    path: "/encomendas/all",
+    componentProps: {str_key: 'encomendas'}
   }, {
     Component: InternalDocumentList,
     contextProps: contextProps,
-    path: "/despesas/all"
+    path: "/despesas/all",
+    componentProps: {str_key: 'despesas'}
   }, {
     Component: InternalDocumentForm,
     contextProps: contextProps,
     componentProps: {
-      model: {} as InternalDocument
+      model: {} as InternalDocument,
+      str_key: 'despesas-form'
     },
     path: "/despesas/form"
   }];
@@ -107,7 +113,7 @@ export const AppRouter: ComponentType<AppContextProps & {loginProps: LoginProps}
     <IonContent>
       <MenuPage {...menuProps}>
         {routes.map((routeProps, index) => (
-          <AppRoute<any | LoginProps | ComponentProps<typeof InternalDocumentForm>> key={index} {...routeProps} />
+          <AppRoute<any> key={index} {...routeProps} />
         ))}
       </MenuPage>
     </IonContent>

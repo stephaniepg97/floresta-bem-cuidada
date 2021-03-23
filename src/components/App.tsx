@@ -159,6 +159,7 @@ const App = () => {
             {contextProps => <AppRouter {...contextProps} loginProps={{
               me: me,
               login: login,
+              str_key: 'login'
             }} />}
           </AppContext.Consumer>
         </IonReactRouter>
