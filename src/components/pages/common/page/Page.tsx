@@ -15,22 +15,20 @@ import { ButtonProps } from '../../../types/ButtonProps';
 import { Header } from "../header/Header";
 import { Buttons } from '../buttons/Buttons';
 
-
-/*TODO: const useBottomButtons = (props: {titles: Array<string>, visible: boolean, bottomButtons: Array<ButtonProps>, setButtons?: (value: Array<ButtonProps> | undefined) => void}) => {
-    console.log(props.bottomButtons)
-    return props.setButtons && props.bottomButtons && props.setButtons(props.bottomButtons.map<ButtonProps>(buttonProps => buttonProps?.button?.title && props.titles.includes(buttonProps.button.title) ? {...buttonProps, visible: props.visible} : buttonProps))
-};*/
-
-export const Page: ComponentType<RouteComponentProps & Pick<CommonPageProps, "Content" | "contentProps" | "footerProps" | "bottomButtonsProps"> & {
-    bottomButtons: React.MutableRefObject<Array<ButtonProps> | undefined>;
-}> = ({bottomButtons, Content, bottomButtonsProps, ...props}) => {
-    const [buttons, setButtons] = useReducer<Reducer<Array<ButtonProps> | undefined, Array<ButtonProps> | undefined>>((oldValue, newValue) => {
-        bottomButtons.current = newValue;
+export const Page: ComponentType<RouteComponentProps & Pick<CommonPageProps, "Content" | "contentProps" | "footerProps" | "bottomButtonsProps">> = ({
+    bottomButtons, 
+    Content, 
+    bottomButtonsProps, 
+    ...props
+}) => {
+    const [buttons, setButtons] = useReducer<Reducer<Array<ButtonProps> | undefined, Array<ButtonProps> | undefined>>((_, newValue) => {
+        if (!!bottomButtons) { 
+            bottomButtons.current = newValue;
+        }
         return newValue;
-    }, bottomButtons.current ? [...bottomButtons.current] : undefined);
-    //console.log(buttons)
+    }, bottomButtons?.current ? [...bottomButtons.current] : undefined);
     return (    
-        <IonContent key={props.str_key} {...props.contentProps}>
+        <IonContent key={props.keyId} {...props.contentProps}>
             <IonRefresher slot="fixed" onIonRefresh={() => { }}>
                 <IonRefresherContent
                     pullingIcon={chevronDownCircleOutline}

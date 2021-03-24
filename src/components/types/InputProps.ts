@@ -15,5 +15,5 @@ export type InputProps<T extends Model> = (CommonInputProps<T> & {
 }) | (CommonInputProps<T> & {
     inputProps?: undefined;
     Field: React.ComponentType<{value?: object}>;
-    <T1>(xfield: T1 | undefined): keyof T | keyof T1 | null;
+    xfield: keyof T | null;
 });

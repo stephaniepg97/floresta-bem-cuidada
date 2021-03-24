@@ -3,19 +3,9 @@
   "name": "Corkart",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "./assets/img/logo75.png",
+      "src": "./assets/img/logo74.png",
       "type": "image/png",
-      "sizes": "75x55"
-    },
-    {
-      "src": "./assets/img/logo400.png",
-      "type": "image/png",
-      "sizes": "400x85"
+      "sizes": "114x74"
     }
   ],
   "start_url": ".",

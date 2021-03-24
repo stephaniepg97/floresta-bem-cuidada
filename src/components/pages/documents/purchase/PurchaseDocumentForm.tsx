@@ -3,18 +3,18 @@ import {
     RouteComponentProps as RP
   } from "react-router";
 
-import { InternalDocument } from '../../../models/InternalDocument';
+import { PurchaseDocument } from '../../../models/PurchaseDocument';
 import { DocumentFormProps } from '../../../types/DocumentFormProps';
 import { DocumentForm } from "../DocumentForm"
 
-export const InternalDocumentForm: ComponentType<DocumentFormProps<InternalDocument> & RP<any>> = props => (
-    <DocumentForm<InternalDocument> 
+export const PurchaseDocumentForm: ComponentType<DocumentFormProps<PurchaseDocument> & RP<any>> = props => (
+    <DocumentForm<PurchaseDocument> 
         {...props}
         key={props.keyId}
         extended={{
-            dataField: "DataDoc",
+            dataField: "Data",
             routeUpdate: "document/create",
-            title: "Registo de Despesa"
+            title: "Registo de Encomenda"
         }}
     />
 );

@@ -16,14 +16,13 @@ import {
 } from '@ionic/react';
 import { Loading } from "../common/Loading";
 import { LoginProps } from "../../types/LoginProps";
-import logo from "../../../assets/img/logo75.png";
-import { AppContextProps } from '../../types/AppContextProps';
+import logo from "../../../assets/img/logo74.png";
 
 type FormData = {
     username: string;
     password: string;
 };
-export const Login: ComponentType<LoginProps & AppContextProps & RP<any>> = ({
+export const Login: ComponentType<LoginProps & RP<any>> = ({
     login,
     me,
     ...props
@@ -51,7 +50,7 @@ export const Login: ComponentType<LoginProps & AppContextProps & RP<any>> = ({
         }
     }];
     return (
-        <IonPage>
+        <IonPage key={props.keyId}>
             <Loading isOpen={showLoading} />
             <IonContent>
                 <div id="loginVerticalAlign" slot="fixed">

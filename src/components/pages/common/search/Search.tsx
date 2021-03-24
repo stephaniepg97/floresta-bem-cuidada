@@ -11,7 +11,7 @@ import { IonItemDivider, IonLabel } from '@ionic/react';
 import { Button } from '../buttons/Button';
 import { Buttons } from '../buttons/Buttons';
 
-export const Search = <T extends Model> ({model, ...props} :  Pick<FormState<T, any>, "model"> & Pick<RouteComponentProps, "fetchApiOptions"> & CommonFormProps<T>) => {
+export const Search = <T extends Model> ({model, ...props} :  Pick<FormState<T, any>, "model"> & Pick<RouteComponentProps, | "keyId"> & CommonFormProps<T, any>) => {
     const [show, setShow] = useState(false);
     return (
         <>
@@ -36,8 +36,9 @@ export const Search = <T extends Model> ({model, ...props} :  Pick<FormState<T, 
             </IonItemDivider>
             {show &&
                 <>
-                    <FormContent<T> 
+                    <FormContent<T, any> 
                         {...props}
+                        key={`${props.keyId}-search-form`}
                         model={model}
                         
                     />

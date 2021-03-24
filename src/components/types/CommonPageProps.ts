@@ -4,7 +4,6 @@ import { ButtonProps } from "./ButtonProps";
 import { ToolbarButtonsProps } from "./ToolbarButtonsProps";
 
 export type CommonPageProps = {
-    bottomButtons?: Array<ButtonProps>;
     contentProps?:ComponentProps<typeof IonContent>;
     footerProps?: ComponentProps<typeof IonFooter>;
     bottomButtonsProps?: ToolbarButtonsProps

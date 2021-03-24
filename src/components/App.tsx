@@ -11,13 +11,12 @@ import { Employee } from "./models/Employee";
 import { AppRouter } from './pages/router/AppRouter';
 import { AppContext } from './contexts/AppContext';
 import { IonReactRouter } from '@ionic/react-router';
-import { createBrowserHistory } from 'history';
 
 import './App.scss';
 import config from "../config.json";
+import { useHistory } from 'react-router';
 
 const App = () => {
-  const history = createBrowserHistory();
   const [employee, setEmployee] = useReducer<Reducer<Employee | null, Employee | null>>((_, newValue) => {
     sessionStorage.setItem("session_employee", JSON.stringify(newValue))
     return newValue;
@@ -144,26 +143,25 @@ const App = () => {
     })*/
     return () => {stored = null};
   }, [token, me, login]);
-  
   return (
     <IonApp>
-      <AppContext.Provider value={{
-        fetchApi: fetchApi,
-        token: token,
-        employee: employee,
-        logout: logout,
-        history: history,
-      }}>
-        <IonReactRouter history={history}>
-          <AppContext.Consumer>
-            {contextProps => <AppRouter {...contextProps} loginProps={{
-              me: me,
-              login: login,
-              str_key: 'login'
-            }} />}
-          </AppContext.Consumer>
-        </IonReactRouter>
-      </AppContext.Provider>
+      <IonReactRouter>
+        <AppContext.Provider value={{
+          fetchApi: fetchApi,
+          token: token,
+          employee: employee,
+          logout: logout,
+          history: useHistory(),
+        }}>
+            <AppContext.Consumer>
+              {contextProps => <AppRouter {...contextProps} loginProps={{
+                me: me,
+                login: login,
+                keyId: "login",
+              }} />}
+            </AppContext.Consumer>
+        </AppContext.Provider>
+      </IonReactRouter>
     </IonApp>
   );
 }

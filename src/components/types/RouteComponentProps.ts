@@ -1,8 +1,11 @@
+import { MutableRefObject } from "react";
+import { ButtonProps } from "./ButtonProps";
 import { HeaderProps } from "./HeaderProps"
 import { OptionsFetchApi } from "./OptionsFetchApi";
 
 export type RouteComponentProps = {
-    headerProps?: HeaderProps;
     fetchApiOptions?: OptionsFetchApi;
-    str_key: string;
+    headerProps?: HeaderProps;
+    keyId: string;
+    bottomButtons?: MutableRefObject<ButtonProps[] | undefined>;
 }

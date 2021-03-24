@@ -7,4 +7,13 @@ export interface _Document extends Model {
     Nome?:string;
     TotalMerc?:number;
     Items?:Array<Item>;
+    NumDoc?:number;
+    TipoDoc?:string;
+    Serie?:string;
+    DataVenc?:Date;
+    NomeForn?:string;
+    Fornecedor?:string;
+    DescForn?:number;
+    DescFinanc?:number;
+    Anexos?:Array<string>;
 }

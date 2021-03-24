@@ -1,10 +1,9 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { add } from 'ionicons/icons';
 
 import { IonInput, IonIcon} from "@ionic/react";
 import { Model } from "../../../models/Model";
 import { InputProps } from "../../../types/InputProps";
-
 
 export const Input = <T extends Model> ({
         OptionsDialog, 
@@ -14,7 +13,6 @@ export const Input = <T extends Model> ({
         model, 
         xfield
 }: InputProps<T> & {model: T}) => {
-    const value = useCallback<(<C, >(_: keyof C, __: C) => object)>((key, object) => !!object && Object.entries(object).find(([k, value]) => key === k)?.[1], []);
     const [showDialog, setShowDialog] = useState<boolean>(false);
     return (
         <>
@@ -37,3 +35,4 @@ export const Input = <T extends Model> ({
         </>
     );
 }
+export const value: (<C, >(_: keyof C, __: C) => object) = (key, object) => !!object && Object.entries(object).find(([k, _]) => key === k)?.[1];

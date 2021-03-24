@@ -19,7 +19,7 @@ import {
   } from '@ionic/react';
   import { arrowBack } from 'ionicons/icons';
 import { MenuItemProps } from "../../../types/MenuItemProps";
-import logoMenu from "../../../../assets/img/logo400.png"
+import logoMenu from "../../../../assets/img/logo74.png"
 import { Button } from "../buttons/Button";
 
 export const MenuPage : FC<{
@@ -31,7 +31,7 @@ export const MenuPage : FC<{
       <IonMenu {...menuProps}>
         <IonHeader>
           <IonItem id="headerMenu" lines="none">
-            <IonImg id="logoMenu" src={logoMenu}/>
+            <IonImg src={logoMenu}/>
           </IonItem>
         </IonHeader>
         <IonContent>
@@ -56,18 +56,18 @@ export const MenuPage : FC<{
               <IonMenuButton 
                 menu={menuProps.menuId} 
                 color="primary" 
-                autoHide={false} />
+                autoHide />
               <Button
                 icon={{
                     icon: arrowBack,
-                    color: "primary"
+                    color: "primary",
                 }}
                 button={{
                     fill: "clear",
                     slot: "start", 
                     onClick: () => history?.back(),
                 }}
-                visible />
+                visible={history?.location.pathname === "/login"} />
             </IonButtons>
           </IonToolbar>
         </IonHeader>

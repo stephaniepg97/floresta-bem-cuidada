@@ -19,47 +19,44 @@ import { Model } from "../../../models/Model"
 import { ButtonProps } from '../../../types/ButtonProps';
 import { RouteComponentProps } from '../../../types/RouteComponentProps';
 import { Input } from '../input/Input';
+import { AppContextProps } from '../../../types/AppContextProps';
 
 export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({ 
     details,
     model,
     getModel,
     setButtons,
-    selected,
     bottomButtons,
     ...props
-} : ListProps<T, D1, D2> & RouteComponentProps & {
+} : ListProps<T, D1, D2> & RouteComponentProps & Pick<AppContextProps, 'fetchApi' | 'token'> & {
     model: T;
-    selected: React.MutableRefObject<Array<T>>;
     setButtons?: (value: Array<ButtonProps> | undefined) => void;
 }) => {
     const modelRef = useRef<T>(model);
+    const selected = useRef<Array<T>>([]);
     const [showLoading, setShowLoading] = useState<boolean>(false);
     const [data, setData] = useReducer<Reducer<Array<D1> | undefined, Array<D1> | undefined>>((oldValue, newValue) => {
         if (!!newValue) {
             let _model: T | null = getModel ? getModel(modelRef.current, newValue) : null;
             if (_model && modelRef.current !== _model) modelRef.current = _model;
-            //console.log("hide loading DETAILS ITEM ");
             showLoading && setShowLoading(false);
         }
         return newValue;
     }, !details || !details?.fetchApiOptions ? [] : details?.data);
     const [showDetails, setShowDetails] = useReducer<Reducer<boolean, boolean>>((oldValue, newValue) => {
-       //!!newValue && console.log("show loading DETAILS ITEM ");
         !!newValue && !showLoading && !data && setShowLoading(true);
         return newValue; 
     }, false);
     const setEndButtons = useCallback<(titles: Array<string>, visible: boolean) => void>((titles, visible) => {
-        //console.log(bottomButtons)
-        return setButtons && bottomButtons && setButtons(bottomButtons.map<ButtonProps>(buttonProps => buttonProps?.button?.title && titles.includes(buttonProps.button.title) ? {...buttonProps, visible: visible} : buttonProps))
+        return setButtons && !!bottomButtons?.current && setButtons(bottomButtons.current.map<ButtonProps>(buttonProps => buttonProps?.button?.title && titles.includes(buttonProps.button.title) ? {...buttonProps, visible: visible} : buttonProps))
     }, [setButtons, bottomButtons]);
 
     useEffect(() => {
         if (!showDetails || !!data) return;
         if (!data && details && details?.fetchApiOptions) {
             //console.log(props.fetchApiOptions && props.fetchApiOptions.route)
-            setData([{} as D1, {} as D1])
             //props.fetchApi(details.fetchApiOptions(model)).then(result => setData(result.response || []));
+            setData([{} as D1, {} as D1])
         }
     }, [
         data, 

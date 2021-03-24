@@ -3,7 +3,6 @@ import { ComponentProps, ComponentType } from "react";
 import { MenuPage } from "../common/menu/MenuPage";
 import { logOut, archive, card, key } from 'ionicons/icons';
 import { AppContextProps } from "../../types/AppContextProps";
-import { Home } from "../Home";
 import { Login } from "../login/Login";
 import { Password } from "../Password";
 import { PurchaseDocumentList } from "../documents/purchase/PurchaseDocumentList";
@@ -13,9 +12,12 @@ import { InternalDocumentForm } from "../documents/internal/InternalDocumentForm
 import { LoginProps } from "../../types/LoginProps";
 import { AppRoute } from "./AppRoute";
 import { AppRouteProps } from "../../types/AppRouteProps";
-import { InternalDocumentFormProps } from "../../types/InternalDocumentFormProps";
+import { DocumentFormProps } from "../../types/DocumentFormProps";
 import { InternalDocument } from "../../models/InternalDocument";
 import { RouteComponentProps } from "../../types/RouteComponentProps";
+import { PurchaseDocument } from "../../models/PurchaseDocument";
+import { PurchaseDocumentForm } from "../documents/purchase/PurchaseDocumentForm";
+import { Redirect } from "react-router";
 
 export const AppRouter: ComponentType<AppContextProps & {loginProps: LoginProps}> = ({loginProps, ...contextProps}) => {
   const menuProps: ComponentProps<typeof MenuPage> = {
@@ -29,12 +31,14 @@ export const AppRouter: ComponentType<AppContextProps & {loginProps: LoginProps}
       header: "Documentos",
       items: [{
         routerLink: "/encomendas/all",
+        routerDirection: "root",
         title: "Encomendas",
         icon: {
           icon: archive,
         }
       }, {
         routerLink: "/despesas/all",
+        routerDirection: "root",
         title: "Despesas",
         icon: {
           icon: card,
@@ -44,12 +48,14 @@ export const AppRouter: ComponentType<AppContextProps & {loginProps: LoginProps}
       header: "Registar ou Alterar",
       items: [{
         routerLink: "/encomendas/form",
+        routerDirection: "root",
         title: "Registo de Encomenda",
         icon: {
           icon: archive,
         }
       }, {
         routerLink: "/despesas/form",
+        routerDirection: "root",
         title: "Registo de Despesa",
         icon: {
           icon: card,
@@ -59,12 +65,14 @@ export const AppRouter: ComponentType<AppContextProps & {loginProps: LoginProps}
       header: contextProps.employee?.Nome,
       items: [{
         routerLink: "/password/reset",
+        routerDirection: "root",
         title: "Alterar palavra-passe",
         icon: {
           icon: key,
         },
       }, {
-        onClick: () => contextProps.logout,
+        onClick: () => contextProps.logout(),
+        routerOptions: {unmount: true},
         title: "Terminar sessão",
         icon: {
           icon: logOut,
@@ -73,41 +81,49 @@ export const AppRouter: ComponentType<AppContextProps & {loginProps: LoginProps}
     }],
     history: contextProps.history
   };
-  const routes: Array<AppRouteProps<RouteComponentProps> | AppRouteProps<LoginProps> | AppRouteProps<InternalDocumentFormProps>> = [{
-    Component: Home,
-    contextProps: contextProps,
-    exact: true,
-    path: "/",
-    componentProps: {str_key: 'home'}
-  }, {
+  const routes: Array<AppRouteProps<RouteComponentProps> | AppRouteProps<LoginProps> | AppRouteProps<DocumentFormProps<InternalDocument>>> = [{
     Component: Login,
     contextProps: contextProps,
     componentProps: loginProps,
     auth: false,
-    path: "/"
+    path: "/login",
   }, {
     Component: Password,
     contextProps: contextProps,
     path: "/password/reset",
-    componentProps: {str_key: 'password'}
+    componentProps: {
+      keyId: "password"
+    }
   }, {
     Component: PurchaseDocumentList,
     contextProps: contextProps,
     path: "/encomendas/all",
-    componentProps: {str_key: 'encomendas'}
+    componentProps: {
+      keyId: "encomendas"
+    }
   }, {
     Component: InternalDocumentList,
     contextProps: contextProps,
     path: "/despesas/all",
-    componentProps: {str_key: 'despesas'}
+    componentProps: {
+      keyId: "despesas"
+    }
   }, {
     Component: InternalDocumentForm,
     contextProps: contextProps,
     componentProps: {
       model: {} as InternalDocument,
-      str_key: 'despesas-form'
+      keyId: "despesas-form"
     },
     path: "/despesas/form"
+  }, {
+    Component: PurchaseDocumentForm,
+    contextProps: contextProps,
+    componentProps: {
+      model: {} as PurchaseDocument,
+      keyId: "encomendas-form"
+    },
+    path: "/encomendas/form"
   }];
   return (
     <IonContent>
@@ -115,6 +131,7 @@ export const AppRouter: ComponentType<AppContextProps & {loginProps: LoginProps}
         {routes.map((routeProps, index) => (
           <AppRoute<any> key={index} {...routeProps} />
         ))}
+        <Redirect exact from="/" to={!contextProps.token ? "/login" : "/encomendas/all"} />
       </MenuPage>
     </IonContent>
   );

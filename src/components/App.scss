@@ -17,7 +17,7 @@
 /**************************** VARIABLES ****************************/
 :root {
     /** primary **/
-    --ion-color-primary: #1d4b8b;
+    --ion-color-primary: #2c8717;
     --ion-color-primary-rgb: 108, 20, 86;
     --ion-color-primary-contrast: #ffffff;
     --ion-color-primary-contrast-rgb: 255, 255, 255;
@@ -137,6 +137,10 @@ ion-toast:focus {
 
 .content {
     --padding-top: 60px;
+}
+
+.content-form-list {
+    min-height: 100%;
 }
 
 .searchPlaceholder {
