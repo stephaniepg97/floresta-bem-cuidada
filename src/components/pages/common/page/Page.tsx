@@ -6,7 +6,7 @@ import {
     IonRefresherContent,
 } from '@ionic/react';
 
-import { chevronDownCircleOutline } from 'ionicons/icons';
+import { chevronDownCircleOutline, arrowUp } from 'ionicons/icons';
 
 import { CommonPageProps } from '../../../types/CommonPageProps';
 import { RouteComponentProps } from '../../../types/RouteComponentProps';
@@ -14,21 +14,21 @@ import { ButtonProps } from '../../../types/ButtonProps';
 
 import { Header } from "../header/Header";
 import { Buttons } from '../buttons/Buttons';
+import { FabButton } from '../buttons/FabButton';
 
-export const Page: ComponentType<RouteComponentProps & Pick<CommonPageProps, "Content" | "contentProps" | "footerProps" | "bottomButtonsProps">> = ({
-    bottomButtons, 
-    Content, 
-    bottomButtonsProps, 
+export const Page: ComponentType<RouteComponentProps & CommonPageProps> = ({
+    buttonsProps, 
+    Content,
     ...props
 }) => {
     const [buttons, setButtons] = useReducer<Reducer<Array<ButtonProps> | undefined, Array<ButtonProps> | undefined>>((_, newValue) => {
-        if (!!bottomButtons) { 
-            bottomButtons.current = newValue;
+        if (!!buttonsProps) { 
+            buttonsProps = {...buttonsProps, buttons: newValue };
         }
         return newValue;
-    }, bottomButtons?.current ? [...bottomButtons.current] : undefined);
+    }, buttonsProps?.buttons);
     return (    
-        <IonContent key={props.keyId} {...props.contentProps}>
+        <IonContent onScroll={(event) => console.log(event)} key={props.keyId} {...props.contentProps}>
             <IonRefresher slot="fixed" onIonRefresh={() => { }}>
                 <IonRefresherContent
                     pullingIcon={chevronDownCircleOutline}
@@ -39,9 +39,23 @@ export const Page: ComponentType<RouteComponentProps & Pick<CommonPageProps, "Co
             {Content && <Content setButtons={(value) => setButtons(value)}/> }
             {buttons &&
                 <IonFooter {...props.footerProps} className={`ion-no-border ${props.footerProps?.className}`}>
-                    <Buttons buttons={buttons} {...bottomButtonsProps}/>
+                    <Buttons {...buttonsProps}/>
                 </IonFooter>
             }
+            <FabButton
+                fab={{
+                    vertical: "bottom",
+                    horizontal: "end"
+                }}
+                icon={{
+                    icon: arrowUp
+                }}
+                button={{
+                    color: "white",
+                    onClick: () => {} //scrollTo({top: 0})
+                }}
+                visible={true}
+            />
         </IonContent>
     );
 }

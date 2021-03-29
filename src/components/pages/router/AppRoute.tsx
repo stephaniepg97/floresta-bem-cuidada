@@ -13,7 +13,7 @@ export const AppRoute = <T extends RouteComponentProps = RouteComponentProps> ({
     <Route key={componentProps.keyId} exact={exact} path={path} render={(routeComponentProps) => (
         (auth && !contextProps.token) || (!auth && !!contextProps.token)
         ? <Redirect to={auth ? "/login" : "/encomendas/all"} />
-        : <Component key={componentProps.keyId} {...contextProps} {...routeComponentProps} {...componentProps}/>
+        : <Component key={componentProps.keyId} {...routeComponentProps} {...componentProps}/>
         )} 
     />
 );

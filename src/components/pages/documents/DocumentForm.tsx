@@ -1,6 +1,8 @@
 import React from 'react';
 import { RouteComponentProps as RP } from "react-router";
 
+import { add } from 'ionicons/icons';
+
 import { Form } from "../common/form/Form"
 import { OptionsDialog } from '../common/options-dialog/OptionsDialog';
 
@@ -8,26 +10,118 @@ import { Item } from "../../models/Item"
 import { Supplier } from '../../models/Supplier';
 import { DocumentFormProps } from '../../types/DocumentFormProps';
 import { _Document } from '../../models/Document';
-import { value } from '../common/input/Input';
+import { value } from '../common/inputs/Input';
 import { Construction } from '../../models/Construction';
 import { DocumentFamily } from '../../models/DocumentFamily';
 import { DocumentType } from '../../models/DocumentType';
 import { InputProps } from '../../types/InputProps';
+import { Button } from '../common/buttons/Button';
 
-export const DocumentForm = <D extends _Document> ({model, extended, ...props}: DocumentFormProps<D> & RP<any> & {
+export const DocumentForm = <T extends _Document> ({model, extended, ...props}: DocumentFormProps<T> & RP<any> & {
     extended: {
-        dataField: (string | undefined) & keyof D,
+        dataField: (string | undefined) & keyof T,
         routeUpdate: string,
         title: string,
     }
 }) => (
-    <Form<D, Item> {...props}
+    <Form<T, Item> {...props}
         key={props.keyId}
         model={model}
         contentProps={{className: "content"}}
         form={[{
             title: "Informação Geral",
-            fields: [
+            fields: [{
+                label: "Obra",
+                inputProps: {
+                    name: 'Descricao',
+                    value: model?.Descricao,
+                },
+                OptionsDialog: (popoverProps) => (
+                    <OptionsDialog<Construction> 
+                        {...props} 
+                        headerProps={{ 
+                            ...props,
+                            title: "Obras" 
+                        }}
+                        fetchApiOptions={{
+                            route: "obras/all"
+                        }}
+                        popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
+                        listProps={{
+                            fields: [{
+                                label: "Código",
+                                inputProps: {
+                                    name: "Codigo",
+                                }
+                            }, {
+                                label: "Descrição",
+                                inputProps: {
+                                    name: "Descricao",
+                                }
+                            }],
+                        }}
+                    />
+                ),
+            }, {
+                label: "Fornecedor",
+                inputProps: {
+                    name: "Nome",
+                    maxlength: 8,
+                    value: model?.Nome
+                },
+                OptionsDialog: (popoverProps) => (
+                    <OptionsDialog<Supplier> 
+                        {...props} 
+                        headerProps={{ 
+                            ...props,
+                            title: "Fornecedores" 
+                        }}
+                        fetchApiOptions={{
+                            route: "supplier/all"
+                        }}
+                        popoverProps={{cssClass: "dialog-80x", ...popoverProps}} 
+                        listProps={{
+                            fields: [{
+                                label: "Fornecedor",
+                                inputProps: {
+                                    name: "Fornecedor",
+                                }
+                            }, {
+                                label: "Local",
+                                inputProps: {
+                                    name: "Local",
+                                }
+                            }, {
+                                label: "Morada",
+                                inputProps: {
+                                    name: "Morada",
+                                }
+                            }, {
+                                label: "Nome",
+                                inputProps: {
+                                    name: "Nome",
+                                }
+                            }, {
+                                label: "Distrito",
+                                inputProps: {
+                                    name: "NomeDistrito",
+                                }
+                            }, {
+                                label: "Pais",
+                                inputProps: {
+                                    name: "NomePais",
+                                }
+                            }, {
+                                label: "Nº de contribuinte",
+                                inputProps: {
+                                    name: "NumContrib",
+                                }
+                            }],
+                        }}
+                    />
+                ),
+            }],
+            fieldGroup: [
                 [{
                     label: "Nº do documento",
                     inputProps: {
@@ -118,38 +212,6 @@ export const DocumentForm = <D extends _Document> ({model, extended, ...props}: 
                         />
                     ),
                 }], [{
-                    label: "Obra",
-                    inputProps: {
-                        name: 'Descricao',
-                        value: model?.Descricao,
-                    },
-                    OptionsDialog: (popoverProps) => (
-                        <OptionsDialog<Construction> 
-                            {...props} 
-                            headerProps={{ 
-                                ...props,
-                                title: "Obras" 
-                            }}
-                            fetchApiOptions={{
-                                route: "obras/all"
-                            }}
-                            popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
-                            listProps={{
-                                fields: [{
-                                    label: "Código",
-                                    inputProps: {
-                                        name: "Codigo",
-                                    }
-                                }, {
-                                    label: "Descrição",
-                                    inputProps: {
-                                        name: "Descricao",
-                                    }
-                                }],
-                            }}
-                        />
-                    ),
-                }], [{
                     label: "Data do Documento",
                     inputProps: {
                         name: extended.dataField,
@@ -163,64 +225,6 @@ export const DocumentForm = <D extends _Document> ({model, extended, ...props}: 
                         type: "date",
                         value: String(value(extended.dataField, model)),
                     }
-                }], [{
-                    label: "Fornecedor",
-                    inputProps: {
-                        name: "Nome",
-                        maxlength: 8,
-                        value: model?.Nome
-                    },
-                    OptionsDialog: (popoverProps) => (
-                        <OptionsDialog<Supplier> 
-                            {...props} 
-                            headerProps={{ 
-                                ...props,
-                                title: "Fornecedores" 
-                            }}
-                            fetchApiOptions={{
-                                route: "supplier/all"
-                            }}
-                            popoverProps={{cssClass: "supplier-dialog", ...popoverProps}} 
-                            listProps={{
-                                fields: [{
-                                    label: "Fornecedor",
-                                    inputProps: {
-                                        name: "Fornecedor",
-                                    }
-                                }, {
-                                    label: "Local",
-                                    inputProps: {
-                                        name: "Local",
-                                    }
-                                }, {
-                                    label: "Morada",
-                                    inputProps: {
-                                        name: "Morada",
-                                    }
-                                }, {
-                                    label: "Nome",
-                                    inputProps: {
-                                        name: "Nome",
-                                    }
-                                }, {
-                                    label: "Distrito",
-                                    inputProps: {
-                                        name: "NomeDistrito",
-                                    }
-                                }, {
-                                    label: "Pais",
-                                    inputProps: {
-                                        name: "NomePais",
-                                    }
-                                }, {
-                                    label: "Nº de contribuinte",
-                                    inputProps: {
-                                        name: "NumContrib",
-                                    }
-                                }],
-                            }}
-                        />
-                    ),
                 }], [{
                     label: "Desconto de Fornecedor",
                     inputProps: {
@@ -242,23 +246,42 @@ export const DocumentForm = <D extends _Document> ({model, extended, ...props}: 
             ]
         }, {
             title: "Anexos",
-            fields: (model?.Anexos??["Ficheiro 1", "Ficheiro 2"]).map(file => [{
-                label: file, 
-                Field: () => <input type="file" />,
-                xfield: "Anexos"
-            } as InputProps<D>])
+            fields: model?.Anexos?.map((file, index) => {
+                return {
+                    label: file, 
+                    Field: ({value}) => <input type="file" />,
+                    xfield: "Anexos"
+                } as InputProps<T>;
+            }),
+            Bottom: ({model}) => (
+                <div className="flex-row-center-content">
+                    <Button
+                        button={{
+                            slot: "icon-only",
+                            color: "primary",
+                            onClick: () => {}, //model,
+                            className: "buttom-add-form"
+                        }}
+                        icon={{
+                            icon: add,
+                            color: "white",
+                        }}
+                        visible
+                    />
+                </div>
+            ),
         }, {
             title: "Artigos",
             listProps: {
                 keyId: props.keyId,
-                data: [{} as Item, {} as Item], //model.Items
+                data: model.Items || null,
                 fields: [{
                     label: "Artigo",
                     inputProps: {
                         name: "Artigo",
                         readonly: true
                     },
-                    searchFields: [{
+                    searchFieldGroup: [{
                         label: "Código",
                         inputProps: {
                             name: "Artigo",
@@ -270,7 +293,7 @@ export const DocumentForm = <D extends _Document> ({model, extended, ...props}: 
                         name: "Descricao",
                         readonly: true
                     },
-                    searchFields: [{
+                    searchFieldGroup: [{
                         label: "Descrição",
                         inputProps: {
                             name: "Descricao",
@@ -296,6 +319,23 @@ export const DocumentForm = <D extends _Document> ({model, extended, ...props}: 
                     }
                 }]
             },
+            Bottom: ({model}) => (
+                <div className="flex-row-center-content">
+                    <Button
+                        button={{
+                            slot: "icon-only",
+                            color: "primary",
+                            onClick: () => {}, //model,
+                            className: "buttom-add-form"
+                        }}
+                        icon={{
+                            icon: add,
+                            color: "white",
+                        }}
+                        visible
+                    />
+                </div>
+            ),
         }]}
         fetchApiOptions={{route: extended.routeUpdate}}
         headerProps={{

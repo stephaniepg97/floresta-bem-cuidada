@@ -67,7 +67,7 @@ export const MenuPage : FC<{
                     slot: "start", 
                     onClick: () => history?.back(),
                 }}
-                visible={history?.location.pathname === "/login"} />
+                visible={history?.location.pathname !== "/login"} />
             </IonButtons>
           </IonToolbar>
         </IonHeader>

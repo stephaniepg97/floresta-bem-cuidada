@@ -1,17 +1,13 @@
 import React, {useState} from 'react';
-import { search, add, removeOutline } from 'ionicons/icons';
-
+import { search, add, removeOutline, trashBinOutline } from 'ionicons/icons';
 import { FormContent } from "../form/Form"
-
-import { FormState, CommonFormProps } from '../../../types/FormProps';
-import { RouteComponentProps } from '../../../types/RouteComponentProps';
-
 import { Model } from "../../../models/Model"
 import { IonItemDivider, IonLabel } from '@ionic/react';
 import { Button } from '../buttons/Button';
 import { Buttons } from '../buttons/Buttons';
+import { FormContentProps } from '../../../types/FormContentProps';
 
-export const Search = <T extends Model> ({model, ...props} :  Pick<FormState<T, any>, "model"> & Pick<RouteComponentProps, | "keyId"> & CommonFormProps<T, any>) => {
+export const Search = <T extends Model> ({model, ...props} : FormContentProps<T>) => {
     const [show, setShow] = useState(false);
     return (
         <>
@@ -52,6 +48,18 @@ export const Search = <T extends Model> ({model, ...props} :  Pick<FormState<T, 
                         button: {
                             onClick: () => {},
                             color: "medium",
+                        },
+                        visible: true
+                    }, {
+                        text: "Limpar",
+                        icon: {
+                            icon: trashBinOutline,
+                            color: "white"
+                        },
+                        label: {color: "white"},
+                        button: {
+                            onClick: () => {},
+                            color: "danger",
                         },
                         visible: true
                     }]}/>

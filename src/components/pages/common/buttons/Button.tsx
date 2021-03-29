@@ -4,11 +4,10 @@ import {
     IonIcon,
     IonLabel,
 } from '@ionic/react';
-
-
 import { ButtonProps } from '../../../types/ButtonProps';
+import "./Button.scss"
 
-export const Button: ComponentType<ButtonProps> = ({icon, text, label, button, visible}) => (
+export const Button: ComponentType<ButtonProps> = ({icon, text, label, button, visible = true}) => (
     <>
         {visible && 
             <IonButton 

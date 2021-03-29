@@ -1,8 +1,9 @@
 import { IonToolbar } from "@ionic/react";
 import { ComponentProps } from "react";
+import { ButtonProps } from "./ButtonProps";
 
-export type ToolbarButtonsProps = {
+export type ButtonsProps = {
     toolbarProps?: ComponentProps<typeof IonToolbar>; 
     fixed?:boolean; 
-    centered?:boolean
+    buttons?: Array<ButtonProps>;
 }

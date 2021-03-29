@@ -1,11 +1,11 @@
-import { ComponentProps, ComponentType } from "react";
+import { ComponentProps, ComponentType, MutableRefObject } from "react";
 import { IonContent, IonFooter } from "@ionic/react";
-import { ButtonProps } from "./ButtonProps";
-import { ToolbarButtonsProps } from "./ToolbarButtonsProps";
+import { ButtonsProps } from "./ButtonsProps";
+import { ListContentProps } from "./ListContentProps";
 
 export type CommonPageProps = {
     contentProps?:ComponentProps<typeof IonContent>;
     footerProps?: ComponentProps<typeof IonFooter>;
-    bottomButtonsProps?: ToolbarButtonsProps
-    Content?: ComponentType<{setButtons?: (value: Array<ButtonProps> | undefined) => void}>;
+    buttonsProps?: ButtonsProps;
+    Content?: ComponentType<Pick<ListContentProps, 'setButtons'>> & Pick<ButtonsProps, 'buttons'>;
 };

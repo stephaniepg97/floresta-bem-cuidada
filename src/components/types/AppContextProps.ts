@@ -1,12 +1,12 @@
 import { ResultFetchApi } from "./ResultFetchApi"
 import { OptionsFetchApi } from "./OptionsFetchApi"
-import { Employee } from "../models/Employee"
-import { ComponentProps } from "react"
-import { IonReactRouter } from "@ionic/react-router"
+import { User } from "../models/User"
+import { BrowserHistory } from "history"
 
-export type AppContextProps = ComponentProps<typeof IonReactRouter> & {
+export type AppContextProps = {
     fetchApi: (O : OptionsFetchApi) => Promise<ResultFetchApi>
     token: string | null;
-    logout: () => void;
-    employee: Employee | null;
+    logout: (logOut: () => void) => void;
+    employee: User | null;
+    history: BrowserHistory;
 }

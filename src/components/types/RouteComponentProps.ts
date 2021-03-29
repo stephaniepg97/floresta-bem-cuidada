@@ -7,5 +7,4 @@ export type RouteComponentProps = {
     fetchApiOptions?: OptionsFetchApi;
     headerProps?: HeaderProps;
     keyId: string;
-    bottomButtons?: MutableRefObject<ButtonProps[] | undefined>;
 }

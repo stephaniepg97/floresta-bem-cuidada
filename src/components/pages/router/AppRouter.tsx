@@ -3,7 +3,7 @@ import { ComponentProps, ComponentType } from "react";
 import { MenuPage } from "../common/menu/MenuPage";
 import { logOut, archive, card, key } from 'ionicons/icons';
 import { AppContextProps } from "../../types/AppContextProps";
-import { Login } from "../login/Login";
+import { Login } from "../auth/Login";
 import { Password } from "../Password";
 import { PurchaseDocumentList } from "../documents/purchase/PurchaseDocumentList";
 import { InternalDocumentList } from "../documents/internal/InternalDocumentList";
@@ -18,6 +18,7 @@ import { RouteComponentProps } from "../../types/RouteComponentProps";
 import { PurchaseDocument } from "../../models/PurchaseDocument";
 import { PurchaseDocumentForm } from "../documents/purchase/PurchaseDocumentForm";
 import { Redirect } from "react-router";
+import { Logout } from "../auth/Logout";
 
 export const AppRouter: ComponentType<AppContextProps & {loginProps: LoginProps}> = ({loginProps, ...contextProps}) => {
   const menuProps: ComponentProps<typeof MenuPage> = {
@@ -71,8 +72,8 @@ export const AppRouter: ComponentType<AppContextProps & {loginProps: LoginProps}
           icon: key,
         },
       }, {
-        onClick: () => contextProps.logout(),
-        routerOptions: {unmount: true},
+        routerLink: "/logout",
+        routerDirection: "root",
         title: "Terminar sessão",
         icon: {
           icon: logOut,
@@ -124,6 +125,13 @@ export const AppRouter: ComponentType<AppContextProps & {loginProps: LoginProps}
       keyId: "encomendas-form"
     },
     path: "/encomendas/form"
+  }, {
+    Component: Logout,
+    componentProps: {
+      keyId: "logout"
+    },
+    contextProps: contextProps,
+    path: "/logout"
   }];
   return (
     <IonContent>

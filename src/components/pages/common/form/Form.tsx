@@ -8,14 +8,14 @@ import {
     IonItem,
 } from '@ionic/react';
 import { checkmark } from 'ionicons/icons';
-
-import { CommonFormProps, FormProps, FormState } from "../../../types/FormProps"
+import { FormProps } from "../../../types/FormProps"
 import { RouteComponentProps } from '../../../types/RouteComponentProps';
-import { Input } from '../input/Input';
+import { Input } from '../inputs/Input';
 import { Page } from '../page/Page';
 import { Model } from '../../../models/Model';
 import { ListContent } from '../list/List';
 import { ListContentProps } from '../../../types/ListContentProps';
+import { FormContentProps } from '../../../types/FormContentProps';
 
 import "./Form.scss";
 
@@ -26,21 +26,21 @@ export const Form = <T extends Model, D extends Model> (props: FormProps<T, D> &
     />
 );
 
-export const FormContent = <T extends Model, D extends Model> ({form, model, listProps, ...props} : CommonFormProps<T, D> & FormState<T, D> & Pick<RouteComponentProps, 'keyId'>) => (
+export const FormContent = <T extends Model, D extends Model> (props : FormContentProps<T, D>) => (
     <div key={props.keyId}>
-        {form.map((group, index0) => (
+        {props.form.map(({Bottom, fieldGroup, fields, listProps, title}, index0) => (
             <div key={index0}>
                 <IonItemGroup className="ion-item-group" >
-                    {group.title && 
+                    {title && 
                         <IonItemDivider>
                             <IonLabel className="ion-text-uppercase">
-                                {group.title}
+                                {title}
                             </IonLabel>
                             <IonIcon size="small" color="success" slot="end" className="ion-icon" icon={checkmark} />
                         </IonItemDivider> 
                     }
-                    {group.fields?.map((inputProps, index1) => (
-                        <IonItem key={index1}>
+                    {fieldGroup?.map((inputProps, index1) => (
+                        <IonItem key={`group-${index1}`}>
                             <div className="ion-item-items">
                                 {inputProps?.map((i, index2) => (
                                     <div key={index2} className="field">
@@ -48,15 +48,24 @@ export const FormContent = <T extends Model, D extends Model> ({form, model, lis
                                             <small>{`${i.label}${!i.required ? "" : "*"}`}</small>
                                         </IonLabel>
                                         <div className="input">
-                                            <Input<T> {...i} model={model}/>
+                                            <Input<T> {...i} model={props.model}/>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         </IonItem>
                     ))}
+                    {fields?.map((i, index2) => (
+                        <IonItem key={`field-${index2}`}>
+                            <IonLabel className="ion-label ion-text-wrap">
+                                <small>{`${i.label}${!i.required ? "" : "*"}`}</small>
+                            </IonLabel>
+                            <Input<T> {...i} model={props.model}/>
+                        </IonItem>
+                    ))}
                 </IonItemGroup>
-                {(!!listProps || !!group.listProps) && <ListContent key={`list-${index0}`} {...(listProps ?? group.listProps) as ListContentProps<T, any, any>} {...props} />}
+                {!!listProps && <ListContent key={`list-${index0}`} {...listProps as ListContentProps<D>} {...props} />}
+                {Bottom && <Bottom model={props.model} />}
             </div>
         ))}
     </div>

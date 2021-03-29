@@ -1,5 +1,9 @@
 {
-    "WEB_API_URL": "http://localhost:2018/WebApi/",
-    "COMPANY": "DEMO",
-    "INSTANCE": "Default"
+    "Company": "DEMO",
+    "Instance": "Default",
+    "Line": "LE",
+    "UserDB": "sa",
+    "PasswordDB": "253197@sg",
+    "ServerDB": "STEPHANIE-PORT\\PRIMAVERA",
+    "grant_type": "password"
 }

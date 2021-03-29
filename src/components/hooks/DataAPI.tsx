@@ -1,4 +1,5 @@
-import { Reducer, useEffect, useReducer, useState } from "react";
+import { Reducer, useContext, useEffect, useReducer, useState } from "react";
+import { AppContext } from "../contexts/AppContext";
 import { Model } from "../models/Model";
 import { OptionsFetchApi } from "../types/OptionsFetchApi";
 
@@ -8,15 +9,15 @@ export const useDataAPI = <T extends Model> (fetchApiOptions?: OptionsFetchApi) 
         !!newValue && showLoading && setShowLoading(false);
         return newValue;
     }, !fetchApiOptions ? [] : null);
+    const appContext = useContext(AppContext);
     useEffect(() => {
         if (!data && showLoading && !!fetchApiOptions) {
             console.log(fetchApiOptions.route)
-            /*props.fetchApi(props.fetchApiOptions).then(result => {
+            appContext.fetchApi(fetchApiOptions).then(result => {
                 console.log(result)
                 setData(result.response?.Data || [])
-            });*/
-            setData([{} as T, {} as T])
+            });
         }
-    }, [data, showLoading, fetchApiOptions]);
+    }, [data, showLoading, fetchApiOptions, appContext]);
     return [data, showLoading] as [Array<T> | null, boolean];
 }

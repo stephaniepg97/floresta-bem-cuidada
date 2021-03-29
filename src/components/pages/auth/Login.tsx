@@ -17,11 +17,11 @@ import {
 import { Loading } from "../common/Loading";
 import { LoginProps } from "../../types/LoginProps";
 import logo from "../../../assets/img/logo74.png";
+import { User } from '../../models/User';
 
-type FormData = {
-    username: string;
-    password: string;
-};
+import config from "../../../config.json";
+
+type FormData = Pick<User, 'Username' | 'Password'>
 export const Login: ComponentType<LoginProps & RP<any>> = ({
     login,
     me,
@@ -31,19 +31,17 @@ export const Login: ComponentType<LoginProps & RP<any>> = ({
     const { handleSubmit, errors, getValues, control } = useForm<FormData>();
     const submit = handleSubmit(data => {
         setShowLoading(true)
-        login(data).then(result => {
-            setShowLoading(false);
-            result.response && props.history.push("/encomendas/all")
-        });
+        login({logIn: () => setShowLoading(false), ...data, ...config});
+        //result.response && props.history.push("/encomendas/all")
     });
     const fields: Array<{name: keyof FormData, title: string, options?: RegisterOptions}> = [{
-        name: "username",
+        name: "Username",
         title: "Utilizador",
         options: {
             required: "Introduza um nome de utilizador/email válido.",
         }
     }, {
-        name: "password",
+        name: "Password",
         title: "Senha",
         options: {
             required: "Introduza a palavra passe.",
@@ -70,14 +68,11 @@ export const Login: ComponentType<LoginProps & RP<any>> = ({
                                             <Controller
                                                 render={({value, onChange, name}) => (
                                                     <IonInput 
-                                                        {...field.name === "username"
+                                                        {...field.name === "Username"
                                                             ? { autocomplete: "username", type: "text" }
                                                             : { type: "password", onKeyPress: (event) => event.key.toLowerCase() === "enter" && submit()}
                                                         }
-                                                        onIonChange={(event) => {
-                                                            onChange(event)
-                                                            console.log(field.name, getValues()[field.name])
-                                                        }}
+                                                        onIonChange={onChange}
                                                         name={name}
                                                         value={value}
                                                         placeholder={field.title}
@@ -113,7 +108,7 @@ export const Login: ComponentType<LoginProps & RP<any>> = ({
             </IonContent>
             <IonFooter id="loginFooter" className="ion-no-border">
                 <IonToolbar >
-                    <p className="ion-text-center">CORKART© | Todos os direitos reservados.</p>
+                    <p className="ion-text-center">FLORESTA BEM CUIDADA© | Todos os direitos reservados.</p>
                 </IonToolbar>
             </IonFooter>
         </IonPage>

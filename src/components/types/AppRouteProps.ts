@@ -8,7 +8,7 @@ import { IonRouteProps } from "@ionic/react";
 
 export type AppRouteProps<T extends RouteComponentProps = RouteComponentProps> = {
     Component: ComponentType<T & RP<any>>;
-    contextProps: AppContextProps
+    contextProps: Pick<AppContextProps, 'token'>
     auth?: boolean; 
     componentProps: T; 
 } & Pick<IonRouteProps, 'path' | 'exact'>

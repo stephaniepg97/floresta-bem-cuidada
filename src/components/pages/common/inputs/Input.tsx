@@ -4,6 +4,8 @@ import { add } from 'ionicons/icons';
 import { IonInput, IonIcon} from "@ionic/react";
 import { Model } from "../../../models/Model";
 import { InputProps } from "../../../types/InputProps";
+import { FormState } from "../../../types/FormProps";
+import { FileInput } from "./FileInput";
 
 export const Input = <T extends Model> ({
         OptionsDialog, 
@@ -12,19 +14,22 @@ export const Input = <T extends Model> ({
         label, 
         model, 
         xfield
-}: InputProps<T> & {model: T}) => {
+}: InputProps<T> & FormState<T>) => {
     const [showDialog, setShowDialog] = useState<boolean>(false);
+    const props: React.ComponentProps<typeof IonInput> = {
+        ...inputProps, 
+        placeholder: inputProps?.placeholder ?? label,
+        clearOnEdit: false,
+        value: !!inputProps?.name || !!xfield ? String(value<T>(inputProps?.name ?? xfield as keyof T, model)) : "",
+        onIonChange: event => model = {...model, [inputProps?.name ?? xfield as keyof T]: event.detail.value}
+    }
     return (
         <>
-            {inputProps ?
-                <IonInput
-                    {...inputProps}
-                    className="ion-input"
-                    placeholder={label}
-                    clearOnEdit={false} 
-                    value={String(value<T>(inputProps.name, model) ?? "")}
-                />
-                : (xfield !== undefined) && Field && <Field {...xfield !== null && {value: value<T>(xfield, model)}} />
+            {!!inputProps && !!inputProps.accept 
+                ? <FileInput {...props} />
+                : !!inputProps 
+                    ? <IonInput {...props} />
+                    : (xfield !== undefined) && Field && <Field {...xfield && {value: value<T>(xfield, model)}} />
             }
             {OptionsDialog && (
                 <>

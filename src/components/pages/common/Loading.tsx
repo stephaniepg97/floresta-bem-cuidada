@@ -1,17 +1,15 @@
-import React, { FC } from 'react';
+import React, { ComponentProps, ComponentType } from 'react';
 import {
     IonLoading
 } from '@ionic/react';
 
-type LoadingProps = {
-    isOpen: boolean;
-}
+type LoadingProps = ComponentProps<typeof IonLoading>
 
-export const Loading: FC<LoadingProps> = ({ isOpen }) => {
+export const Loading: ComponentType<LoadingProps> = ({ message = 'A carregar...', ...props}) => {
     return (
         <IonLoading
-            isOpen={isOpen}
-            message={'A carregar...'}
+            message={message}
+            {...props}
         />
     );
 }

@@ -2,7 +2,7 @@ import { Model } from "./Model"
 
 export interface Item extends Model {
     Id?: string;
-    Artigo?: number;
+    Artigo?: string;
     Descricao?: string;
     Quantidade?: number;
     Peso?:number;

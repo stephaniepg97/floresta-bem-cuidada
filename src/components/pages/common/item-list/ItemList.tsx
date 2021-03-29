@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, useReducer, Reducer } from 'react';
+import React, { useState, useEffect, useRef, useReducer, Reducer, useCallback } from 'react';
 import { 
     IonLabel,
     IonList,
@@ -18,45 +18,91 @@ import { ColumnProps } from "../../../types/ColumnProps";
 import { Model } from "../../../models/Model"
 import { ButtonProps } from '../../../types/ButtonProps';
 import { RouteComponentProps } from '../../../types/RouteComponentProps';
-import { Input } from '../input/Input';
+import { Input } from '../inputs/Input';
 import { AppContextProps } from '../../../types/AppContextProps';
 
 export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({ 
     details,
-    model,
+    row,
     getModel,
     setButtons,
-    bottomButtons,
+    buttons,
     ...props
 } : ListProps<T, D1, D2> & RouteComponentProps & Pick<AppContextProps, 'fetchApi' | 'token'> & {
-    model: T;
+    row: T;
     setButtons?: (value: Array<ButtonProps> | undefined) => void;
+    buttons?: Array<ButtonProps>;
 }) => {
-    const modelRef = useRef<T>(model);
+    const model = useRef<T>(row);
     const selected = useRef<Array<T>>([]);
     const [showLoading, setShowLoading] = useState<boolean>(false);
-    const [data, setData] = useReducer<Reducer<Array<D1> | undefined, Array<D1> | undefined>>((oldValue, newValue) => {
+    const [data, setData] = useReducer<Reducer<Array<D1> | undefined, Array<D1> | undefined>>((_, newValue) => {
         if (!!newValue) {
-            let _model: T | null = getModel ? getModel(modelRef.current, newValue) : null;
-            if (_model && modelRef.current !== _model) modelRef.current = _model;
+            let _model: T | null = getModel ? getModel(model.current, newValue) : null;
+            if (_model && model.current !== _model) model.current = _model;
+            console.log(model.current)
             showLoading && setShowLoading(false);
         }
         return newValue;
     }, !details || !details?.fetchApiOptions ? [] : details?.data);
-    const [showDetails, setShowDetails] = useReducer<Reducer<boolean, boolean>>((oldValue, newValue) => {
+    const [showDetails, setShowDetails] = useReducer<Reducer<boolean, boolean>>((_, newValue) => {
         !!newValue && !showLoading && !data && setShowLoading(true);
         return newValue; 
     }, false);
-    const setEndButtons = useCallback<(titles: Array<string>, visible: boolean) => void>((titles, visible) => {
-        return setButtons && !!bottomButtons?.current && setButtons(bottomButtons.current.map<ButtonProps>(buttonProps => buttonProps?.button?.title && titles.includes(buttonProps.button.title) ? {...buttonProps, visible: visible} : buttonProps))
-    }, [setButtons, bottomButtons]);
-
+    const setEndButtons = useCallback<(titles: Array<string>, visible: boolean) => void>((titles, visible) => setButtons && !!buttons && setButtons(buttons.map<ButtonProps>(buttonProps => buttonProps?.button?.title && titles.includes(buttonProps.button.title) ? {...buttonProps, visible: visible} : buttonProps)), [setButtons, buttons]);
+    const ItemChild = <M extends Model> ({
+        checkbox, 
+        size, 
+        inputProps, 
+        Field, 
+        modelOrItem,
+        xfield,
+        ...props 
+    }: (ColumnProps<M>) & {
+        modelOrItem: M;
+    }) => {
+        return (
+            <IonItem lines="none" color="transparent" {...!!inputProps?.readonly && !checkbox && {
+                onClick: () => setShowDetails && setShowDetails(!showDetails)
+            }}>
+                <>
+                    {(JSON.stringify(modelOrItem) === JSON.stringify(model.current)) && checkbox ? 
+                        <IonCheckbox  
+                            checked={selected.current.includes(model.current)} 
+                            onIonChange={() => {
+                                let last = selected.current.length === 0;
+                                if (selected.current.includes(model.current)) selected.current.splice(selected.current.indexOf(model.current), 1);
+                                else selected.current.push(model.current);
+                                setEndButtons(["create", "reset"], last || selected.current.length !== 0); 
+                            }}
+                        /> : 
+                        <Input<M>
+                            {...props}
+                            model={modelOrItem}
+                            {...inputProps ? {
+                                inputProps: {...inputProps,
+                                    onIonChange: (event) => {
+                                        if (!inputProps?.name) return;
+                                        modelOrItem = {...modelOrItem, [inputProps.name]: event.detail.value}
+                                        setEndButtons(["save"], true);
+                                    },
+                                }
+                            } : {
+                                Field: Field ? Field : () => <></>,
+                                xfield: xfield || null
+                            }}
+                        />
+                    }
+                </> 
+            </IonItem>  
+        );
+    };
     useEffect(() => {
         if (!showDetails || !!data) return;
         if (!data && details && details?.fetchApiOptions) {
             //console.log(props.fetchApiOptions && props.fetchApiOptions.route)
-            //props.fetchApi(details.fetchApiOptions(model)).then(result => setData(result.response || []));
-            setData([{} as D1, {} as D1])
+            props.fetchApi(details.fetchApiOptions(model.current)).then(result => setData(result.response || []));
+            //setData(props.asdI ?? [{} as D1, {} as D1])
         }
     }, [
         data, 
@@ -65,7 +111,6 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
         showDetails, 
         model,
     ]);
-
     return (
         <>
             <Loading isOpen={showLoading} />
@@ -74,13 +119,8 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
                     fields={props.fields}
                     itemProps={{className: "ion-list-item", detail: true, detailIcon: showDetails ? chevronDown: chevronForward}} 
                     Children={(col) => 
-                        <ItemChild<T> 
-                            model={modelRef.current} 
-                            modelRef={modelRef} 
-                            selected={selected} 
-                            setEndButtons={setEndButtons} 
-                            setShowDetails={setShowDetails} 
-                            showDetails={showDetails}
+                        <ItemChild
+                            modelOrItem={model.current} 
                             {...col} 
                         />
                     }
@@ -102,7 +142,7 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
                                     key={indexR}
                                     fields={details.columns}
                                     itemProps={{className: "ion-detail-item ion-margin-top", detail: false, color: 'light'}} 
-                                    Children={(col) => <ItemChild<D1> model={row} {...col} /> }
+                                    Children={(col) => <ItemChild modelOrItem={row} {...col} /> }
                                 />
                             )) 
                             : <small className="sem-resultados">Sem resultados...</small>
@@ -113,60 +153,3 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
         </>
     );
 }
-
-const ItemChild = <T extends Model> ({
-    checkbox, 
-    size, 
-    inputProps, 
-    Field, 
-    modelRef, 
-    model,
-    showDetails, 
-    setShowDetails, 
-    selected,
-    setEndButtons,
-    xfield,
-    ...props 
-}: ColumnProps<T> & {
-    model: T;
-    selected?: React.MutableRefObject<Array<T>>;
-    modelRef?: React.MutableRefObject<T>;
-    setEndButtons?: (titles: Array<string>, visible: boolean) => void;
-    showDetails?: boolean; 
-    setShowDetails?: (value: boolean) => void 
-}) => (
-    <IonItem lines="none" color="transparent" {...!!inputProps?.readonly && !checkbox && {
-        onClick: () => setShowDetails && setShowDetails(!showDetails)
-    }}>
-        <>
-            {checkbox && modelRef && selected && setEndButtons ? 
-                <IonCheckbox  
-                    checked={selected.current.includes(modelRef.current)} 
-                    onIonChange={() => {
-                        //let last = selected.current.length === 0;
-                        if (selected.current.includes(modelRef.current)) selected.current.splice(selected.current.indexOf(modelRef.current), 1);
-                        else selected.current.push(modelRef.current);
-                        //console.log(last || selected.current.length !== 0)
-                        //setEndButtons(["create", "reset"], last || selected.current.length !== 0); 
-                    }}
-                /> : 
-                <Input<T>
-                    {...props}
-                    model={model}
-                    {...inputProps && modelRef && setEndButtons ? {
-                        inputProps: {...inputProps,
-                            onIonChange: (event) => {
-                                if (!inputProps?.name) return;
-                                modelRef.current = {...modelRef.current, [inputProps.name]: event.detail.value}
-                                //setEndButtons(["save"], true);
-                            },
-                        }
-                    } : {
-                        Field: Field ? Field : () => <></>,
-                        xfield: xfield || null
-                    }}
-                />
-            }
-        </> 
-    </IonItem>  
-);
