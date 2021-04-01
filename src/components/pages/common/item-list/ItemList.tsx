@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useReducer, Reducer, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useReducer, Reducer, useCallback, useContext } from 'react';
 import { 
     IonLabel,
     IonList,
@@ -12,14 +12,14 @@ import { Loading } from "../Loading"
 
 import "./ItemList.scss";
 
-import { ListProps } from "../../../types/ListProps";
+import { ListPropsWithDetails } from "../../../types/ListPropsWithDetails";
 import { ColumnProps } from "../../../types/ColumnProps";
 
 import { Model } from "../../../models/Model"
 import { ButtonProps } from '../../../types/ButtonProps';
 import { RouteComponentProps } from '../../../types/RouteComponentProps';
 import { Input } from '../inputs/Input';
-import { AppContextProps } from '../../../types/AppContextProps';
+import { AppContext } from '../../../contexts/AppContext';
 
 export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({ 
     details,
@@ -28,11 +28,12 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
     setButtons,
     buttons,
     ...props
-} : ListProps<T, D1, D2> & RouteComponentProps & Pick<AppContextProps, 'fetchApi' | 'token'> & {
+} : ListPropsWithDetails<T, D1, D2> & RouteComponentProps & {
     row: T;
     setButtons?: (value: Array<ButtonProps> | undefined) => void;
     buttons?: Array<ButtonProps>;
 }) => {
+    const { fetchApi } = useContext(AppContext);
     const model = useRef<T>(row);
     const selected = useRef<Array<T>>([]);
     const [showLoading, setShowLoading] = useState<boolean>(false);
@@ -101,7 +102,7 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
         if (!showDetails || !!data) return;
         if (!data && details && details?.fetchApiOptions) {
             //console.log(props.fetchApiOptions && props.fetchApiOptions.route)
-            props.fetchApi(details.fetchApiOptions(model.current)).then(result => setData(result.response || []));
+            fetchApi(details.fetchApiOptions(model.current)).then(result => setData(result.response || []));
             //setData(props.asdI ?? [{} as D1, {} as D1])
         }
     }, [
@@ -110,6 +111,7 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
         details, 
         showDetails, 
         model,
+        fetchApi
     ]);
     return (
         <>

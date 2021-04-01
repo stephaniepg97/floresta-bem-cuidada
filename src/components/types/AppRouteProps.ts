@@ -1,14 +1,10 @@
 import { ComponentType } from "react";
-import { AppContextProps } from "./AppContextProps";
-import { RouteComponentProps } from "./RouteComponentProps";
-import {
-    RouteComponentProps as RP
-  } from "react-router";
+import { RouteComponentProps } from "react-router";
 import { IonRouteProps } from "@ionic/react";
 
 export type AppRouteProps<T extends RouteComponentProps = RouteComponentProps> = {
-    Component: ComponentType<T & RP<any>>;
-    contextProps: Pick<AppContextProps, 'token'>
+    Component: ComponentType<T & Pick<AppRouteProps, 'keyId'>>;
     auth?: boolean; 
-    componentProps: T; 
+    componentProps: Omit<T, keyof RouteComponentProps> | {}; 
+    keyId: string;
 } & Pick<IonRouteProps, 'path' | 'exact'>

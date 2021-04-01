@@ -6,7 +6,6 @@ import { Model } from "../../../models/Model"
 import { OptionsDialogProps} from "../../../types/OptionsDialogProps";
 import { List } from "../list/List";
 import { RouteComponentProps } from '../../../types/RouteComponentProps';
-import { AppContext } from '../../../contexts/AppContext';
 import "./OptionsDialog.scss"
 
 export const OptionsDialog = <T extends Model>({
@@ -16,10 +15,6 @@ export const OptionsDialog = <T extends Model>({
 }: OptionsDialogProps<T> & RouteComponentProps) => (
     <IonPopover {...popoverProps} cssClass={`dialog ${popoverProps.cssClass}`}>
         {popoverProps.children}
-        {listProps && 
-            <AppContext.Consumer>
-                {contextProps => <List<T, any, any> key={`${routeProps.keyId}-dialog`} {...contextProps} {...listProps} {...routeProps} />}
-            </AppContext.Consumer> 
-        }
+        {listProps && <List<T, any, any> key={`${routeProps.keyId}-dialog`} {...listProps} {...routeProps} />}
     </IonPopover>
 );

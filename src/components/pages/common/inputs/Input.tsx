@@ -6,6 +6,7 @@ import { Model } from "../../../models/Model";
 import { InputProps } from "../../../types/InputProps";
 import { FormState } from "../../../types/FormProps";
 import { FileInput } from "./FileInput";
+import { value } from "../../../../helpers/Helper";
 
 export const Input = <T extends Model> ({
         OptionsDialog, 
@@ -13,23 +14,28 @@ export const Input = <T extends Model> ({
         Field, 
         label, 
         model, 
-        xfield
+        xfield,
 }: InputProps<T> & FormState<T>) => {
+    const valueOfModel = value<T>(inputProps?.name ?? xfield as keyof T, model);
     const [showDialog, setShowDialog] = useState<boolean>(false);
-    const props: React.ComponentProps<typeof IonInput> = {
+    const props: React.ComponentProps<typeof IonInput> = inputProps ? {
         ...inputProps, 
+        ...!inputProps?.value && {value: !!valueOfModel ? String(valueOfModel) : ""},
         placeholder: inputProps?.placeholder ?? label,
         clearOnEdit: false,
-        value: !!inputProps?.name || !!xfield ? String(value<T>(inputProps?.name ?? xfield as keyof T, model)) : "",
-        onIonChange: event => model = {...model, [inputProps?.name ?? xfield as keyof T]: event.detail.value}
-    }
+        onIonChange: event => model = inputProps.name 
+            ? {...model, [inputProps.name as keyof T]: event.detail.value} 
+            : inputProps.getModel 
+                ? inputProps.getModel(model, event.detail.value) as T
+                : model
+    } : {};
     return (
         <>
             {!!inputProps && !!inputProps.accept 
-                ? <FileInput {...props} />
+                ? <FileInput<T> {...props} model={model} />
                 : !!inputProps 
                     ? <IonInput {...props} />
-                    : (xfield !== undefined) && Field && <Field {...xfield && {value: value<T>(xfield, model)}} />
+                    : Field && <Field {...xfield && {value: value<T>(xfield, model)}} />
             }
             {OptionsDialog && (
                 <>
@@ -40,4 +46,3 @@ export const Input = <T extends Model> ({
         </>
     );
 }
-export const value: (<C, >(_: keyof C, __: C) => object) = (key, object) => !!object && Object.entries(object).find(([k, _]) => key === k)?.[1];

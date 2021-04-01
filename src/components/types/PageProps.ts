@@ -3,7 +3,7 @@ import { IonContent, IonFooter } from "@ionic/react";
 import { ButtonsProps } from "./ButtonsProps";
 import { ListContentProps } from "./ListContentProps";
 
-export type CommonPageProps = {
+export type PageProps = {
     contentProps?:ComponentProps<typeof IonContent>;
     footerProps?: ComponentProps<typeof IonFooter>;
     buttonsProps?: ButtonsProps;

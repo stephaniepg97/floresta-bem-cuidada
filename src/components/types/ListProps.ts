@@ -1,10 +1,11 @@
-import { DetailProps } from "./DetailProps";
-import { CommonListProps } from "./CommonListProps";
+import { ColumnProps } from "./ColumnProps";
+import { Model } from "../models/Model";
+import { PageProps } from "./PageProps";
+import { PageContextProps } from "./PageContextProps";
+import { Context } from "react";
+import { FormContextProps } from "./FormContextProps";
 
-import { Model } from "../models/Model"
-import { _Document } from "../models/Document";
-
-export type ListProps<T extends _Document, D1 extends Model = {}, D2 extends Model = {}> = CommonListProps<T> & {
-    details?: DetailProps<T, D1, D2>;
-    getModel?: (model: T, details: Array<D1> | undefined) => T;
+export type ListProps<T extends Model> = PageProps & {
+    fields: Array<ColumnProps<T>>;
+    FormContext: Context<FormContextProps<T>>;
 }

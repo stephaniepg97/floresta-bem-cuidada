@@ -1,5 +1,7 @@
 import { _Document } from '../models/Document';
-import { FormState } from './FormProps';
-import { RouteComponentProps } from './RouteComponentProps';
+import { Context } from 'react';
+import { FormContextProps } from './FormContextProps';
 
-export type DocumentFormProps<D extends _Document> = FormState<D> & RouteComponentProps
+export type DocumentFormProps<T extends _Document> = {
+    FormContext: Context<FormContextProps<T>>
+}

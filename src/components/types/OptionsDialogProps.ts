@@ -1,8 +1,8 @@
-import { CommonListProps } from "./CommonListProps";
+import { ListProps } from "./ListProps";
 import { Model } from "../models/Model";
 import { PopoverProps } from "./PopoverProps";
 
 export type OptionsDialogProps<T extends Model> = {
-    listProps?: CommonListProps<T>;
+    listProps?: ListProps<T>;
     popoverProps: PopoverProps
 }

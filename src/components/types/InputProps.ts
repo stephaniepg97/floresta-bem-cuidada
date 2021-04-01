@@ -9,9 +9,13 @@ type CommonInputProps = {
 }
 
 export type InputProps<T extends Model> = (CommonInputProps & {
-    inputProps: React.ComponentProps<typeof IonInput> & {
+    inputProps: React.ComponentProps<typeof IonInput> & ({
         name: keyof T;
-    };
+        getModel?: () => undefined;
+    } | {
+        name?: undefined;
+        getModel: (model: T, value?: string | null) => T;
+    });
     Field?: undefined;
     xfield?: undefined;
 }) | (CommonInputProps & {

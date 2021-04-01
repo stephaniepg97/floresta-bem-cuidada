@@ -1,17 +1,14 @@
-import React, { FC } from 'react';
-import { RouteComponentProps as RP } from "react-router";
-
-import { RouteComponentProps } from "../../../types/RouteComponentProps"
-
+import React, { ComponentType } from 'react';
+import { RouteComponentProps } from "react-router";
 import { InternalDocument } from "../../../models/InternalDocument";
+import { AppRouteProps } from '../../../types/AppRouteProps';
 import { DocumentList } from '../DocumentList';
 
-export const InternalDocumentList: FC<RouteComponentProps & RP<any>> = (props) => (
+export const InternalDocumentList: ComponentType<RouteComponentProps & Pick<AppRouteProps, 'keyId'>> = (props) => (
     <DocumentList<InternalDocument> 
         {...props}
         key={props.keyId}
         fetchApiOptions={{route: "Plataforma/Listas/CarregaLista/adhoc?listId=D935093C-2587-EB11-81AF-706655E33B46&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%"}}
-        dataField="DataDoc"
         details={{
             fetchApiOptions: (row) => {
                 return {
@@ -26,7 +23,8 @@ export const InternalDocumentList: FC<RouteComponentProps & RP<any>> = (props) =
             title: "Despesas", 
             fabButton: {
                 button: {
-                    routerLink: "despesas/form",
+                    routerLink: "/despesas/form",
+                    routerDirection: "root"
                 },
             }
         }}

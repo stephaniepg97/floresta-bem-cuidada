@@ -1,5 +1,5 @@
 import { History } from "history";
-import { ComponentProps, ComponentType, FC } from "react";
+import { ComponentProps, ComponentType } from "react";
 import {
     IonRouterOutlet,
     IonContent,
@@ -22,7 +22,7 @@ import { MenuItemProps } from "../../../types/MenuItemProps";
 import logoMenu from "../../../../assets/img/logo74.png"
 import { Button } from "../buttons/Button";
 
-export const MenuPage : FC<{
+export const MenuPage :ComponentType<{
     sideMenu : Array<{header: string | undefined; items: Array<MenuItemProps>}>;
     menuProps: ComponentProps<typeof IonMenu>;
     history?: History;

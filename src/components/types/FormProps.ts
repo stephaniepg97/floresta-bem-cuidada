@@ -1,22 +1,24 @@
-import React, { ComponentType } from "react";
+import { ComponentType, Context } from "react";
 
 import { Model } from "../models/Model"
+import { ButtonProps } from "./ButtonProps";
+import { FormContextProps } from "./FormContextProps";
 
-import { CommonPageProps } from "./CommonPageProps";
 import { InputProps } from "./InputProps";
 import { ListContentProps } from "./ListContentProps";
 
-export type FormState<T extends Model> = {
+export type FormState<T extends Model = {}> = {
     model: T;
 };
-export type CommonFormProps<T extends Model, D extends Model = {}> = ({ 
-        fields?: Array<InputProps<T>>;
-        listProps?: ListContentProps<D, any, any>;
-        fieldGroup?: Array<Array<InputProps<T>>>;
-    }) & {
-        title?:string;
-        Bottom?: ComponentType<FormState<T>>;
-    };
-export type FormProps<T extends Model, D extends Model = {}> = FormState<T> & CommonPageProps & {
-    form: Array<CommonFormProps<T, D>>;
+export type FormGroupProps<T extends Model = {}, D extends Model = {}> = ({ 
+    fields?: Array<InputProps<T>>;
+    listProps?: Omit<ListContentProps<D>, 'FormContext'>;
+    fieldGroups?: Array<Array<InputProps<T>>>;
+}) & {
+    title?:string;
+    Button?: ComponentType<{buttonProps?: ButtonProps} & Pick<FormGroupProps<T, D>, 'fields' | 'listProps' | 'fieldGroups'>>;
+};
+export type FormContentProps<T extends Model = {}, D extends Model = {}> = {
+    formGroups: Array<FormGroupProps<T, D>>;
+    FormContext: Context<FormContextProps<T>>;
 }

@@ -8,7 +8,7 @@ import {
 
 import { chevronDownCircleOutline, arrowUp } from 'ionicons/icons';
 
-import { CommonPageProps } from '../../../types/CommonPageProps';
+import { PageProps } from '../../../types/PageProps';
 import { RouteComponentProps } from '../../../types/RouteComponentProps';
 import { ButtonProps } from '../../../types/ButtonProps';
 
@@ -16,7 +16,7 @@ import { Header } from "../header/Header";
 import { Buttons } from '../buttons/Buttons';
 import { FabButton } from '../buttons/FabButton';
 
-export const Page: ComponentType<RouteComponentProps & CommonPageProps> = ({
+export const Page: ComponentType<Pick<RouteComponentProps, 'headerProps' | 'keyId'> & PageProps> = ({
     buttonsProps, 
     Content,
     ...props
@@ -54,7 +54,6 @@ export const Page: ComponentType<RouteComponentProps & CommonPageProps> = ({
                     color: "white",
                     onClick: () => {} //scrollTo({top: 0})
                 }}
-                visible={true}
             />
         </IonContent>
     );

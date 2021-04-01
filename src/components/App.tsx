@@ -169,15 +169,11 @@ const App = () => {
           token: token,
           employee: user,
           logout: logout,
-          history: createBrowserHistory()
+          history: createBrowserHistory(),
+          me: me,
+          login: login,
         }}>
-            <AppContext.Consumer>
-              {contextProps => <AppRouter {...contextProps} loginProps={{
-                me: me,
-                login: login,
-                keyId: "login",
-              }} />}
-            </AppContext.Consumer>
+            <AppRouter />
         </AppContext.Provider>
       </IonReactRouter>
     </IonApp>

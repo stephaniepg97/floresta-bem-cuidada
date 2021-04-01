@@ -1,5 +1,3 @@
-import { MutableRefObject } from "react";
-import { ButtonProps } from "./ButtonProps";
 import { HeaderProps } from "./HeaderProps"
 import { OptionsFetchApi } from "./OptionsFetchApi";
 

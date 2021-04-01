@@ -15,5 +15,6 @@ export interface _Document extends Model {
     Fornecedor?:string;
     DescForn?:number;
     DescFinanc?:number;
+    Data?:string;
     Anexos?:Array<string>;
 }
