@@ -1,9 +1,9 @@
-import { ComponentType } from "react";
+import { ComponentType as CT } from "react";
 import { RouteComponentProps } from "react-router";
 import { IonRouteProps } from "@ionic/react";
 
 export type AppRouteProps<T extends RouteComponentProps = RouteComponentProps> = {
-    Component: ComponentType<T & Pick<AppRouteProps, 'keyId'>>;
+    ComponentType: CT<T & { keyId: string; }>;
     auth?: boolean; 
     componentProps: Omit<T, keyof RouteComponentProps> | {}; 
     keyId: string;

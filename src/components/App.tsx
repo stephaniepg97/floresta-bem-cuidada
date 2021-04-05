@@ -107,7 +107,7 @@ const App = () => {
         message: null
       },
       response: null,
-    }, _token: string | null = null; 
+    }, _token: string | null = null, opened: boolean | null = null; 
     if ((!Username) && !!result.error) {
       result.error.message = `${result.error?.message || ''}\nMissing values: username`;
     }
@@ -119,12 +119,20 @@ const App = () => {
         let result : ResultFetchApi = await fetchApi({route: "token", method: "POST", body, contentType: "application/x-www-form-urlencoded"});
         return [!!result.response ? result.response.access_token as string : null, result];
       };
-      const openPlatform: (_: {_token: string | null; body: OpenPlatformBody}) => Promise<[string | null, ResultFetchApi]> = async rest => [rest._token, await fetchApi({route: 'Auth/AbrePlataformaEmpresaShell', method: "POST", credentials: 'include', ...rest})];
+      const openPlatform: (_: {_token: string | null; body: OpenPlatformBody}) => Promise<[boolean | null, ResultFetchApi]> = async rest => {
+        let result : ResultFetchApi = await fetchApi({route: 'Auth/Open', method: "POST", credentials: 'include', ...rest});
+        return [!!result.response ? result.response as boolean : null, result];
+      };
       [_token, result] = await getToken({Username, Password, Company, Line, Instance, grant_type});
       if (!!result.error?.message) {
         [_token, result] = await getToken({Username, Password, Instance, grant_type});
         if (!result.error?.message) {
-          [_token, result] = await openPlatform({_token: result.response?.access_token ?? null, body: {Username, Password, ...config}})
+          [opened, result] = await openPlatform({_token: result.response?.access_token ?? null, body: {Username, Password, ...config}})
+          if (!opened)
+            result.error = {
+              message: `${result.error?.message}\nOcorreu um erro na abertura da plataforma.`, 
+              ...result.error
+            }; 
         }
       }
       !!logIn && logIn();

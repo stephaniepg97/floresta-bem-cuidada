@@ -11,7 +11,9 @@ export interface _Document extends Model {
     TipoDoc?:string;
     Serie?:string;
     DataVenc?:Date;
-    NomeForn?:string;
+    Obra?:string;
+    NomeObra?:string;
+    NomeFornecedor?:string;
     Fornecedor?:string;
     DescForn?:number;
     DescFinanc?:number;

@@ -85,7 +85,7 @@ export const AppRouter: ComponentType = () => {
   const routes: Array<AppRouteProps<RouteComponentProps> 
       | AppRouteProps<LoginProps> 
       | AppRouteProps<Pick<AppRouteProps, 'keyId'> & RouteComponentProps & FormState<InternalDocument | PurchaseDocument>>> = [{
-    Component: Login,
+    ComponentType: Login,
     componentProps: {
       me: me,
       login: login,
@@ -94,36 +94,36 @@ export const AppRouter: ComponentType = () => {
     auth: false,
     path: "/login",
   }, {
-    Component: Password,
+    ComponentType: Password,
     path: "/password/reset",
     keyId: "password",
     componentProps: {}
   }, {
-    Component: PurchaseDocumentList,
+    ComponentType: PurchaseDocumentList,
     path: "/encomendas/all",
     keyId: "encomendas",
     componentProps: {}
   }, {
-    Component: InternalDocumentList,
+    ComponentType: InternalDocumentList,
     path: "/despesas/all",
     keyId: "despesas",
     componentProps: {}
   }, {
-    Component: InternalDocumentForm,
+    ComponentType: InternalDocumentForm,
     componentProps: {
       model: {} as InternalDocument,
     },
     keyId: "despesas-form",
     path: "/despesas/form"
   }, {
-    Component: PurchaseDocumentForm,
+    ComponentType: PurchaseDocumentForm,
     componentProps: {
       model: {} as PurchaseDocument,
     },
     keyId: "encomendas-form",
     path: "/encomendas/form"
   }, {
-    Component: Logout,
+    ComponentType: Logout,
     keyId: "logout",
     path: "/logout",
     componentProps: {}
