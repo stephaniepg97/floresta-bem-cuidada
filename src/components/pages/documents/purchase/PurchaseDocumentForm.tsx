@@ -1,18 +1,17 @@
-import { ComponentType } from 'react';
-import { RouteComponentProps } from 'react-router';
-import { PurchaseDocumentFormContext } from '../../../contexts/PurchaseDocumentFormContext';
+import { FunctionComponent } from 'react';
+import { PurchaseDocumentFormContextConsumer, PurchaseDocumentFormContextProvider } from '../../../contexts/PurchaseDocumentFormContext';
+import { Item } from '../../../models/Item';
 import { PurchaseDocument } from '../../../models/PurchaseDocument';
-import { AppRouteProps } from '../../../types/AppRouteProps';
-import { FormState } from '../../../types/FormProps';
 import { DocumentForm } from "../DocumentForm"
 
-export const PurchaseDocumentForm: ComponentType<Pick<AppRouteProps, 'keyId'> & RouteComponentProps & FormState<PurchaseDocument>> = props => (
-    <PurchaseDocumentFormContext.Provider value={{
-        ...props,
+export const PurchaseDocumentForm: FunctionComponent<{keyId: string;}> = ({keyId}) => (
+    <PurchaseDocumentFormContextProvider value={{
         fetchApiOptions: {route: "document/create"},
         headerProps: {title: "Registo de Encomenda"},
         contentProps: {className: "content"},
+        model: {} as PurchaseDocument,
+        keyId
     }}>
-        <DocumentForm<PurchaseDocument> FormContext={PurchaseDocumentFormContext} />
-    </PurchaseDocumentFormContext.Provider>
+        <DocumentForm<Item, PurchaseDocument> FormConsumer={PurchaseDocumentFormContextConsumer} />
+    </PurchaseDocumentFormContextProvider>
 );

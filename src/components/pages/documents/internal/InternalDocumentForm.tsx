@@ -1,18 +1,17 @@
-import React, { ComponentType } from 'react';
-import { InternalDocumentFormContext } from '../../../contexts/InternalDocumentFormContext';
+import { FunctionComponent } from 'react';
+import { InternalDocumentFormContextProvider, InternalDocumentFormContextConsumer } from '../../../contexts/InternalDocumentFormContext';
 import { InternalDocument } from '../../../models/InternalDocument';
-import { AppRouteProps } from '../../../types/AppRouteProps';
-import { RouteComponentProps } from "react-router";
+import { Item } from '../../../models/Item';
 import { DocumentForm } from "../DocumentForm"
-import { FormState } from '../../../types/FormProps';
 
-export const InternalDocumentForm: ComponentType<Pick<AppRouteProps, 'keyId'> & RouteComponentProps & FormState<InternalDocument>> = props => (
-    <InternalDocumentFormContext.Provider value={{
-        ...props,
+export const InternalDocumentForm: FunctionComponent<{ keyId: string; }> = ({keyId}) => (
+    <InternalDocumentFormContextProvider value={{
         fetchApiOptions: {route: "document/create"},
         headerProps: {title: "Registo de Despesa"},
         contentProps: {className: "content"},
+        model: {} as InternalDocument,
+        keyId
     }}>
-        <DocumentForm<InternalDocument> FormContext={InternalDocumentFormContext} />
-    </InternalDocumentFormContext.Provider>
+        <DocumentForm<Item, InternalDocument> FormConsumer={InternalDocumentFormContextConsumer} />
+    </InternalDocumentFormContextProvider>
 );

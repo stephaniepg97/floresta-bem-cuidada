@@ -1,16 +1,16 @@
 import { Item } from "./Item";
 import { Model } from "./Model"
 
-export interface _Document extends Model {
+export interface _Document<D extends Item = Item> extends Model {
     Documento?: string;
     Descricao?:string;
     Nome?:string;
-    TotalMerc?:number;
-    Items?:Array<Item>;
+    Total?:number;
+    Items?:Array<D>;
     NumDoc?:number;
     TipoDoc?:string;
     Serie?:string;
-    DataVenc?:Date;
+    DataVenc?:string;
     Obra?:string;
     NomeObra?:string;
     NomeFornecedor?:string;

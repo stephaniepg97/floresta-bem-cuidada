@@ -1,7 +1,8 @@
-import { ComponentType, Context } from "react";
+import { ComponentType, Consumer, Context } from "react";
 
 import { Model } from "../models/Model"
 import { ButtonProps } from "./ButtonProps";
+import { DocumentFormProps } from "./DocumentFormProps";
 import { FormContextProps } from "./FormContextProps";
 
 import { InputProps } from "./InputProps";
@@ -16,9 +17,6 @@ export type FormGroupProps<T extends Model = {}, D extends Model = {}> = ({
     fieldGroups?: Array<Array<InputProps<T>>>;
 }) & {
     title?:string;
-    Button?: ComponentType<{buttonProps?: ButtonProps} & Pick<FormGroupProps<T, D>, 'fields' | 'listProps' | 'fieldGroups'>>;
+    Button?: ComponentType<ButtonProps>;
 };
-export type FormContentProps<T extends Model = {}, D extends Model = {}> = {
-    formGroups: Array<FormGroupProps<T, D>>;
-    FormContext: Context<FormContextProps<T>>;
-}
+export type FormContentProps<T extends Model = {}, D extends Model = {}> = DocumentFormProps<T, D>;

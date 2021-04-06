@@ -9,5 +9,5 @@ export interface Item extends Model {
     PrecUnit?: number;
     Checked?: boolean;
     Documento?: string;
-    CDU_ArtigoTransporte?:boolean
+    DataEntrega?:string
 }   

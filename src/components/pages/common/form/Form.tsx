@@ -12,65 +12,78 @@ import { Page } from '../page/Page';
 import { Model } from '../../../models/Model';
 import { ListContent } from '../list/List';
 import { ListContentProps } from '../../../types/ListContentProps';
-
 import "./Form.scss";
+import { FormContextProps } from '../../../types/FormContextProps';
 
-export const Form = <T extends Model, D extends Model> ({FormContext, formGroups}: FormContentProps<T, D>) => (
-    <FormContext.Consumer>
-        {formContext =>
-            <Page {...formContext} 
-                key={formContext.keyId}
-                Content={() => <FormContent<T, D> key={formContext.keyId} {...{FormContext, formGroups}} /> }
-            />
-        }
-    </FormContext.Consumer>
+const FormPage = <T extends Model = {}, D extends Model = {}> ({pageProps, contentProps}: {contentProps: FormContentProps<T, D>, pageProps: FormContextProps<T, D>}) => (
+    <Page {...pageProps} 
+        key={pageProps.keyId}
+        Content={() => <FormContent<T, D> key={pageProps.keyId} {...contentProps} /> }
+    />
 );
-
-export const FormContent = <T extends Model, D extends Model = {}> ({FormContext, formGroups} : FormContentProps<T, D>) => (
-    <FormContext.Consumer>
-        {({model, keyId, ...props}) =>
-            <div key={keyId}>
-                {formGroups.map(({Button, fieldGroups: fieldGroup, fields, listProps, title}, index0) => (
-                    <div key={`${keyId}-${index0}`}>
-                        <IonItemGroup className="ion-item-group" >
-                            {title && 
-                                <IonItemDivider>
-                                    <IonLabel className="ion-text-uppercase">
-                                        {title}
-                                    </IonLabel>
-                                    <IonIcon size="small" color="success" slot="end" className="ion-icon" icon={checkmark} />
-                                </IonItemDivider> 
-                            }
-                            {fieldGroup?.map((inputProps, index1) => (
-                                <IonItem key={`group-${index1}`}>
-                                    <div className="ion-item-items">
-                                        {inputProps?.map((i, index2) => (
-                                            <div key={index2} className="field">
-                                                <IonLabel className="ion-label ion-text-wrap">
-                                                    <small>{`${i.label}${!i.required ? "" : "*"}`}</small>
-                                                </IonLabel>
-                                                <div className="input">
-                                                    <Input<T> {...i} model={model}/>
-                                                </div>
-                                            </div>
-                                        ))}
+const FormPageContent = <T extends Model = {}, D extends Model = {}> ({model, keyId, formGroups, ...props}: FormContextProps<T, D>) => (
+    <div key={keyId}>
+        {formGroups.map(({Button, fieldGroups, fields, listProps, title}, index0) => (
+            <div key={`${keyId}-${index0}`}>
+                <IonItemGroup className="ion-item-group" >
+                    {title && 
+                        <IonItemDivider>
+                            <IonLabel className="ion-text-uppercase">
+                                {title}
+                            </IonLabel>
+                            <IonIcon size="small" color="success" slot="end" className="ion-icon" icon={checkmark} />
+                        </IonItemDivider> 
+                    }
+                    {fieldGroups?.map((inputProps, index1) => (
+                        <IonItem key={`group-${index1}`}>
+                            <div className="ion-item-items">
+                                {inputProps?.map((i, index2) => (
+                                    <div key={index2} className="field">
+                                        <IonLabel className="ion-label ion-text-wrap">
+                                            <small>{`${i.label}${!i.required ? "" : "*"}`}</small>
+                                        </IonLabel>
+                                        <div className="input">
+                                            <Input<T> {...i} model={model}/>
+                                        </div>
                                     </div>
-                                </IonItem>
-                            ))}
-                            {fields?.map((i, index2) => (
-                                <IonItem key={`field-${index2}`}>
-                                    <IonLabel className="ion-label ion-text-wrap">
-                                        <small>{`${i.label}${!i.required ? "" : "*"}`}</small>
-                                    </IonLabel>
-                                    <Input<T> {...i} model={model}/>
-                                </IonItem>
-                            ))}
-                        </IonItemGroup>
-                        {!!listProps && <ListContent key={`list-${index0}`} {...listProps as ListContentProps<D>} {...props} />}
-                        {Button && <Button {...{fieldGroups: fieldGroup, fields, listProps}} />}
-                    </div>
-                ))}
+                                ))}
+                            </div>
+                        </IonItem>
+                    ))}
+                    {fields?.map((i, index2) => (
+                        <IonItem key={`field-${index2}`}>
+                            <IonLabel className="ion-label ion-text-wrap">
+                                <small>{`${i.label}${!i.required ? "" : "*"}`}</small>
+                            </IonLabel>
+                            <Input<T> {...i} model={model}/>
+                        </IonItem>
+                    ))}
+                </IonItemGroup>
+                {!!listProps && <ListContent key={`list-${index0}`} {...listProps as ListContentProps<D>} {...props} />}
+                {Button && <Button />}
             </div>
+        ))}
+    </div>
+);
+export const Form = <T extends Model = {}, D extends Model = {}> ({FormConsumer, formProps}: FormContentProps<T, D>) => (
+    <>
+        {
+            !!FormConsumer 
+                ? <FormConsumer>
+                    {formContext => <FormPage<T, D> pageProps={formContext} contentProps={{FormConsumer, formProps} as FormContentProps<T, D>} /> }
+                </FormConsumer>
+                : <FormPage<T, D> pageProps={formProps as FormContextProps<T, D>} contentProps={{FormConsumer, formProps} as FormContentProps<T, D>} />
         }
-    </FormContext.Consumer>
+    </>
+);
+export const FormContent = <T extends Model = {}, D extends Model = {}> ({FormConsumer, formProps} : FormContentProps<T, D>) => (
+    <>
+        {
+            !!FormConsumer 
+                ? <FormConsumer>
+                    {contextProps => <FormPageContent<T, D> {...contextProps} />}
+                </FormConsumer>
+                : <FormPageContent<T, D> {...formProps as FormContextProps<T, D>} />
+        }
+    </>
 );

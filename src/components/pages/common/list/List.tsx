@@ -8,10 +8,9 @@ import { RouteComponentProps } from '../../../types/RouteComponentProps';
 import { ListPropsWithDetails } from "../../../types/ListPropsWithDetails";
 import { ListContentProps } from '../../../types/ListContentProps';
 import { useDataAPI } from '../../../hooks/DataAPI';
-import { FormGroupProps } from '../../../types/FormProps';
 import "./List.scss";
 
-export const List = <T extends Model, D1 extends Model = {}, D2 extends Model = {}>(props: ListPropsWithDetails<T, D1, D2> & RouteComponentProps) => {
+export const List = <T extends Model, D1 extends Model = {}, D2 extends Model = {}>({searchForm, ...props}: ListPropsWithDetails<T, D1, D2> & RouteComponentProps) => {
     const [data, loading] = useDataAPI<T>(props.fetchApiOptions);
     return (
         <Page {...props}
@@ -19,10 +18,9 @@ export const List = <T extends Model, D1 extends Model = {}, D2 extends Model = 
             Content={({setButtons}) => (
                 <>
                     <Loading isOpen={loading} />
-                    <Search<T> 
+                    <Search<T>
+                        {...searchForm}
                         key={`${props.keyId}`}
-                        FormContext={props.FormContext}
-                        formGroups={props.fields.filter(f => !!f.searchForm).map(f => f.searchForm as FormGroupProps<T>)} 
                     />
                     <ListContent {...props} data={data} setButtons={setButtons} />
                 </>
@@ -31,10 +29,11 @@ export const List = <T extends Model, D1 extends Model = {}, D2 extends Model = 
     );
 }
 
-export const ListContent = <T extends Model, D1 extends Model, D2 extends Model> ({data, ...props}: ListContentProps<T, D1, D2>) => (
+export const ListContent = <T extends Model, D1 extends Model, D2 extends Model> ({data, ...props}: Omit<ListContentProps<T, D1, D2>, 'searchForm'>) => (
     <div key={props.keyId}>
         <Item<T>
             {...props}
+            key={`${props.keyId}-item`}
             itemProps={{color: "light"}}
             colProps={{className: "ion-text-center col-title" }}
             Children={(col) => <h6>{col.label}</h6>} 
@@ -43,8 +42,8 @@ export const ListContent = <T extends Model, D1 extends Model, D2 extends Model>
         {data && data.length
             ? data.map((row, index) => (
                 <ItemList<T, D1, D2> 
-                    key={`${props.keyId}-${index}`}
                     {...props}
+                    key={`${props.keyId}-${index}`}
                     row={row}
                 />
             ))

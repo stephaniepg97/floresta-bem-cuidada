@@ -28,7 +28,7 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
     setButtons,
     buttons,
     ...props
-} : ListPropsWithDetails<T, D1, D2> & RouteComponentProps & {
+} : Omit<ListPropsWithDetails<T, D1, D2>, 'searchForm'> & RouteComponentProps & {
     row: T;
     setButtons?: (value: Array<ButtonProps> | undefined) => void;
     buttons?: Array<ButtonProps>;
@@ -51,7 +51,7 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
         return newValue; 
     }, false);
     const setEndButtons = useCallback<(titles: Array<string>, visible: boolean) => void>((titles, visible) => setButtons && !!buttons && setButtons(buttons.map<ButtonProps>(buttonProps => buttonProps?.button?.title && titles.includes(buttonProps.button.title) ? {...buttonProps, visible: visible} : buttonProps)), [setButtons, buttons]);
-    const ItemChild = <M extends Model> ({
+    const ItemChild = <I extends Model> ({
         checkbox, 
         size, 
         inputProps, 
@@ -59,8 +59,8 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
         modelOrItem,
         xfield,
         ...props 
-    }: (ColumnProps<M>) & {
-        modelOrItem: M;
+    }: (ColumnProps<I>) & {
+        modelOrItem: I;
     }) => {
         return (
             <IonItem lines="none" color="transparent" {...!!inputProps?.readonly && !checkbox && {
@@ -77,9 +77,8 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
                                 setEndButtons(["create", "reset"], last || selected.current.length !== 0); 
                             }}
                         /> : 
-                        <Input<M>
+                        <Input<I>
                             {...props}
-                            model={modelOrItem}
                             {...inputProps ? {
                                 inputProps: {...inputProps,
                                     onIonChange: (event) => {
@@ -87,11 +86,15 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
                                         modelOrItem = {...modelOrItem, [inputProps.name]: event.detail.value}
                                         setEndButtons(["save"], true);
                                     },
+                                    className: "ion-text-center"
                                 }
                             } : {
-                                Field: Field ? Field : () => <></>,
+                                Field: Field as React.ComponentType<{
+                                    value?: object | undefined;
+                                }>,
                                 xfield: xfield || null
                             }}
+                            model={modelOrItem}
                         />
                     }
                 </> 
@@ -101,9 +104,7 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
     useEffect(() => {
         if (!showDetails || !!data) return;
         if (!data && details && details?.fetchApiOptions) {
-            //console.log(props.fetchApiOptions && props.fetchApiOptions.route)
-            fetchApi(details.fetchApiOptions(model.current)).then(result => setData(result.response || []));
-            //setData(props.asdI ?? [{} as D1, {} as D1])
+            fetchApi(details.fetchApiOptions(model.current)).then(result => setData(result.response.Data || []));
         }
     }, [
         data, 

@@ -1,6 +1,9 @@
 import { _Document } from "../models/Document";
-import { FormState } from "./FormProps";
+import { FormGroupProps, FormState } from "./FormProps";
 import { Model } from "../models/Model";
 import { PageContextProps } from "./PageContextProps";
 
-export type FormContextProps<T extends Model> = FormState<T> & PageContextProps;
+export type FormContextProps<T extends Model = {}, D extends Model = {}> = FormState<T> & PageContextProps & {
+    formGroups: Array<FormGroupProps<T, D>>; 
+    setFormGroups?: (formGroups: Array<FormGroupProps<T, D>>) => void
+};

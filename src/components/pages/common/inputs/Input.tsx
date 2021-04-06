@@ -20,7 +20,7 @@ export const Input = <T extends Model> ({
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const props: React.ComponentProps<typeof IonInput> = inputProps ? {
         ...inputProps, 
-        ...!inputProps?.value && {value: !!valueOfModel ? String(valueOfModel) : ""},
+        ...!inputProps?.value && {value: !!valueOfModel ? inputProps.type === "date" ? String(valueOfModel).slice(0, 10) : String(valueOfModel) : ""},
         placeholder: inputProps?.placeholder ?? label,
         clearOnEdit: false,
         onIonChange: event => model = inputProps.name 

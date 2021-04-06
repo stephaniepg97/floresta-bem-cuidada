@@ -1,4 +1,4 @@
-import {  useState, ComponentType } from 'react';
+import {  useState, FunctionComponent } from 'react';
 import { useForm, Controller, RegisterOptions } from "react-hook-form";
 import "./Login.scss";
 import {
@@ -21,7 +21,7 @@ import { User } from '../../models/User';
 import config from "../../../config.json";
 
 type FormData = Pick<User, 'Username' | 'Password'>
-export const Login: ComponentType<LoginProps> = ({
+export const Login: FunctionComponent<LoginProps> = ({
     login,
     me,
     ...props

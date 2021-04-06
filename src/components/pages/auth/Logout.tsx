@@ -1,10 +1,8 @@
-import { ComponentType, useCallback, useContext, useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { FunctionComponent, useCallback, useContext, useEffect, useState } from "react";
 import { AppContext } from "../../contexts/AppContext";
-import { AppRouteProps } from "../../types/AppRouteProps";
 import { Loading } from "../common/Loading";
 
-export const Logout: ComponentType<RouteComponentProps & Pick<AppRouteProps, 'keyId'>> = ({keyId}) => {
+export const Logout: FunctionComponent<{keyId: string;}> = ({keyId}) => {
     const [loading, setLoading] = useState(true);
     const appContext = useContext(AppContext);
     const logOut = useCallback(() => setLoading(false), [setLoading]);

@@ -1,20 +1,16 @@
-import React, { ComponentType } from 'react';
-import { RouteComponentProps } from "react-router";
+import React, { FunctionComponent } from 'react';
 import { InternalDocument } from "../../../models/InternalDocument";
-import { AppRouteProps } from '../../../types/AppRouteProps';
 import { DocumentList } from '../DocumentList';
 
-export const InternalDocumentList: ComponentType<RouteComponentProps & Pick<AppRouteProps, 'keyId'>> = (props) => (
+export const InternalDocumentList: FunctionComponent<{keyId: string;}> = (props) => (
     <DocumentList<InternalDocument> 
         {...props}
         key={props.keyId}
-        fetchApiOptions={{route: "Plataforma/Listas/CarregaLista/adhoc?listId=D935093C-2587-EB11-81AF-706655E33B46&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%"}}
+        fetchApiOptions={{route: "Plataforma/Listas/CarregaLista/adhoc?listId=5A403103-B585-EB11-81AB-706655E33B46&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%"}}
         details={{
             fetchApiOptions: (row) => {
                 return {
-                    route: "document/internal/items",
-                    body: JSON.stringify(row),
-                    method: "POST",
+                    route: `Plataforma/Listas/CarregaLista/adhoc?listId=88CDA2EE-6D86-EB11-81AC-706655E33B46&listParameters=000,${row.NumDoc},${row.Serie},${row.TipoDoc}`,
                 };
             },
             columns: []

@@ -1,10 +1,8 @@
-import React, { ComponentType } from 'react';
-import { RouteComponentProps } from "react-router";
+import React, { FunctionComponent } from 'react';
 import { PurchaseDocument } from '../../../models/PurchaseDocument';
-import { AppRouteProps } from '../../../types/AppRouteProps';
 import { DocumentList } from '../DocumentList';
 
-export const PurchaseDocumentList: ComponentType<RouteComponentProps & Pick<AppRouteProps, 'keyId'>> = (props) => (
+export const PurchaseDocumentList: FunctionComponent<{keyId: string;}> = (props) => (
     <DocumentList<PurchaseDocument> 
         {...props}
         key={props.keyId}
@@ -12,9 +10,7 @@ export const PurchaseDocumentList: ComponentType<RouteComponentProps & Pick<AppR
         details={{
             fetchApiOptions: (row) => {
                 return {
-                    route: "document/purchase/items",
-                    body: JSON.stringify(row),
-                    method: "POST",
+                    route: `Plataforma/Listas/CarregaLista/adhoc?listId=D8A86D99-548F-EB11-81C2-BCE92FBF0A4F&listParameters=000,${row.NumDoc},${row.Serie},${row.TipoDoc}`,
                 };
             },
             columns: []
