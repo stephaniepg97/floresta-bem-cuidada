@@ -23,7 +23,7 @@ const FormPage = <T extends Model = {}, D extends Model = {}> ({pageProps, conte
 );
 const FormPageContent = <T extends Model = {}, D extends Model = {}> ({model, keyId, formGroups, ...props}: FormContextProps<T, D>) => (
     <div key={keyId}>
-        {formGroups.map(({Button, fieldGroups, fields, listProps, title}, index0) => (
+        {!!formGroups && formGroups.map(({Button, fieldGroups, fields, listProps, title}, index0) => (
             <div key={`${keyId}-${index0}`}>
                 <IonItemGroup className="ion-item-group" >
                     {title && 

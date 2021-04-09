@@ -9,15 +9,15 @@ export const useDataAPI = <T extends Model> (fetchApiOptions?: OptionsFetchApi) 
         !!newValue && showLoading && setShowLoading(false);
         return newValue;
     }, !fetchApiOptions ? [] : null);
-    const appContext = useContext(AppContext);
+    const { fetchApi } = useContext(AppContext);
     useEffect(() => {
         if (!data && showLoading && !!fetchApiOptions) {
             console.log(fetchApiOptions.route)
-            appContext.fetchApi(fetchApiOptions).then(result => {
-                console.log(result)
+            fetchApi(fetchApiOptions).then(result => {
+                console.log(result.response)
                 setData(result.response?.Data || [])
             });
         }
-    }, [data, showLoading, fetchApiOptions, appContext]);
+    }, [data, showLoading, fetchApiOptions, fetchApi]);
     return [data, showLoading] as [Array<T> | null, boolean];
 }

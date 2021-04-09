@@ -1,4 +1,4 @@
-import React, { ComponentType, useReducer, Reducer } from 'react';
+import React, { useReducer, Reducer, FunctionComponent } from 'react';
 import {
     IonContent,
     IonFooter,
@@ -16,7 +16,7 @@ import { Header } from "../header/Header";
 import { Buttons } from '../buttons/Buttons';
 import { FabButton } from '../buttons/FabButton';
 
-export const Page: ComponentType<Pick<RouteComponentProps, 'headerProps' | 'keyId'> & PageProps> = ({
+export const Page: FunctionComponent<Pick<RouteComponentProps, 'headerProps' | 'keyId'> & PageProps> = ({
     buttonsProps, 
     Content,
     ...props

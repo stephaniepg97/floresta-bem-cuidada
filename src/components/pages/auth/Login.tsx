@@ -1,4 +1,4 @@
-import {  useState, FunctionComponent } from 'react';
+import {  useState, FunctionComponent, useContext, useEffect } from 'react';
 import { useForm, Controller, RegisterOptions } from "react-hook-form";
 import "./Login.scss";
 import {
@@ -14,24 +14,21 @@ import {
     IonTitle,
 } from '@ionic/react';
 import { Loading } from "../common/Loading";
-import { LoginProps } from "../../types/LoginProps";
 import logo from "../../../assets/img/logo74.png";
 import { User } from '../../models/User';
 
 import config from "../../../config.json";
+import { AppContext } from '../../contexts/AppContext';
+import { RouteComponentProps, withRouter } from 'react-router';
 
 type FormData = Pick<User, 'Username' | 'Password'>
-export const Login: FunctionComponent<LoginProps> = ({
-    login,
-    me,
-    ...props
-}) => {
+const Login: FunctionComponent<RouteComponentProps> = (props) => {
+    const { login, token, setToken } = useContext(AppContext);
     const [showLoading, setShowLoading] = useState<boolean>(false);
     const { handleSubmit, errors, getValues, control } = useForm<FormData>();
     const submit = handleSubmit(data => {
         setShowLoading(true)
-        login({logIn: () => setShowLoading(false), ...data, ...config});
-        //result.response && props.history.push("/encomendas/all")
+        login({logIn: () => setShowLoading(false), ...data, ...config}).then(([_token, result]) => setToken(_token));
     });
     const fields: Array<{name: keyof FormData, title: string, options?: RegisterOptions}> = [{
         name: "Username",
@@ -46,8 +43,11 @@ export const Login: FunctionComponent<LoginProps> = ({
             required: "Introduza a palavra passe.",
         }
     }];
+    useEffect(() => {
+        if (token) props.history.push("/encomendas/all")
+    }, [props, token])
     return (
-        <IonPage key={props.keyId}>
+        <IonPage key="login">
             <Loading isOpen={showLoading} />
             <IonContent>
                 <div id="loginVerticalAlign" slot="fixed">
@@ -113,3 +113,4 @@ export const Login: FunctionComponent<LoginProps> = ({
         </IonPage>
     );
 };
+export default withRouter(Login);

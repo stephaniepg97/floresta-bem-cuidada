@@ -8,15 +8,17 @@ export interface _Document<D extends Item = Item> extends Model {
     Total?:number;
     Items?:Array<D>;
     NumDoc?:number;
-    TipoDoc?:string;
-    Serie?:string;
-    DataVenc?:string;
-    Obra?:string;
+    Tipodoc:string;
+    Serie:string;
+    DataVencimento:string;
+    IDObra:string;
     NomeObra?:string;
-    NomeFornecedor?:string;
-    Fornecedor?:string;
-    DescForn?:number;
-    DescFinanc?:number;
-    Data?:string;
+    NomeEntidade?:string;
+    Entidade:string;
+    DescEntidade:number;
+    DescFinanceiro:number;
+    Data:string;
     Anexos?:Array<string>;
+    Filial:string;
+    TipoEntidade:string;
 }

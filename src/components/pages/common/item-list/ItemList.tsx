@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useReducer, Reducer, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useRef, useReducer, Reducer, useCallback, useContext, MutableRefObject } from 'react';
 import { 
     IonLabel,
     IonList,
@@ -19,7 +19,7 @@ import { Model } from "../../../models/Model"
 import { ButtonProps } from '../../../types/ButtonProps';
 import { RouteComponentProps } from '../../../types/RouteComponentProps';
 import { Input } from '../inputs/Input';
-import { AppContext } from '../../../contexts/AppContext';
+import { AppContext } from '../../../contexts/AppContext'; 
 
 export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({ 
     details,
@@ -51,7 +51,7 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
         return newValue; 
     }, false);
     const setEndButtons = useCallback<(titles: Array<string>, visible: boolean) => void>((titles, visible) => setButtons && !!buttons && setButtons(buttons.map<ButtonProps>(buttonProps => buttonProps?.button?.title && titles.includes(buttonProps.button.title) ? {...buttonProps, visible: visible} : buttonProps)), [setButtons, buttons]);
-    const ItemChild = <I extends Model> ({
+    const ItemChild = <I extends Model = T | D1> ({
         checkbox, 
         size, 
         inputProps, 
@@ -60,7 +60,7 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
         xfield,
         ...props 
     }: (ColumnProps<I>) & {
-        modelOrItem: I;
+        modelOrItem: MutableRefObject<I>;
     }) => {
         return (
             <IonItem lines="none" color="transparent" {...!!inputProps?.readonly && !checkbox && {
@@ -101,6 +101,19 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
             </IonItem>  
         );
     };
+    const DetailItem = ({model, fields}: {
+        model: D1, 
+        fields: ColumnProps<D1>[]
+    }) => {
+        const item = useRef<D1>(model);
+        return (
+            <Item<D1>
+                fields={fields}
+                itemProps={{className: "ion-detail-item ion-margin-top", detail: false, color: 'light'}} 
+                Children={(col) => <ItemChild modelOrItem={item} {...col} /> }
+            />
+        );
+    }
     useEffect(() => {
         if (!showDetails || !!data) return;
         if (!data && details && details?.fetchApiOptions) {
@@ -123,7 +136,7 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
                     itemProps={{className: "ion-list-item", detail: true, detailIcon: showDetails ? chevronDown: chevronForward}} 
                     Children={(col) => 
                         <ItemChild
-                            modelOrItem={model.current} 
+                            modelOrItem={model} 
                             {...col} 
                         />
                     }
@@ -140,14 +153,7 @@ export const ItemList = <T extends Model, D1 extends Model, D2 extends Model> ({
                             Children={(col) => <h6>{col.label}</h6>} 
                         />
                         {data.length
-                            ? data.map((row, indexR) => (
-                                <Item<D1>
-                                    key={indexR}
-                                    fields={details.columns}
-                                    itemProps={{className: "ion-detail-item ion-margin-top", detail: false, color: 'light'}} 
-                                    Children={(col) => <ItemChild modelOrItem={row} {...col} /> }
-                                />
-                            )) 
+                            ? data.map((row, index) => <DetailItem model={row} key={index} fields={details.columns} />) 
                             : <small className="sem-resultados">Sem resultados...</small>
                         }
                     </>

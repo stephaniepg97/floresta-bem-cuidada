@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import { useState } from 'react';
 import { search, add, removeOutline, trashBinOutline } from 'ionicons/icons';
 import { FormContent } from "../form/Form"
 import { Model } from "../../../models/Model"
@@ -9,15 +9,11 @@ import { FormContentProps } from '../../../types/FormProps';
 import { FormContextProps } from '../../../types/FormContextProps';
 
 export const Search = <T extends Model = {}> ({FormConsumer, formProps} : FormContentProps<T>) => (
-    <>
-        {
-            !!FormConsumer 
-                ? <FormConsumer>
-                    {contextProps => <SearchContent<T> {...contextProps} />}
-                </FormConsumer>
-                : <SearchContent<T> {...formProps as FormContextProps<T>} />
-        }
-    </>
+    !!FormConsumer 
+        ? <FormConsumer>
+            {contextProps => <SearchContent<T> {...contextProps} />}
+        </FormConsumer>
+        : <SearchContent<T> {...formProps as FormContextProps<T>} />
 );
 
 const SearchContent = <T extends Model = {}> (formProps : FormContextProps<T>) => {

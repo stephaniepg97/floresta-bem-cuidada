@@ -1,15 +1,13 @@
-import { ComponentType, Consumer, Context } from "react";
+import { ComponentType, Consumer, MutableRefObject } from "react";
 
 import { Model } from "../models/Model"
 import { ButtonProps } from "./ButtonProps";
-import { DocumentFormProps } from "./DocumentFormProps";
 import { FormContextProps } from "./FormContextProps";
-
 import { InputProps } from "./InputProps";
-import { ListContentProps } from "./ListContentProps";
+import { ListContentProps } from "./ListContentProps"; 
 
 export type FormState<T extends Model = {}> = {
-    model: T;
+    model: MutableRefObject<T>;
 };
 export type FormGroupProps<T extends Model = {}, D extends Model = {}> = ({ 
     fields?: Array<InputProps<T>>;
@@ -19,4 +17,10 @@ export type FormGroupProps<T extends Model = {}, D extends Model = {}> = ({
     title?:string;
     Button?: ComponentType<ButtonProps>;
 };
-export type FormContentProps<T extends Model = {}, D extends Model = {}> = DocumentFormProps<T, D>;
+export type FormContentProps<T extends Model = {}, D extends Model = {}> = {
+    FormConsumer: Consumer<FormContextProps<T, D>>;
+    formProps?: undefined
+} | {
+    FormConsumer?: undefined;
+    formProps: FormContextProps<T, D>;
+}

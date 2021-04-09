@@ -1,4 +1,4 @@
-import { ComponentProps, ComponentType, MutableRefObject } from "react";
+import { ComponentProps, ComponentType } from "react";
 import { IonContent, IonFooter } from "@ionic/react";
 import { ButtonsProps } from "./ButtonsProps";
 import { ListContentProps } from "./ListContentProps";

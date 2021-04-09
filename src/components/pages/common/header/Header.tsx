@@ -1,4 +1,4 @@
-import React, { ComponentType } from 'react';
+import { FunctionComponent } from 'react';
 import "./Header.scss";
 import {
     IonToolbar,
@@ -8,7 +8,7 @@ import { Button } from "../buttons/Button"
 import { HeaderProps } from "../../../types/HeaderProps"
 import { FabButton } from '../buttons/FabButton';
 
-export const Header: ComponentType<HeaderProps> = ({title, endButton, fabButton}) => (
+export const Header: FunctionComponent<HeaderProps> = ({title, endButton, fabButton}) => (
     <IonHeader>
         <IonToolbar color="light">
             <div className="toolbar">

@@ -1,22 +1,22 @@
-import React, { 
+import { 
   useCallback, 
   useEffect, 
   useReducer, 
   Reducer, 
 } from 'react';
-import { IonApp } from '@ionic/react';
+import { IonApp, IonContent } from '@ionic/react';
 import { ResultFetchApi } from "./types/ResultFetchApi";
 import { OptionsFetchApi } from "./types/OptionsFetchApi";
 import { User } from "./models/User";
-import { AppRouter } from './pages/router/AppRouter';
-import { AppContext } from './contexts/AppContext';
-import { IonReactRouter } from '@ionic/react-router';
+import { AppContext } from './contexts/AppContext'; 
 import { createBrowserHistory } from 'history'; 
 import { AuthBody } from './models/AuthBody';
 import { OpenPlatformBody } from './models/OpenPlatformBody';
 
 import './App.scss';
 import config from "../config.json";
+import { IonReactRouter } from '@ionic/react-router';
+import { MenuPage } from './pages/common/menu/MenuPage';
 
 const App = () => {
   const [user, setUser] = useReducer<Reducer<User | null, User | null>>((_, newValue) => {
@@ -101,7 +101,7 @@ const App = () => {
   }, [fetchApi]);
   const login = useCallback<(_ : AuthBody & { 
     logIn?: () => void;
-  }) => Promise<ResultFetchApi>>(async ({ logIn, Line, Instance, Company, Password, Username, grant_type }) => {
+  }) => Promise<[string | null, ResultFetchApi]>>(async ({ logIn, Line, Instance, Company, Password, Username, grant_type }) => {
     let result : ResultFetchApi = {
       error: {
         message: null
@@ -136,55 +136,82 @@ const App = () => {
         }
       }
       !!logIn && logIn();
-      setToken(_token);
     }
-    return result;
+    return [_token, result];
   }, [fetchApi]);
 
   useEffect(() => {
-    let stored : string | null = sessionStorage.getItem("access_token");
-    if (stored && stored !== String(token)) {
-      setToken(stored);
-      return () => { stored = null };
+    let stored_token : string | null = sessionStorage.getItem("access_token");
+    if (stored_token && stored_token !== String(token)) {
+      setToken(stored_token);
+      return () => { stored_token = null };
     }
-    stored && me(stored).then(([user, result]) => {
-      if (result.error?.status === 403 || result.error?.status === 401) { //403: Forbidden / 401: Token expired
-        stored = sessionStorage.getItem("user_session");
-        user = stored && JSON.parse(stored);
-        console.log("user_session", user)
-        !!user && login({...user, ...config})
-          .then(result => {
-            if (!!result.error) {
-              alert(`Error\n${result.error.message}`); 
-              setToken(null);
-            }
-          });
-        !user && setToken(null);
-      }
-      if (!!result.error) {
-        alert(`Error\n${result.error.message}`); 
-        setToken(null);
-      }
-      setUser(user);
-    })
-    return () => { stored = null };
-  }, [token, me, login]);
+    let stored_user : string | null = sessionStorage.getItem("user_session");
+    let _user: User | null = !!stored_user ? JSON.parse(stored_user) : null;
+    if (!stored_token && !stored_user) {
+      if (token || user) setToken(null)
+      else return () => { 
+        stored_token = null; 
+        stored_user = null;
+        _user = null;
+      };
+    }
+    if (stored_token && stored_user) {
+      if (!token) setToken(stored_token)
+      if (!user) setUser(_user)
+      else return () => { 
+        stored_token = null; 
+        stored_user = null;
+        _user = null;
+      };
+    }
+    if (!stored_token) {
+      login({..._user as User, ...config}).then(([_token, result]) => {
+        if (!!result.error) {
+          alert(`Error\n${result.error.message}`); 
+          setToken(null);
+        } else setToken(_token);
+        if (_user !== user) setUser(_user);
+        else return () => { 
+          stored_token = null; 
+          stored_user = null;
+          _user = null;
+        };
+      });
+    } else {
+      me(stored_token).then(([_user, result]) => {
+        if (!!result.error) { //403: Forbidden / 401: Token expired
+          alert(`Error\n${result.error.message}`); 
+          setToken(null)
+        }
+        if (_user !== user) setUser(_user);
+        else return () => { 
+          stored_token = null; 
+          stored_user = null;
+          _user = null;
+        };
+      })
+    }
+  }, [token, me, login, user]);
   return (
-    <IonApp>
-      <IonReactRouter>
-        <AppContext.Provider value={{
-          fetchApi: fetchApi,
-          token: token,
-          employee: user,
-          logout: logout,
-          history: createBrowserHistory(),
-          me: me,
-          login: login,
-        }}>
-            <AppRouter />
-        </AppContext.Provider>
-      </IonReactRouter>
-    </IonApp>
+      <AppContext.Provider value={{
+        fetchApi: fetchApi,
+        token: token,
+        setToken: setToken,
+        employee: user,
+        logout: logout,
+        history: createBrowserHistory(),
+        me: me,
+        login: login,
+      }}>
+        <IonApp>
+          <IonReactRouter>
+            <IonContent>
+              <MenuPage />
+            </IonContent>
+          </IonReactRouter>
+        </IonApp>
+      </AppContext.Provider>
   );
 }
 

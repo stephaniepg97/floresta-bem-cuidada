@@ -9,6 +9,6 @@ type CommonDetailProps<T extends Model, D extends Model> = {
     data?: Array<D>
 }
 
-export type DetailProps<T extends _Document, D1 extends Model, D2 extends Model> = CommonDetailProps<T, D1> & {
+export type DetailProps<T extends Model, D1 extends Model, D2 extends Model> = CommonDetailProps<T, D1> & {
     details?: CommonDetailProps<D1, D2>
 }

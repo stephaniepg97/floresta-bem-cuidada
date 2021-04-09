@@ -13,6 +13,7 @@ import { DocumentFamily } from '../../models/DocumentFamily';
 import { DocumentType } from '../../models/DocumentType';
 import { ListPropsWithDetails } from '../../types/ListPropsWithDetails';
 import { FormContextProps } from '../../types/FormContextProps';
+import { useRef } from 'react';
 
 export const DocumentList = <T extends _Document = InternalDocument | PurchaseDocument, D extends Item = Item> (props: RouteComponentProps & Pick<ListPropsWithDetails<T, D>, 'details'>) => (
     <List<T, D> 
@@ -20,7 +21,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
         searchForm={{
             formProps: {
                 ...props,
-                model: {} as T,
+                model: useRef<T>({} as T),
                 formGroups: [{
                     fieldGroups: [
                         [{
@@ -42,7 +43,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                         [{
                             label: "Tipo de Documento",
                             inputProps: {
-                                name: "TipoDoc",
+                                name: "Tipodoc",
                             },
                             OptionsDialog: (popoverProps) => (
                                 <OptionsDialog<DocumentType> 
@@ -177,7 +178,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                     fields: [{
                         label: "Fornecedor",
                         inputProps: {
-                            name: "NomeFornecedor",
+                            name: "Entidade",
                         },
                         OptionsDialog: (popoverProps) => (
                             <OptionsDialog<Supplier> 
@@ -262,7 +263,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
         }, {
             label: "Fornecedor",
             inputProps: {
-                name: "NomeFornecedor",
+                name: "Entidade",
                 readonly: true
             },
         }, {
