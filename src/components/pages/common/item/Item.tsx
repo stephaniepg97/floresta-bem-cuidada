@@ -7,12 +7,13 @@ import {
 } from '@ionic/react';
 
 import { ColumnProps } from "../../../types/ColumnProps"
+import { Model } from '../../../models/Model';
 
-export const Item = <C,>({itemProps, colProps, Children, fields: columns}: {
+export const Item = <T extends Model = {}, T1 extends Model = T>({itemProps, colProps, Children, fields: columns}: {
     itemProps?: ComponentProps<typeof IonItem>;
     colProps?: ComponentProps<typeof IonCol>;
-    Children: (col : ColumnProps<C>) => React.ReactElement;
-    fields: Array<ColumnProps<C>>;
+    Children: (col : ColumnProps<T, T1>) => React.ReactElement;
+    fields: Array<ColumnProps<T, T1>>;
 }) => (
     <IonItem {...itemProps}>
         <IonGrid>

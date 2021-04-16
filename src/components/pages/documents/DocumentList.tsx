@@ -18,6 +18,7 @@ import { useRef } from 'react';
 export const DocumentList = <T extends _Document = InternalDocument | PurchaseDocument, D extends Item = Item> (props: RouteComponentProps & Pick<ListPropsWithDetails<T, D>, 'details'>) => (
     <List<T, D> 
         {...props}
+        model={useRef<T>({} as T)}
         searchForm={{
             formProps: {
                 ...props,
@@ -43,7 +44,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                         [{
                             label: "Tipo de Documento",
                             inputProps: {
-                                name: "Tipodoc",
+                                name: "TipoDoc",
                             },
                             OptionsDialog: (popoverProps) => (
                                 <OptionsDialog<DocumentType> 
@@ -311,7 +312,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
             ...props.details,
             columns: [{
                 label: "Artigo",
-                xfield: "Artigo",
+                xfield: "Codigo",
                 Field: ({value}) => <small className="ion-text-center">{value}</small>,
             }, {
                 label: "Descrição",
@@ -334,7 +335,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
         getModel={(model, details) => {
             return {
                 ...model,
-                Items: details,
+                Artigos: details,
             }
         }}
     />

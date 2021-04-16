@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
     IonPopover,
 } from '@ionic/react';
@@ -12,9 +12,12 @@ export const OptionsDialog = <T extends Model>({
     listProps, 
     popoverProps,
     ...routeProps
-}: OptionsDialogProps<T> & RouteComponentProps) => (
-    <IonPopover {...popoverProps} cssClass={`dialog ${popoverProps.cssClass}`}>
-        {popoverProps.children}
-        {listProps && <List<T, any, any> key={`${routeProps.keyId}-dialog`} {...listProps} {...routeProps} />}
-    </IonPopover>
-);
+}: OptionsDialogProps<T> & RouteComponentProps) => {
+    const model = useRef<T>({} as T);
+    return (
+        <IonPopover {...popoverProps} cssClass={`dialog ${popoverProps.cssClass}`}>
+            {popoverProps.children}
+            {listProps && <List<T> model={model} key={`${routeProps.keyId}-dialog`} {...listProps} {...routeProps} />}
+        </IonPopover>
+    );
+}

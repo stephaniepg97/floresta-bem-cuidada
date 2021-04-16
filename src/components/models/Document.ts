@@ -6,9 +6,9 @@ export interface _Document<D extends Item = Item> extends Model {
     Descricao?:string;
     Nome?:string;
     Total?:number;
-    Items?:Array<D>;
+    Artigos?:Array<D>;
     NumDoc?:number;
-    Tipodoc:string;
+    TipoDoc:string;
     Serie:string;
     DataVencimento:string;
     IDObra:string;

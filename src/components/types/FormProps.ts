@@ -11,11 +11,11 @@ export type FormState<T extends Model = {}> = {
 };
 export type FormGroupProps<T extends Model = {}, D extends Model = {}> = ({ 
     fields?: Array<InputProps<T>>;
-    listProps?: Omit<ListContentProps<D>, 'FormContext'>;
+    listProps?: Omit<ListContentProps<D,{},{},T>, 'FormContext'>;
     fieldGroups?: Array<Array<InputProps<T>>>;
 }) & {
     title?:string;
-    Button?: ComponentType<ButtonProps>;
+    Button?: ComponentType<{buttonProps?: ButtonProps; setFormGroups: (formGroups: FormGroupProps<T, D>[]) => void }>;
 };
 export type FormContentProps<T extends Model = {}, D extends Model = {}> = {
     FormConsumer: Consumer<FormContextProps<T, D>>;

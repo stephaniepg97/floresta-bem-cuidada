@@ -22,9 +22,9 @@ const InternalDocumentForm: FunctionComponent<RouteComponentProps> = (props) => 
         TipoEntidade: "F",
         Filial: "000",
         Entidade: "",
-        IDObra: "",
-        Serie: "",
-        Tipodoc: ""
+        IDObra: "8EF50027-DA77-11E3-9978-0011503E58D7",
+        Serie: "A",
+        TipoDoc: "STD"
     });
     return (
         <InternalDocumentFormContextProvider value={{
@@ -32,7 +32,6 @@ const InternalDocumentForm: FunctionComponent<RouteComponentProps> = (props) => 
             headerProps: {title: "Registo de Despesa"},
             contentProps: {className: "content"},
             buttonsProps: {
-                fixed: true,
                 buttons: [{
                     text: "Criar",
                     icon: {
@@ -43,8 +42,9 @@ const InternalDocumentForm: FunctionComponent<RouteComponentProps> = (props) => 
                     button: {
                         onClick: () => {
                             fetchApi({route: "Internos/IntegracaoInternos/Actualiza", body: model.current, method: "POST"})
-                                .then(result => {
+                                .then((result) => {
                                     alert(result.response?.Message ?? result.error?.message);
+                                    console.log(result.response?.Content)
                                     //if (!!result.response?.Content) model.current = JSON.parse(result.response?.Content);
                                 })
                         },

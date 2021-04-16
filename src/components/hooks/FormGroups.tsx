@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { date } from "../../helpers/Helper";
 import { Construction } from "../models/Construction";
 import { _Document } from "../models/Document";
@@ -13,13 +13,22 @@ import { FormGroupProps } from "../types/FormProps";
 import { InputProps } from "../types/InputProps";
 import { add } from 'ionicons/icons';
 
-export const useFormProps = <D extends Item, T extends _Document<D>> (props: Omit<FormContextProps<T, D>, 'formGroups' | 'setFormGroups'>) => {
-    const [formGroups, setFormGroups] = useState<Array<FormGroupProps<T, D>>>([{
+export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Omit<FormContextProps<T>, 'reloadForm' | 'formGroups'>) => {
+    const [stateFormProps, setStateFormProps] = useState(false), 
+    clickEvents = useRef<Array<{
+            title: string;
+            onClick: (setFormGroups: (formGroups: FormGroupProps<T, D>[]) => void) => void
+        }>>([]), 
+    formGroups = useRef<Array<FormGroupProps<T, D>>>([{
         title: "Informação Geral",
         fields: [{
             label: "Obra",
             inputProps: {
-                name: "IDObra",
+                getModel: (model, _, value) => {
+                    model.IDObra = value ?? props.model.current.IDObra
+                    return model;
+                },
+                value: props.model.current.IDObra,
             },
             OptionsDialog: (popoverProps) => (
                 <OptionsDialog<Construction> 
@@ -53,7 +62,11 @@ export const useFormProps = <D extends Item, T extends _Document<D>> (props: Omi
         }, {
             label: "Fornecedor",
             inputProps: {
-                name: "Entidade",
+                getModel: (model, _, value) => {
+                    model.Entidade = value ?? props.model.current.Entidade
+                    return model;
+                },
+                value: props.model.current.Entidade,
                 maxlength: 8,
             },
             OptionsDialog: (popoverProps) => (
@@ -113,16 +126,15 @@ export const useFormProps = <D extends Item, T extends _Document<D>> (props: Omi
         }],
         fieldGroups: [
             [{
-                label: "Nº do documento",
-                inputProps: {
-                    name: 'NumDoc',
-                    maxlength: 10,
-                }
-            }, {
                 label: "Tipo",
                 inputProps: {
-                    name: 'Tipodoc',
+                    getModel: (model, _, value) => {
+                        model.TipoDoc = value ?? props.model.current.TipoDoc;
+                        return model;
+                    },
                     maxlength: 10,
+                    readonly: true,
+                    value: props.model.current.TipoDoc,
                 },
                 OptionsDialog: (popoverProps) => (
                     <OptionsDialog<DocumentType> 
@@ -156,8 +168,13 @@ export const useFormProps = <D extends Item, T extends _Document<D>> (props: Omi
             }, {
                 label: "Série",
                 inputProps: {
-                    name: 'Serie',
+                    getModel: (model, _, value) => {
+                        model.Serie = value ?? props.model.current.Serie;
+                        return model;
+                    },
                     maxlength: 10,
+                    readonly: true,
+                    value: props.model.current.Serie,
                 },
                 OptionsDialog: (popoverProps) => (
                     <OptionsDialog<DocumentFamily> 
@@ -206,31 +223,44 @@ export const useFormProps = <D extends Item, T extends _Document<D>> (props: Omi
             }], [{
                 label: "Data do Documento",
                 inputProps: {
-                    name: "Data",
+                    getModel: (model, _, value) => {
+                        model.Data = value ?? props.model.current.Data;
+                        return model;
+                    },
                     type: "date",
-                    value: date(new Date()).slice(0, 10),
+                    value: props.model.current.Data,
                 }
             }, {
                 label: "Vencimento",
                 inputProps: {
-                    name: "DataVencimento",
+                    getModel: (model, _, value) => {
+                        model.DataVencimento = props.model.current.DataVencimento;
+                        return model;
+                    },
                     type: "date",
-                    value: date(new Date(), {days: -1, months: 1}).slice(0, 10),
+                    value: props.model.current.DataVencimento,
                 }
             }], [{
                 label: "Desconto de Fornecedor",
                 inputProps: {
-                    name: "DescEntidade",
+                    getModel: (model, _, value) => {
+                        model.DescEntidade = value ? Number(value) : props.model.current.DescEntidade;
+                        return model;
+                    },
                     type: "number",
-                    step: ".01"
-                    
+                    step: ".01",
+                    value: props.model.current.DescEntidade,
                 },
             }, {
                 label: "Desconto Financeiro",
                 inputProps: {
-                    name: "DescFinanceiro",
+                    getModel: (model, _, value) => {
+                        model.DescFinanceiro = value ? Number(value) : props.model.current.DescFinanceiro;
+                        return model;
+                    },
                     type: "number",
-                    step: ".01"
+                    step: ".01",
+                    value: props.model.current.DescFinanceiro,
                 }
             }]
         ]
@@ -238,25 +268,29 @@ export const useFormProps = <D extends Item, T extends _Document<D>> (props: Omi
         title: "Anexos",
         fields: [...props.model.current.Anexos?.map((filename, index) => {
             return {
-                label: `Ficheiro ${index + 1}` , 
+                label: `Ficheiro ${index + 1}`,
                 inputProps: {
-                    getModel: (model, value) => {
-                        return {...model, Anexos: [...model.Anexos || [], value]}
+                    getModel: (model, index, value) => {
+                        model.Anexos = [...model.Anexos ?? []];
+                        model.Anexos.splice(index, index + 1, "")
+                        return model;
                     },
                     value: filename,
                     accept: "*"
                 }
             } as InputProps<T>;
         }) ?? [], {
-            label: "Novo ficheiro" , 
+            label: "Novo ficheiro",
             inputProps: {
                 accept: "*",
-                getModel: (model, value) => {
-                    return {...model, Anexos: [...model.Anexos || [], value]}
+                getModel: (model, index, value) => {
+                    model.Anexos = [...model.Anexos ?? []];
+                    model.Anexos.splice(index, index + 1, "")
+                    return model;
                 },
             }
         }],
-        Button: buttonProps => (
+        Button: ({buttonProps, setFormGroups}) => (
             <div className="flex-row-center-content">
                 <Button
                     {...buttonProps}
@@ -265,19 +299,8 @@ export const useFormProps = <D extends Item, T extends _Document<D>> (props: Omi
                         slot: "icon-only",
                         color: "primary",
                         onClick: () => {
-                           /* let fieldGroup = props.formGroups.find(fg => fg.title === "Anexos") as FormGroupProps<T, Item>;//, index = formGroups.indexOf(fieldGroup), formGroupsAux = [...formGroups];
-                            fieldGroup.fields = [...fieldGroup.fields as InputProps<T>[], {
-                                label: "Novo ficheiro" , 
-                                inputProps: {
-                                    accept: "*",
-                                    getModel: (model, value) => {
-                                        return {...model, Anexos: [...model.Anexos || [], value]}
-                                    },
-                                }
-                            }];
-                            console.log(props.formGroups.find(fg => fg.title === "Anexos"))*/
-                            //formGroupsAux.splice(index, index + 1, fieldGroup);
-                            //setFormGroups([...formGroups.filter(fg => fg.title !== "Anexos"), {}])
+                            let clickEvent = clickEvents.current.find(c => c.title === "Anexos");
+                            clickEvent && clickEvent.onClick(setFormGroups);
                         },
                         className: "buttom-add-form"
                     }}
@@ -292,43 +315,65 @@ export const useFormProps = <D extends Item, T extends _Document<D>> (props: Omi
         title: "Artigos",
         listProps: {
             keyId: props.keyId,
-            data: props.model.current.Items || null,
+            data: props.model.current.Artigos || null,
             fields: [{
                 label: "Artigo",
                 inputProps: {
-                    name: "Artigo",
-                    readonly: true
-                },
-            }, {
-                label: "Descrição",
-                inputProps: {
-                    name: "Descricao",
-                    readonly: true
+                    getModel: (model, index, value) => {
+                        model.Artigos = model.Artigos ?? [{DataEntrega: date(new Date()).slice(0, 10)} as D];
+                        if (index === model.Artigos.length) model.Artigos = [...model.Artigos, {DataEntrega: date(new Date()).slice(0, 10)} as D];
+                        model.Artigos.splice(index, index + 1, {...model.Artigos[index], Codigo: value ?? ""});
+                        return model;
+                    }
                 },
             }, {
                 label: "Quantidade",
                 inputProps: {
-                    name: "Quantidade",
-                    readonly: true
-                }
-            }, {
-                label: "Toneladas",
-                inputProps: {
-                    name: "Peso",
-                    readonly: true
+                    getModel: (model, index, value) => {
+                        model.Artigos = model.Artigos ?? [{DataEntrega: date(new Date()).slice(0, 10)} as D];
+                        if (index === model.Artigos.length) model.Artigos = [...model.Artigos, {DataEntrega: date(new Date()).slice(0, 10)} as D];
+                        model.Artigos.splice(index, index + 1, {...model.Artigos[index], Quantidade: Number(value ?? 0)});
+                        return model;
+                    }
                 }
             }, {
                 label: "Custo Unitário",
                 inputProps: {
-                    name: "PrecUnit",
-                    readonly: true
+                    getModel: (model, index, value) => {
+                        model.Artigos = model.Artigos ?? [{DataEntrega: date(new Date()).slice(0, 10)} as D];
+                        if (index === model.Artigos.length) model.Artigos = [...model.Artigos, {DataEntrega: date(new Date()).slice(0, 10)} as D];
+                        model.Artigos.splice(index, index + 1, {...model.Artigos[index], PrecUnit: Number(value ?? 0)});
+                        return model;
+                    }
+                }
+            }, {
+                label: "Desconto",
+                inputProps: {
+                    getModel: (model, index, value) => {
+                        model.Artigos = model.Artigos ?? [{DataEntrega: date(new Date()).slice(0, 10)} as D];
+                        if (index === model.Artigos.length) model.Artigos = [...model.Artigos, {DataEntrega: date(new Date()).slice(0, 10)} as D];
+                        model.Artigos.splice(index, index + 1, {...model.Artigos[index], Desconto: Number(value ?? 0)});
+                        return model;
+                    }
+                },
+            }, {
+                label: "Data de Entrega",
+                inputProps: {
+                    getModel: (model, index, value) => {
+                        model.Artigos = model.Artigos ?? [{DataEntrega: date(new Date()).slice(0, 10)} as D];
+                        if (index === model.Artigos.length) model.Artigos = [...model.Artigos, {DataEntrega: date(new Date()).slice(0, 10)} as D];
+                        model.Artigos.splice(index, index + 1, {...model.Artigos[index], DataEntrega: value ?? date(new Date()).slice(0, 10)});
+                        return model;
+                    },
+                    type: "date",
+                    value: date(new Date()).slice(0, 10),
                 }
             }],
             searchForm: {
                 formProps: {} as FormContextProps<D>
             }
         },
-        Button: buttonProps => (
+        Button: ({buttonProps, setFormGroups}) => (
             <div className="flex-row-center-content">
                 <Button
                     {...buttonProps}
@@ -337,9 +382,8 @@ export const useFormProps = <D extends Item, T extends _Document<D>> (props: Omi
                         slot: "icon-only",
                         color: "primary",
                         onClick: () => {
-                            /*let fieldGroup = props.formGroups.find(fg => fg.title === "Artigos") as FormGroupProps<T, Item>;
-                            if (!!fieldGroup.listProps) fieldGroup.listProps.data = [...fieldGroup.listProps.data || [], {} as Item]; //model,
-                            console.log(props.formGroups.find(fg => fg.title === "Artigos"))*/
+                            let clickEvent = clickEvents.current.find(c => c.title === "Artigos");
+                            clickEvent && clickEvent.onClick(setFormGroups);
                         },
                         className: "buttom-add-form"
                     }}
@@ -351,10 +395,38 @@ export const useFormProps = <D extends Item, T extends _Document<D>> (props: Omi
             </div>
         ),
     }]);
-
     useEffect(() => {
-        //"Anexos": add onClick event to add button
-        //"Artigos": add onClick event to add button
-    }, [setFormGroups, formGroups])
-    return [formGroups, setFormGroups];
+        clickEvents.current = [{
+            title: "Anexos", //"Anexos": add onClick event to add button
+            onClick: setFormGroups => {
+                let fieldGroup = formGroups.current.find(fg => fg.title === "Anexos") as FormGroupProps<T, D>;//, index = formGroups.indexOf(fieldGroup), formGroupsAux = [...formGroups];
+                fieldGroup.fields = [...fieldGroup.fields as InputProps<T>[], {
+                    label: "Novo ficheiro" , 
+                    inputProps: {
+                        accept: "*",
+                        getModel: (model, value) => {
+                            return {...model, Anexos: [...model.Anexos || [], value]}
+                        },
+                    }
+                }];
+                let index = formGroups.current.indexOf(fieldGroup);
+                formGroups.current.splice(index, index, fieldGroup);
+                setFormGroups([...formGroups.current]);
+            }
+        }, {
+            title: "Artigos", //"Artigos": add onClick event to add button
+            onClick: setFormGroups => {
+                let fieldGroup = formGroups.current.find(fg => fg.title === "Artigos") as FormGroupProps<T, D>;
+                if (!!fieldGroup.listProps) {
+                    fieldGroup.listProps.data = [...fieldGroup.listProps.data || [], {} as D]; //model,
+                }
+                let index = formGroups.current.indexOf(fieldGroup);
+                formGroups.current.splice(index, index, fieldGroup);
+                setFormGroups([...formGroups.current]);
+                
+            }
+        }]
+        !stateFormProps && setStateFormProps(!stateFormProps)
+    }, [stateFormProps, props.model])
+    return { formGroups: formGroups.current };
 } 

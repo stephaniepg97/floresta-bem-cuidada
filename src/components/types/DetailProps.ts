@@ -4,7 +4,7 @@ import { _Document } from "../models/Document";
 import { ColumnProps } from "../types/ColumnProps"
 
 type CommonDetailProps<T extends Model, D extends Model> = {
-    columns: Array<ColumnProps<D>>;
+    columns: Array<ColumnProps<D, T>>;
     fetchApiOptions?: (model : T) => OptionsFetchApi;
     data?: Array<D>
 }

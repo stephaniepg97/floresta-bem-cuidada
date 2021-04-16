@@ -22,13 +22,17 @@ import { AppContext } from '../../contexts/AppContext';
 import { RouteComponentProps, withRouter } from 'react-router';
 
 type FormData = Pick<User, 'Username' | 'Password'>
-const Login: FunctionComponent<RouteComponentProps> = (props) => {
+const Login: FunctionComponent<RouteComponentProps> = props => {
     const { login, token, setToken } = useContext(AppContext);
     const [showLoading, setShowLoading] = useState<boolean>(false);
     const { handleSubmit, errors, getValues, control } = useForm<FormData>();
     const submit = handleSubmit(data => {
         setShowLoading(true)
-        login({logIn: () => setShowLoading(false), ...data, ...config}).then(([_token, result]) => setToken(_token));
+        login({logIn: () => setShowLoading(false), ...data, ...config})
+            .then(([_token, result]) => {
+                if (!!result.error) alert(`Error\n${result.error.message}`); 
+                setToken(_token);
+            })
     });
     const fields: Array<{name: keyof FormData, title: string, options?: RegisterOptions}> = [{
         name: "Username",
@@ -45,7 +49,7 @@ const Login: FunctionComponent<RouteComponentProps> = (props) => {
     }];
     useEffect(() => {
         if (token) props.history.push("/encomendas/all")
-    }, [props, token])
+    }, [props.history, token])
     return (
         <IonPage key="login">
             <Loading isOpen={showLoading} />

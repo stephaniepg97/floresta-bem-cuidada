@@ -4,6 +4,5 @@ import { Model } from "../models/Model";
 import { PageContextProps } from "./PageContextProps";
 
 export type FormContextProps<T extends Model = {}, D extends Model = {}> = FormState<T> & PageContextProps & {
-    formGroups: Array<FormGroupProps<T, D>>; 
-    setFormGroups?: (formGroups: Array<FormGroupProps<T, D>>) => void
+    formGroups: FormGroupProps<T, D>[];
 };

@@ -143,15 +143,35 @@ export const MenuPage: FunctionComponent = (props) => {
             </IonToolbar>
           </IonHeader>
           <IonRouterOutlet id="content-pane">
-            <Redirect exact from="/" to={!token ? "/login" : "/encomendas/all"} />
-            <Route path="/login" component={Login} />
-            <Route path="/logout" component={Logout} />
-            <Route path="/password/reset" component={Password} />
-            <Route path="/encomendas/all" component={PurchaseDocumentList} />
-            <Route path="/despesas/all" component={InternalDocumentList} />
-            <Route path="/encomendas/form" component={PurchaseDocumentForm} />
-            <Route path="/despesas/form" component={InternalDocumentForm} />
-            <Route path="/password/reset" component={Password} />
+            <Redirect exact from="/" to={token ? "/encomendas/all" : "/login"} />
+            <Route path="/login" render={(props) => token 
+              ? <Redirect to="/encomendas/all"/>
+              : <Login {...props} /> 
+            } />
+            <Route path="/logout" render={(props) => !token 
+              ? <Redirect to="/login"/>
+              : <Logout {...props} /> 
+            } />
+            <Route path="/password/reset" render={(props) => !token 
+              ? <Redirect to="/login"/>
+              : <Password {...props} /> 
+            } />
+            <Route path="/encomendas/all" render={(props) => !token 
+              ? <Redirect to="/login"/>
+              : <PurchaseDocumentList {...props} /> 
+            } />
+            <Route path="/despesas/all" render={(props) => !token 
+              ? <Redirect to="/login"/>
+              : <InternalDocumentList {...props} /> 
+            } />
+            <Route path="/encomendas/form" render={(props) => !token 
+              ? <Redirect to="/login"/>
+              : <PurchaseDocumentForm {...props} /> 
+            } />
+            <Route path="/despesas/form" render={(props) => !token 
+              ? <Redirect to="/login"/>
+              : <InternalDocumentForm {...props} /> 
+            } />
           </IonRouterOutlet>
         </IonPage>
       </IonSplitPane>

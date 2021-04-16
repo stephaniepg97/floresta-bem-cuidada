@@ -22,15 +22,15 @@ const App = () => {
   const [user, setUser] = useReducer<Reducer<User | null, User | null>>((_, newValue) => {
     sessionStorage.setItem("user_session", JSON.stringify(newValue))
     return newValue;
-  }, null);
+  }, !!sessionStorage.getItem("user_session") ? JSON.parse(sessionStorage.getItem("user_session") as string) as User : null);
   const [token, setToken] = useReducer<Reducer<string | null, string | null>>((_, newValue) => {
     if (!newValue) {
       sessionStorage.removeItem("access_token")
       setUser(null);
     } else sessionStorage.setItem("access_token", newValue)
     return newValue;
-  }, null);
-  const logout = useCallback<(logOut: () => void) => void>(logOut => new Promise(executor => {
+  }, sessionStorage.getItem("access_token"));
+  const logout = useCallback<(logOut: () => void) => Promise<void>>(async logOut => new Promise(executor => {
     return setTimeout(executor, 1000);
   }).then(() => {
     logOut();
@@ -71,8 +71,7 @@ const App = () => {
             status: response.status,
             message: `${response.status}: ${response.statusText}`,
           };
-        }
-        else if (response.status === 204) { //204: no content
+        } else if (response.status === 204) { //204: no content
           result.response = response;
         } else {
           let contentType: string | null = response.headers.get("Content-Type");
@@ -83,6 +82,7 @@ const App = () => {
             result.response = await response.text();
           }
         }
+        if (result.error?.status === 401) setToken(null) //Unauthorized
       } catch (e) {
         console.log(e)
         result.error = {
@@ -125,73 +125,54 @@ const App = () => {
       };
       [_token, result] = await getToken({Username, Password, Company, Line, Instance, grant_type});
       if (!!result.error?.message) {
-        [_token, result] = await getToken({Username, Password, Instance, grant_type});
-        if (!result.error?.message) {
-          [opened, result] = await openPlatform({_token: result.response?.access_token ?? null, body: {Username, Password, ...config}})
-          if (!opened)
-            result.error = {
-              message: `${result.error?.message}\nOcorreu um erro na abertura da plataforma.`, 
-              ...result.error
-            }; 
-        }
+        [_token, result] = await getToken({Username, Password, Line, Instance, grant_type});
+      }
+      if (!result.error?.message) {
+        [opened, result] = await openPlatform({_token: result.response?.access_token ?? null, body: {Username, Password, ...config}})
+        if (!opened)
+          result.error = {
+            message: `${result.error?.message}\nOcorreu um erro na abertura da plataforma.`, 
+            ...result.error
+          }; 
       }
       !!logIn && logIn();
     }
     return [_token, result];
   }, [fetchApi]);
-
+  /*const callerApi = useCallback<(options: OptionsFetchApi) => Promise<[string | null, ResultFetchApi]>>(async (options : OptionsFetchApi) => {
+    let result = await fetchApi(options), _token: string | null = null;
+    if (result.error?.status === 401) { //expired token
+      let stored_user : string | null = sessionStorage.getItem("user_session"),
+      _user: User | null = !!stored_user ? JSON.parse(stored_user) : null;
+      if (user !== _user) setUser(_user);
+      if (!!_user) {
+        [_token, result] = await login({..._user as User, ...config});
+        if (!!result.error) alert(`Error\n${result.error.message}`); 
+        result = await fetchApi(options);
+      }
+    }
+    return [_token, result];
+  }, [login, user, setUser, fetchApi]);*/
   useEffect(() => {
-    let stored_token : string | null = sessionStorage.getItem("access_token");
-    if (stored_token && stored_token !== String(token)) {
-      setToken(stored_token);
-      return () => { stored_token = null };
-    }
-    let stored_user : string | null = sessionStorage.getItem("user_session");
-    let _user: User | null = !!stored_user ? JSON.parse(stored_user) : null;
-    if (!stored_token && !stored_user) {
-      if (token || user) setToken(null)
-      else return () => { 
-        stored_token = null; 
-        stored_user = null;
-        _user = null;
-      };
-    }
-    if (stored_token && stored_user) {
-      if (!token) setToken(stored_token)
-      if (!user) setUser(_user)
-      else return () => { 
-        stored_token = null; 
-        stored_user = null;
-        _user = null;
-      };
-    }
-    if (!stored_token) {
-      login({..._user as User, ...config}).then(([_token, result]) => {
-        if (!!result.error) {
-          alert(`Error\n${result.error.message}`); 
-          setToken(null);
-        } else setToken(_token);
-        if (_user !== user) setUser(_user);
-        else return () => { 
-          stored_token = null; 
-          stored_user = null;
-          _user = null;
-        };
-      });
-    } else {
+    if (!!user && !!token) return;
+    let stored_token : string | null = sessionStorage.getItem("access_token"),
+      stored_user : string | null = sessionStorage.getItem("user_session"),
+      _user: User | null = !!stored_user ? JSON.parse(stored_user) : null;
+    if (!!stored_token && !_user) {
       me(stored_token).then(([_user, result]) => {
         if (!!result.error) { //403: Forbidden / 401: Token expired
           alert(`Error\n${result.error.message}`); 
           setToken(null)
         }
-        if (_user !== user) setUser(_user);
-        else return () => { 
-          stored_token = null; 
-          stored_user = null;
-          _user = null;
-        };
+        setUser(_user);
       })
     }
+    
+    return () => {
+      stored_token = null;
+      stored_user = null;
+      _user = null;
+    };
   }, [token, me, login, user]);
   return (
       <AppContext.Provider value={{

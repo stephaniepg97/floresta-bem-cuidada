@@ -8,11 +8,11 @@ export type AppContextProps = {
     fetchApi: (O : OptionsFetchApi) => Promise<ResultFetchApi>
     token: string | null;
     setToken: (value: string | null) => void;
-    logout: (logOut: () => void) => void;
+    logout: (logOut: () => void) => Promise<void>;
     employee: User | null;
     history: History<unknown>;
     me: (token: string | null) => Promise<[User | null, ResultFetchApi]>;
     login:(_ : AuthBody & { 
         logIn?: () => void;
-    }) => Promise<[string | null, ResultFetchApi]>
+    }) => Promise<[string | null, ResultFetchApi]>;
 }

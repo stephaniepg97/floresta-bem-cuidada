@@ -7,15 +7,19 @@ import { FormState } from "../../../types/FormProps";
 import { FileInput } from "./FileInput";
 import { value } from "../../../../helpers/Helper";
 
-export const Input = <T extends Model> ({
+export const Input = <T extends Model, T1 extends Model = T> ({
         OptionsDialog, 
         inputProps, 
         Field, 
         label, 
         model, 
         xfield,
-}: InputProps<T> & FormState<T>) => {
-    const valueOfModel = value<T>(inputProps?.name ?? xfield as keyof T, model.current);
+        xModel,
+        index
+}: InputProps<T, T1> & FormState<T1> & {
+    index: number
+}) => {
+    const valueOfModel = value<T|T1>(inputProps?.name as keyof T & keyof T1 ?? xfield as keyof T, !!xModel ? xModel.current : model.current);
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const props: React.ComponentProps<typeof IonInput> = inputProps ? {
         ...inputProps, 
@@ -23,18 +27,21 @@ export const Input = <T extends Model> ({
         placeholder: inputProps?.placeholder ?? label,
         clearOnEdit: false,
         onIonChange: event => {
-            model.current = inputProps.name 
-            ? {...model.current, [inputProps.name as keyof T]: inputProps.type === "date" ? event.detail.value + "T00:00:00Z" : event.detail.value} 
-            : inputProps.getModel 
-                ? inputProps.getModel(model.current, event.detail.value) as T
-                : model.current
-            console.log(model.current)
+            if(!!xModel) {
+                xModel.current = inputProps.name 
+                    ? {...xModel.current, [inputProps.name as keyof T]: inputProps.type === "date" ? event.detail.value + "T00:00:00Z" : event.detail.value} 
+                    : xModel.current;
+            }
+            model.current = inputProps.getModel 
+                ? inputProps.getModel(model.current, index, event.detail.value)
+                : model.current;
+            inputProps.onIonChange && inputProps.onIonChange(event)
         }
     } : {};
     return (
         <>
             {!!inputProps && !!inputProps.accept 
-                ? <FileInput<T> {...props} model={model} />
+                ? <FileInput<T1> {...props} model={model} />
                 : !!inputProps 
                     ? <IonInput {...props} />
                     : Field && <Field {...xfield && {value: valueOfModel}} />
