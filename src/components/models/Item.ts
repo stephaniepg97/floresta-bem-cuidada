@@ -1,14 +1,17 @@
 import { Model } from "./Model"
 
 export interface Item extends Model {
-    Id?: string;
-    Codigo?: string;
-    Descricao?: string;
+    Artigo?: string;
+    NomeArtigo?: string;
     Quantidade?: number;
-    Peso?:number;
     PrecUnit?: number;
-    Checked?: boolean;
     Documento?: string;
     DataEntrega?:string;
     Desconto?:number;
+    TaxaIva?:number;
+    FornecedorPrincipal?:string;
+    NomeFornecedorPrincipal?:string;
+    Familia?:string;
+    NomeFamilia?:string;
+    ArmazemSugestao?:string;
 }   

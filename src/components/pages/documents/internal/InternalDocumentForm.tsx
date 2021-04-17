@@ -43,8 +43,8 @@ const InternalDocumentForm: FunctionComponent<RouteComponentProps> = (props) => 
                         onClick: () => {
                             fetchApi({route: "Internos/IntegracaoInternos/Actualiza", body: model.current, method: "POST"})
                                 .then((result) => {
-                                    alert(result.response?.Message ?? result.error?.message);
-                                    console.log(result.response?.Content)
+                                    alert(result?.response?.Message ?? result?.error?.message);
+                                    console.log(result?.response?.Content)
                                     //if (!!result.response?.Content) model.current = JSON.parse(result.response?.Content);
                                 })
                         },

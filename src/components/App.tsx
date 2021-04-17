@@ -36,7 +36,7 @@ const App = () => {
     logOut();
     setToken(null);
   }), [setToken]);
-  const fetchApi = useCallback<(o : OptionsFetchApi) => Promise<ResultFetchApi>>(
+  const fetchApi = useCallback<(o : OptionsFetchApi) => Promise<ResultFetchApi | null>>(
     async ({
       method = 'GET',
       body = null,
@@ -95,14 +95,14 @@ const App = () => {
     },
     [token],
   );
-  const me = useCallback<(_token: string | null) => Promise<[User | null, ResultFetchApi]>>(async _token => {
-    let result : ResultFetchApi = await fetchApi({route: 'Auth/Me', _token: _token});
-    return [!!result.response ? result.response as User : null, result];
+  const me = useCallback<(_token: string | null) => Promise<[User | null, ResultFetchApi | null]>>(async _token => {
+    let result : ResultFetchApi | null = await fetchApi({route: 'Auth/Me', _token: _token});
+    return [!!result?.response ? result.response as User : null, result];
   }, [fetchApi]);
   const login = useCallback<(_ : AuthBody & { 
     logIn?: () => void;
-  }) => Promise<[string | null, ResultFetchApi]>>(async ({ logIn, Line, Instance, Company, Password, Username, grant_type }) => {
-    let result : ResultFetchApi = {
+  }) => Promise<[string | null, ResultFetchApi | null]>>(async ({ logIn, Line, Instance, Company, Password, Username, grant_type }) => {
+    let result : ResultFetchApi | null = {
       error: {
         message: null
       },
@@ -115,21 +115,21 @@ const App = () => {
       result.error.message = `${result.error?.message || ''}\nMissing values: password`;
     }
     if (!result.error?.message) {
-      const getToken: (_ : AuthBody) => Promise<[string | null, ResultFetchApi]> = async body => {
-        let result : ResultFetchApi = await fetchApi({route: "token", method: "POST", body, contentType: "application/x-www-form-urlencoded"});
-        return [!!result.response ? result.response.access_token as string : null, result];
+      const getToken: (_ : AuthBody) => Promise<[string | null, ResultFetchApi | null]> = async body => {
+        let result : ResultFetchApi | null = await fetchApi({route: "token", method: "POST", body, contentType: "application/x-www-form-urlencoded"});
+        return [!!result?.response ? result?.response.access_token as string : null, result];
       };
-      const openPlatform: (_: {_token: string | null; body: OpenPlatformBody}) => Promise<[boolean | null, ResultFetchApi]> = async rest => {
-        let result : ResultFetchApi = await fetchApi({route: 'Auth/Open', method: "POST", credentials: 'include', ...rest});
-        return [!!result.response ? result.response as boolean : null, result];
+      const openPlatform: (_: {_token: string | null; body: OpenPlatformBody}) => Promise<[boolean | null, ResultFetchApi | null]> = async rest => {
+        let result : ResultFetchApi | null = await fetchApi({route: 'Auth/Open', method: "POST", credentials: 'include', ...rest});
+        return [!!result?.response ? result?.response as boolean : null, result];
       };
       [_token, result] = await getToken({Username, Password, Company, Line, Instance, grant_type});
-      if (!!result.error?.message) {
-        [_token, result] = await getToken({Username, Password, Line, Instance, grant_type});
+      if (!!result?.error?.message) {
+        [_token, result] = await getToken({Username, Password, Instance, grant_type});
       }
-      if (!result.error?.message) {
-        [opened, result] = await openPlatform({_token: result.response?.access_token ?? null, body: {Username, Password, ...config}})
-        if (!opened)
+      if (!result?.error?.message) {
+        [opened, result] = await openPlatform({_token: result?.response?.access_token ?? null, body: {Username, Password, ...config}})
+        if (!opened && !!result)
           result.error = {
             message: `${result.error?.message}\nOcorreu um erro na abertura da plataforma.`, 
             ...result.error
@@ -160,14 +160,25 @@ const App = () => {
       _user: User | null = !!stored_user ? JSON.parse(stored_user) : null;
     if (!!stored_token && !_user) {
       me(stored_token).then(([_user, result]) => {
-        if (!!result.error) { //403: Forbidden / 401: Token expired
+        if (!!result?.error) { //403: Forbidden / 401: Token expired 
           alert(`Error\n${result.error.message}`); 
-          setToken(null)
+          return () => {
+            setToken(null);
+            stored_token = null;
+            stored_user = null;
+            _user = null;
+            result = null;
+          };
         }
-        setUser(_user);
+        return () => {
+          setUser(_user);
+          stored_token = null;
+          stored_user = null;
+          _user = null;
+          result = null;
+        };
       })
     }
-    
     return () => {
       stored_token = null;
       stored_user = null;

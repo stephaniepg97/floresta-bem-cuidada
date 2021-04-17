@@ -30,7 +30,7 @@ const Login: FunctionComponent<RouteComponentProps> = props => {
         setShowLoading(true)
         login({logIn: () => setShowLoading(false), ...data, ...config})
             .then(([_token, result]) => {
-                if (!!result.error) alert(`Error\n${result.error.message}`); 
+                if (!!result?.error) alert(`Error\n${result.error.message}`); 
                 setToken(_token);
             })
     });

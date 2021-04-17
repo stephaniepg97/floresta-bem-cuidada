@@ -15,11 +15,11 @@ const InternalDocumentList: FunctionComponent<RouteComponentProps> = (props) => 
             {...props}
             keyId="despesas"
             key="despesas"
-            fetchApiOptions={{route: "Plataforma/Listas/CarregaLista/adhoc?listId=366A6D1F-2C9D-EB11-8113-00155D0A3600&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%"}}
+            fetchApiOptions={{route: "Plataforma/Listas/CarregaLista/adhoc?listId=5A403103-B585-EB11-81AB-706655E33B46&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%"}}
             details={{
                 fetchApiOptions: (row) => {
                     return {
-                        route: `Plataforma/Listas/CarregaLista/adhoc?listId=4077EEDB-2C9D-EB11-8113-00155D0A3600&listParameters=000,${row.NumDoc},${row.Serie},${row.TipoDoc}`,
+                        route: `Plataforma/Listas/CarregaLista/adhoc?listId=88CDA2EE-6D86-EB11-81AC-706655E33B46&listParameters=000,${row.NumDoc},${row.Serie},${row.TipoDoc}`,
                     };
                 },
                 columns: []

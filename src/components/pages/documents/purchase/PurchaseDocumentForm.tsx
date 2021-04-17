@@ -45,8 +45,8 @@ const PurchaseDocumentForm: FunctionComponent<RouteComponentProps> = (props) => 
                             fetchApi({route: "Compras/IntegracaoCompras/Actualiza", body: model.current, method: "POST"})
                                 .then((result) => {
                                     //if (!!result.response?.Content) model.current = JSON.parse(result.response?.Content);
-                                    alert(result.response?.Message ?? result.error?.message);
-                                    console.log(result.response?.Content)
+                                    alert(result?.response?.Message ?? result?.error?.message);
+                                    console.log(result?.response?.Content)
                                 })
                         },
                         color: "success",

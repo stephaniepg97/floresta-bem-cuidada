@@ -1,12 +1,12 @@
 .end-button {
     box-shadow: 0 1px 5px grey; 
-    margin-top: 10px;
-    margin-left: 10px;
 }
 .end-button:hover {
     opacity: 0.95;
 }
-
+.end-button-container {
+    margin: 10px 10px 20px 0px;
+}
 .fixed-toolbar {
     position: fixed !important;
 }

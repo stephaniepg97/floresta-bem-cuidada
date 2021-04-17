@@ -9,13 +9,12 @@ import "./Buttons.scss"
 export const Buttons: ComponentType<ButtonsProps> = ({buttons, toolbarProps, fixed}) => (
     <IonToolbar {...toolbarProps} className={`${fixed && "fixed-toolbar"} ${toolbarProps?.className}}`} color="transparent">
         {buttons && 
-            <div className="flex-row-center-content ion-margin">
+            <div className="flex-row-center-content">
                 <IonButtons>
                     {buttons.map((buttonProps, index) => (
-                        <Button
-                            key={index}
-                            {...{...buttonProps, button: {...buttonProps.button, className: `${buttonProps.button?.className} end-button`}}}
-                        />
+                        <div key={index} className="end-button-container">
+                            <Button {...{...buttonProps, button: {...buttonProps.button, className: `${buttonProps.button?.className} end-button`}}} />
+                        </div>
                     ))}
                 </IonButtons> 
             </div> 

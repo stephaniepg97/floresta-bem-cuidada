@@ -23,7 +23,7 @@ export const List = <T extends Model, D1 extends Model = {}, D2 extends Model = 
         if (!data && showLoading && !!props.fetchApiOptions) {
             console.log(props.fetchApiOptions.route)
             fetchApi(props.fetchApiOptions).then((result) => {
-                setData(result.response?.Data || []);
+                setData(result?.response?.Data || []);
             });
         }
     }, [data, showLoading, props.fetchApiOptions, fetchApi, setToken, token]);

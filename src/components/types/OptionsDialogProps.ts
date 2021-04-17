@@ -3,6 +3,6 @@ import { Model } from "../models/Model";
 import { PopoverProps } from "./PopoverProps";
 
 export type OptionsDialogProps<T extends Model> = {
-    listProps?: ListProps<T>;
+    listProps?: Omit<ListProps<T>, 'buttonsProps' | 'footerProps'>;
     popoverProps: PopoverProps
 }

@@ -32,13 +32,13 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
             },
             OptionsDialog: (popoverProps) => (
                 <OptionsDialog<Construction> 
-                    {...props} 
+                    keyId={props.keyId}
                     key={`${props.keyId}-construction`}
                     headerProps={{ 
                         title: "Obras" 
                     }}
                     fetchApiOptions={{
-                        route: "obras/all"
+                        route: "/Plataforma/Listas/CarregaLista/adhoc?listId=C7EEB235-6C8F-EB11-81C2-BCE92FBF0A4F&listParameters=%%,%%,%%,%%,%%,%%,%%"
                     }}
                     popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
                     listProps={{
@@ -46,15 +46,72 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                             label: "Código",
                             inputProps: {
                                 name: "Codigo",
+                                readonly: true,
                             }
                         }, {
                             label: "Descrição",
                             inputProps: {
                                 name: "Descricao",
+                                readonly: true,
+                            }
+                        }, {
+                            label: "Entidade A",
+                            inputProps: {
+                                name: "EntidadeA",
+                                readonly: true,
+                            }
+                        }, {
+                            label: "Estado",
+                            inputProps: {
+                                name: "NomeEstado",
+                                readonly: true,
+                            }
+                        }, {
+                            label: "Armazém Principal",
+                            inputProps: {
+                                name: "NomeArmazemObra",
+                                readonly: true,
                             }
                         }],
                         searchForm: {
-                            formProps: {} as FormContextProps<Construction>
+                            formProps: {
+                                keyId: `${props.keyId}-construction-search`,
+                                model: useRef({} as Construction),
+                                formGroups: [{
+                                    fieldGroups: [
+                                        [{
+                                            label: "Código",
+                                            inputProps: {
+                                                name: "Codigo",
+                                            }
+                                        }, {
+                                            label: "Estado",
+                                            inputProps: {
+                                                name: "NomeEstado",
+                                            }
+                                        }, {
+                                            label: "Entidade A",
+                                            inputProps: {
+                                                name: "EntidadeA",
+                                            }
+                                        }]
+                                    ]
+                                }, {
+                                    fields: [{
+                                        label: "Descrição",
+                                        inputProps: {
+                                            name: "Descricao",
+                                            readonly: true,
+                                        }
+                                    }, {
+                                        label: "Armazém Principal",
+                                        inputProps: {
+                                            name: "NomeArmazemObra",
+                                            readonly: true,
+                                        }
+                                    }]
+                                }]
+                            }
                         }
                     }}
                 />
@@ -71,54 +128,121 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
             },
             OptionsDialog: (popoverProps) => (
                 <OptionsDialog<Supplier> 
-                    {...props} 
+                    keyId={props.keyId}
                     key={`${props.keyId}-supplier`}
                     headerProps={{ 
                         title: "Fornecedores" 
                     }}
                     fetchApiOptions={{
-                        route: "supplier/all"
+                        route: "/Plataforma/Listas/CarregaLista/adhoc?listId=34F8318B-9E9E-EB11-81D1-BCE92FBF0A4F&listParameters=1,1,1,1,1,1,1,%%,%%,%%,%%,%%,%%,%%,%%,%%,%%,%%,%%"
                     }}
-                    popoverProps={{cssClass: "dialog-80x", ...popoverProps}} 
+                    popoverProps={{cssClass: "dialog-95x", ...popoverProps}} 
                     listProps={{
                         fields: [{
                             label: "Fornecedor",
                             inputProps: {
                                 name: "Fornecedor",
-                            }
-                        }, {
-                            label: "Local",
-                            inputProps: {
-                                name: "Local",
-                            }
-                        }, {
-                            label: "Morada",
-                            inputProps: {
-                                name: "Morada",
+                                readonly: true,
                             }
                         }, {
                             label: "Nome",
                             inputProps: {
-                                name: "Nome",
+                                name: "NomeFornecedor",
+                                readonly: true,
+                            }
+                        }, {
+                            label: "NIF",
+                            inputProps: {
+                                name: "NIF",
+                                readonly: true,
+                            }
+                        }, {
+                            label: "País",
+                            inputProps: {
+                                name: "NomePais",
+                                readonly: true,
                             }
                         }, {
                             label: "Distrito",
                             inputProps: {
                                 name: "NomeDistrito",
+                                readonly: true,
                             }
                         }, {
-                            label: "Pais",
+                            label: "Condição de Pagamento",
                             inputProps: {
-                                name: "NomePais",
+                                name: "NomeCondPag",
+                                readonly: true,
                             }
                         }, {
-                            label: "Nº de contribuinte",
+                            label: "Modo de Pagamento",
                             inputProps: {
-                                name: "NumContrib",
+                                name: "NomeModoPag",
+                                readonly: true,
+                            }
+                        }, {
+                            label: "Modo de Expedição",
+                            inputProps: {
+                                name: "NomeModoExp",
+                                readonly: true,
                             }
                         }],
                         searchForm: {
-                            formProps: {} as FormContextProps<Supplier>
+                            formProps: {
+                                keyId: `${props.keyId}-supplier-search`,
+                                model: useRef({} as Supplier),
+                                formGroups: [{
+                                    fieldGroups: [
+                                        [{
+                                            label: "Código",
+                                            inputProps: {
+                                                name: "Fornecedor",
+                                            }
+                                        }, {
+                                            label: "NIF",
+                                            inputProps: {
+                                                name: "NIF",
+                                            }
+                                        }]
+                                    ]
+                                }, {
+                                    fieldGroups: [
+                                        [{
+                                            label: "País",
+                                            inputProps: {
+                                                name: "NomePais",
+                                            }
+                                        }, {
+                                            label: "Distrito",
+                                            inputProps: {
+                                                name: "NomeDistrito",
+                                            }
+                                        }]
+                                    ]
+                                }, {
+                                    fields: [{
+                                        label: "Nome",
+                                        inputProps: {
+                                            name: "NomeFornecedor",
+                                        }
+                                    }, {
+                                        label: "Condição de Pagamento",
+                                        inputProps: {
+                                            name: "NomeCondPag",
+                                        }
+                                    }, {
+                                        label: "Modo de Pagamento",
+                                        inputProps: {
+                                            name: "NomeModoPag",
+                                        }
+                                    }, {
+                                        label: "Modo de Expedição",
+                                        inputProps: {
+                                            name: "NomeModoExp",
+                                        }
+                                    }]
+                                }]
+                            }
                         }
                     }}
                 />
@@ -138,7 +262,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                 },
                 OptionsDialog: (popoverProps) => (
                     <OptionsDialog<DocumentType> 
-                        {...props} 
+                        keyId={props.keyId}
                         key={`${props.keyId}-documentType`}
                         headerProps={{ 
                             title: "Tipos de Documento" 
@@ -178,7 +302,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                 },
                 OptionsDialog: (popoverProps) => (
                     <OptionsDialog<DocumentFamily> 
-                        {...props} 
+                        keyId={props.keyId}
                         key={`${props.keyId}-documentFamily`}
                         headerProps={{ 
                             title: "Séries" 
@@ -322,10 +446,108 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                     getModel: (model, index, value) => {
                         model.Artigos = model.Artigos ?? [{DataEntrega: date(new Date()).slice(0, 10)} as D];
                         if (index === model.Artigos.length) model.Artigos = [...model.Artigos, {DataEntrega: date(new Date()).slice(0, 10)} as D];
-                        model.Artigos.splice(index, index + 1, {...model.Artigos[index], Codigo: value ?? ""});
+                        model.Artigos.splice(index, index + 1, {...model.Artigos[index], Artigo: value ?? ""});
                         return model;
                     }
                 },
+                OptionsDialog: (popoverProps) => (
+                    <OptionsDialog<D> 
+                        keyId={props.keyId}
+                        key={`${props.keyId}-artigos`}
+                        headerProps={{ 
+                            title: "Artigos" 
+                        }}
+                        fetchApiOptions={{
+                            route: "/Plataforma/Listas/CarregaLista/adhoc?listId=DBEEB01F-A49E-EB11-81D1-BCE92FBF0A4F&listParameters=1,1,%%,%%,%%,%%,%%,%%"
+                        }}
+                        popoverProps={{cssClass: "dialog-95x", ...popoverProps}} 
+                        listProps={{
+                            fields: [{
+                                label: "Código",
+                                inputProps: {
+                                    name: "Artigo",
+                                    readonly: true,
+                                }
+                            }, {
+                                label: "Nome",
+                                inputProps: {
+                                    name: "NomeArtigo",
+                                    readonly: true,
+                                }
+                            }, {
+                                label: "Iva (%)",
+                                inputProps: {
+                                    name: "TaxaIva",
+                                    readonly: true,
+                                }
+                            }, {
+                                label: "Desconto (%)",
+                                inputProps: {
+                                    name: "Desconto",
+                                    readonly: true,
+                                }
+                            }, {
+                                label: "Fornecedor Principal",
+                                inputProps: {
+                                    name: "NomeFornecedorPrincipal",
+                                    readonly: true,
+                                }
+                            }, {
+                                label: "Família",
+                                inputProps: {
+                                    name: "NomeFamilia",
+                                    readonly: true,
+                                }
+                            }, {
+                                label: "Armazém Principal",
+                                inputProps: {
+                                    name: "ArmazemSugestao",
+                                    readonly: true,
+                                }
+                            }],
+                            searchForm: {
+                                formProps: {
+                                    keyId: `${props.keyId}-artigos-search`,
+                                    model: useRef({} as D),
+                                    formGroups: [{
+                                        fieldGroups: [
+                                            [{
+                                                label: "Código",
+                                                inputProps: {
+                                                    name: "Artigo",
+                                                }
+                                            }, {
+                                                label: "Armazém Principal",
+                                                inputProps: {
+                                                    name: "ArmazemSugestao",
+                                                    readonly: true,
+                                                }
+                                            }]
+                                        ]
+                                    }, {
+                                        fields: [{
+                                            label: "Nome",
+                                            inputProps: {
+                                                name: "NomeArtigo",
+                                                readonly: true,
+                                            }
+                                        }, {
+                                            label: "Fornecedor Principal",
+                                            inputProps: {
+                                                name: "NomeFornecedorPrincipal",
+                                            }
+                                        }, {
+                                            label: "Família",
+                                            inputProps: {
+                                                name: "NomeFamilia",
+                                            }
+                                        }]
+                                    }]
+                                }
+                            }
+                        }}
+                    />
+                ),
             }, {
                 label: "Quantidade",
                 inputProps: {

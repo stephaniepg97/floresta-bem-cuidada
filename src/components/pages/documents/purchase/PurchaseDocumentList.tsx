@@ -13,11 +13,11 @@ const PurchaseDocumentList: FunctionComponent<RouteComponentProps> = (props) => 
         <DocumentList<PurchaseDocument> 
             keyId="encomendas"
             key="encomendas"
-            fetchApiOptions={{route: "Plataforma/Listas/CarregaLista/adhoc?listId=CF56AE6F-2C9D-EB11-8113-00155D0A3600&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%"}}
+            fetchApiOptions={{route: "Plataforma/Listas/CarregaLista/adhoc?listId=B8E2A04C-B485-EB11-81AB-706655E33B46&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%"}}
             details={{
                 fetchApiOptions: (row) => {
                     return {
-                        route: `Plataforma/Listas/CarregaLista/adhoc?listId=6AC0B500-2D9D-EB11-8113-00155D0A3600&listParameters=000,${row.NumDoc},${row.Serie},${row.TipoDoc}`,
+                        route: `Plataforma/Listas/CarregaLista/adhoc?listId=D8A86D99-548F-EB11-81C2-BCE92FBF0A4F&listParameters=000,${row.NumDoc},${row.Serie},${row.TipoDoc}`,
                     };
                 },
                 columns: []

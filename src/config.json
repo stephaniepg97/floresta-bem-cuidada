@@ -1,9 +1,9 @@
 {
-    "Company": "240474DEMO",
+    "Company": "DEMO",
     "Instance": "Default",
-    "Line": "LP",
+    "Line": "LE",
     "UserDB": "sa",
-    "PasswordDB": "adminsb",
-    "ServerDB": "SERVERSQL\\PRIMAVERA",
+    "PasswordDB": "253197@sg",
+    "ServerDB": "STEPHANIE-PORT\\PRIMAVERA",
     "grant_type": "password"
 }
