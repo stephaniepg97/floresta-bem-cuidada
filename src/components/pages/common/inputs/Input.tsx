@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { ComponentProps, useCallback, useRef, useState } from "react";
 import { add } from 'ionicons/icons';
 import { IonInput, IonIcon} from "@ionic/react";
 import { Model } from "../../../models/Model";
@@ -15,13 +15,15 @@ export const Input = <T extends Model, T1 extends Model = T> ({
         model, 
         xfield,
         xModel,
-        index
+        position,
 }: InputProps<T, T1> & FormState<T1> & {
-    index: number
+    position: number
 }) => {
+    const inputRef = useRef<HTMLIonInputElement>(null);
     const valueOfModel = value<T|T1>(inputProps?.name as keyof T & keyof T1 ?? xfield as keyof T, !!xModel ? xModel.current : model.current);
     const [showDialog, setShowDialog] = useState<boolean>(false);
-    const props: React.ComponentProps<typeof IonInput> = inputProps ? {
+    const close = useCallback(() => setShowDialog(false), [setShowDialog]);
+    const props: ComponentProps<typeof IonInput> = inputProps ? {
         ...inputProps, 
         ...!inputProps?.value && {value: !!valueOfModel ? inputProps.type === "date" ? String(valueOfModel).slice(0, 10) : inputProps.type === "number" ? Number(valueOfModel) :  String(valueOfModel) : ""},
         placeholder: inputProps?.placeholder ?? label,
@@ -33,7 +35,7 @@ export const Input = <T extends Model, T1 extends Model = T> ({
                     : xModel.current;
             }
             model.current = inputProps.getModel 
-                ? inputProps.getModel(model.current, index, event.detail.value)
+                ? inputProps.getModel(model.current, position, event.detail.value)
                 : model.current;
             inputProps.onIonChange && inputProps.onIonChange(event)
         }
@@ -43,13 +45,15 @@ export const Input = <T extends Model, T1 extends Model = T> ({
             {!!inputProps && !!inputProps.accept 
                 ? <FileInput<T1> {...props} model={model} />
                 : !!inputProps 
-                    ? <IonInput {...props} />
+                    ? <IonInput ref={inputRef} {...props} />
                     : Field && <Field {...xfield && {value: valueOfModel}} />
             }
             {OptionsDialog && (
                 <>
                     <IonIcon size="small" color="medium" slot="end" className="ion-icon" icon={add} onClick={() => setShowDialog(true)}/> 
-                    <OptionsDialog isOpen={showDialog} onDidDismiss={() => setShowDialog(false)} children />
+                    <OptionsDialog close={close} isOpen={showDialog} onDidDismiss={close} setInputValue={value => {
+                        if(!!inputRef.current) inputRef.current.value = value;
+                    }} />
                 </>
             )}
         </>

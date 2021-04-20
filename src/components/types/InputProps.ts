@@ -1,13 +1,14 @@
 import { IonInput } from "@ionic/react";
-import { MutableRefObject } from "react";
+import { ComponentType, MutableRefObject } from "react";
 import { Model } from "../models/Model";
 import { PopoverProps } from "./PopoverProps";
 
-type CommonInputProps<T extends Model = {}> = {
-    OptionsDialog?: React.ComponentType<PopoverProps>;
+export type CommonInputProps<T extends Model = {}> = {
+    OptionsDialog?: ComponentType<Omit<PopoverProps, 'children'> & {setInputValue?: (value: string | null | number) => void; close: () => void}>;
     label:string;
     required?:boolean;
     xModel?: MutableRefObject<T>;
+    inputRef?: React.RefObject<HTMLIonInputElement>;
 }
 
 export type InputProps<T extends Model = {}, T1 extends Model = T> = (CommonInputProps<T> & {

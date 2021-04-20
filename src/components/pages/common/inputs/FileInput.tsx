@@ -3,9 +3,11 @@ import { Model } from "../../../models/Model";
 import { Button } from "../buttons/Button";
 import { attach } from 'ionicons/icons';
 import './FileInput.scss'
-import { createRef, MutableRefObject } from "react";
+import { createRef } from "react";
+import { FormState } from "../../../types/FormProps";
+import { CommonInputProps } from "../../../types/InputProps";
 
-export const FileInput = <T extends Model> ({model, ...props}: React.ComponentProps<typeof IonInput> & {model: MutableRefObject<T>}) => {
+export const FileInput = <T extends Model> ({model, ...props}: React.ComponentProps<typeof IonInput> & FormState<T> & Pick<CommonInputProps<T>, 'inputRef'>) => {
     const fileInput = createRef<HTMLInputElement>(), textInput = createRef<HTMLIonInputElement>();
     return (
         <>
@@ -24,8 +26,8 @@ export const FileInput = <T extends Model> ({model, ...props}: React.ComponentPr
             />
             <input ref={fileInput} type="file" onChange={event => {
                 if (!textInput.current || !event.target.files) return;
-                let input = textInput.current, files = event.target.files;
-                input.value = files[0].name;
+                let files = event.target.files;
+                textInput.current.value = files[0].name;
                 model.current = {...model.current, [props.name as keyof T]: files[0].name}
             }} />
         </>

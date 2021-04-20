@@ -60,6 +60,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                     }}
                                     popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
                                     listProps={{
+                                        onClick: () => {},
                                         fields: [{
                                             label: "Código",
                                             inputProps: {
@@ -95,6 +96,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                     }}
                                     popoverProps={{cssClass: "dialog-80x", ...popoverProps}}
                                     listProps={{
+                                        onClick: () => {},
                                         fields: [{
                                             label: "Tipo de Documento",
                                             inputProps: {
@@ -155,6 +157,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                 }}
                                 popoverProps={{cssClass: "dialog-80x", ...popoverProps}} 
                                 listProps={{
+                                    onClick: () => {},
                                     fields: [{
                                         label: "Código",
                                         inputProps: {
@@ -248,6 +251,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                 }}
                                 popoverProps={{cssClass: "dialog-95x", ...popoverProps}} 
                                 listProps={{
+                                    onClick: () => {},
                                     fields: [{
                                         label: "Fornecedor",
                                         inputProps: {
@@ -444,7 +448,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                 xfield: "Quantidade",
                 Field: ({value}) => <small className="ion-text-center">{value}</small>,
             }, {
-                label: "DataEntrega",
+                label: "Data de Entrega",
                 xfield: "DataEntrega",
                 Field: ({value}) => <small className="ion-text-center">{value}</small>,
             }, {

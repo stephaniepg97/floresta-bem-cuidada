@@ -1,3 +1,4 @@
+import { Reducer, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { Page } from '../page/Page';
 import { ItemList } from '../item-list/ItemList';
 import { Item } from "../item/Item";
@@ -5,14 +6,13 @@ import { Search } from "../search/Search"
 import { Loading } from '../Loading';
 import { Model } from '../../../models/Model';
 import { RouteComponentProps } from '../../../types/RouteComponentProps';
-import { ListPropsWithDetails } from "../../../types/ListPropsWithDetails";
 import { ListContentProps } from '../../../types/ListContentProps';
-import { Reducer, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { AppContext } from '../../../contexts/AppContext';
+import { ItemListWithDetails } from '../item-list/ItemListWithDetails'; 
+import { DetailProps } from '../../../types/DetailProps';
 import "./List.scss";
-import { FormState } from '../../../types/FormProps';
 
-export const List = <T extends Model, D1 extends Model = {}, D2 extends Model = {}, T1 extends Model = T>({searchForm, ...props}: ListPropsWithDetails<T, D1, D2, T1> & FormState<T1> & RouteComponentProps) => {
+export const List = <T extends Model, D1 extends Model = {}, D2 extends Model = {}, T1 extends Model = T>({searchForm, ...props}: Omit<ListContentProps<T, D1, D2, T1>, 'setButtons' | 'data'> & RouteComponentProps) => {
     const { fetchApi, token, setToken } = useContext(AppContext);
     const [showLoading, setShowLoading] = useState<boolean>(true);
     const [data, setData] = useReducer<Reducer<Array<T> | null, Array<T> | null>>((_, newValue) => {
@@ -23,7 +23,12 @@ export const List = <T extends Model, D1 extends Model = {}, D2 extends Model = 
         if (!data && showLoading && !!props.fetchApiOptions) {
             console.log(props.fetchApiOptions.route)
             fetchApi(props.fetchApiOptions).then((result) => {
-                setData(result?.response?.Data || []);
+                if (result?.error?.status === 401) setToken(null) //Unauthorized
+                else setData(result?.response.Data || []);
+                return () => {
+                    result = null;
+                    
+                };
             });
         }
     }, [data, showLoading, props.fetchApiOptions, fetchApi, setToken, token]);
@@ -44,19 +49,25 @@ export const List = <T extends Model, D1 extends Model = {}, D2 extends Model = 
     );
 }
 
-export const ListContent = <T extends Model, D1 extends Model, D2 extends Model, T1 extends Model = T> ({data, ...props}: Omit<ListContentProps<T, D1, D2, T1>, 'searchForm'> & FormState<T1>) => {
-    const Items = ({ model, index }: {
+export const ListContent = <T extends Model, D1 extends Model, D2 extends Model = {}, T1 extends Model = T> ({data, ...props}: Omit<ListContentProps<T, D1, D2, T1>, 'searchForm'>) => {
+    const Items = ({ model, position }: {
         model: T;
-        index: number;
-    }) => {
+        position: number;
+    }) => { 
         const item = useRef<T>(model);
-        return (
-            <ItemList<T, D1, D2, T1> 
+        return !!props.details ? (
+            <ItemListWithDetails<T, D1, D2, T1> 
                 {...props}
-                yModel={item}
-                index={index}
+                details={props.details as DetailProps<T, D1, D2>}
+                xModel={item}
+                position={position}
             />
-        );
+        ) : <ItemList<T, T1> 
+                {...props}
+                onClick={props.onClick as (row: T) => void}
+                xModel={item}
+                position={position}
+        />;
     }
     return (
         <div key={props.keyId}>
@@ -72,7 +83,7 @@ export const ListContent = <T extends Model, D1 extends Model, D2 extends Model,
                     <Items 
                         model={model}
                         key={`${props.keyId}-${index}`}
-                        index={index}
+                        position={index}
                     />
                 ))
                 : <small className="sem-resultados">Sem resultados...</small>

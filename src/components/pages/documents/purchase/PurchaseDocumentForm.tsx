@@ -8,19 +8,18 @@ import { PurchaseDocument } from '../../../models/PurchaseDocument';
 import { DocumentForm } from "../DocumentForm";
 import { add } from 'ionicons/icons';
 
+import config from "../../../../config.json";
+
 const PurchaseDocumentForm: FunctionComponent<RouteComponentProps> = (props) => {
-    const { token, fetchApi } = useContext(AppContext);
+    const { token, fetchApi, setToken } = useContext(AppContext);
     const model = useRef<PurchaseDocument>({
+        ...config,
         Data: date(new Date()).slice(0, 10), 
         DataVencimento: date(new Date(), {days: -1, months: 1}).slice(0, 10),
         DescEntidade: 0,
         DescFinanceiro: 0,
-        TipoEntidade: "F",
-        Filial: "000",
-        Entidade: "",
-        IDObra: "8EF50027-DA77-11E3-9978-0011503E58D7",
-        Serie: "2021",
-        TipoDoc: "ECF" 
+        Serie: config.PurchaseFamily,
+        TipoDoc: config.PurchaseDocType 
     });
     useEffect(() => {
         if (!token) return props.history.push("/login")
@@ -44,9 +43,12 @@ const PurchaseDocumentForm: FunctionComponent<RouteComponentProps> = (props) => 
                             console.log(model.current);
                             fetchApi({route: "Compras/IntegracaoCompras/Actualiza", body: model.current, method: "POST"})
                                 .then((result) => {
-                                    //if (!!result.response?.Content) model.current = JSON.parse(result.response?.Content);
-                                    alert(result?.response?.Message ?? result?.error?.message);
+                                    if (result?.error?.status === 401) setToken(null) //Unauthorized
+                                    else alert(result?.response?.Message ?? result?.error?.message);
                                     console.log(result?.response?.Content)
+                                    return () => {
+                                        result = null;
+                                    };
                                 })
                         },
                         color: "success",

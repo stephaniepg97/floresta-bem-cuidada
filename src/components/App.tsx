@@ -12,11 +12,11 @@ import { AppContext } from './contexts/AppContext';
 import { createBrowserHistory } from 'history'; 
 import { AuthBody } from './models/AuthBody';
 import { OpenPlatformBody } from './models/OpenPlatformBody';
-
-import './App.scss';
-import config from "../config.json";
 import { IonReactRouter } from '@ionic/react-router';
 import { MenuPage } from './pages/common/menu/MenuPage';
+
+import config from "../config.json";
+import './App.scss';
 
 const App = () => {
   const [user, setUser] = useReducer<Reducer<User | null, User | null>>((_, newValue) => {
@@ -82,7 +82,6 @@ const App = () => {
             result.response = await response.text();
           }
         }
-        if (result.error?.status === 401) setToken(null) //Unauthorized
       } catch (e) {
         console.log(e)
         result.error = {

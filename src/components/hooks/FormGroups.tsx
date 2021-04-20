@@ -42,6 +42,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                     }}
                     popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
                     listProps={{
+                        onClick: () => {},
                         fields: [{
                             label: "Código",
                             inputProps: {
@@ -112,7 +113,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                                     }]
                                 }]
                             }
-                        }
+                        },
                     }}
                 />
             ),
@@ -124,9 +125,9 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                     return model;
                 },
                 value: props.model.current.Entidade,
-                maxlength: 8,
+                maxlength: 8, 
             },
-            OptionsDialog: (popoverProps) => (
+            OptionsDialog: ({setInputValue, close, ...popoverProps}) => (
                 <OptionsDialog<Supplier> 
                     keyId={props.keyId}
                     key={`${props.keyId}-supplier`}
@@ -138,6 +139,11 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                     }}
                     popoverProps={{cssClass: "dialog-95x", ...popoverProps}} 
                     listProps={{
+                        onClick: (row) => {
+                            props.model.current = {...props.model.current, NomeEntidade: row.NomeFornecedor, Entidade: row.Fornecedor};
+                            if (!!setInputValue) setInputValue(row.NomeFornecedor ?? "");
+                            close();
+                        },
                         fields: [{
                             label: "Fornecedor",
                             inputProps: {
@@ -246,7 +252,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                         }
                     }}
                 />
-            ),
+            )
         }],
         fieldGroups: [
             [{
@@ -272,6 +278,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                         }}
                         popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
                         listProps={{
+                            onClick: () => {},
                             fields: [{
                                 label: "Código",
                                 inputProps: {
@@ -312,6 +319,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                         }}
                         popoverProps={{cssClass: "dialog-80x", ...popoverProps}}
                         listProps={{
+                            onClick: () => {},
                             fields: [{
                                 label: "Tipo de Documento",
                                 inputProps: {
@@ -358,7 +366,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                 label: "Vencimento",
                 inputProps: {
                     getModel: (model, _, value) => {
-                        model.DataVencimento = props.model.current.DataVencimento;
+                        model.DataVencimento = value ?? props.model.current.DataVencimento;
                         return model;
                     },
                     type: "date",
@@ -439,6 +447,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
         title: "Artigos",
         listProps: {
             keyId: props.keyId,
+            model: useRef({} as T),
             data: props.model.current.Artigos || null,
             fields: [{
                 label: "Artigo",
@@ -462,6 +471,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                         }}
                         popoverProps={{cssClass: "dialog-95x", ...popoverProps}} 
                         listProps={{
+                            onClick: () => {},
                             fields: [{
                                 label: "Código",
                                 inputProps: {
@@ -645,10 +655,9 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> (props: Om
                 let index = formGroups.current.indexOf(fieldGroup);
                 formGroups.current.splice(index, index, fieldGroup);
                 setFormGroups([...formGroups.current]);
-                
             }
         }]
-        !stateFormProps && setStateFormProps(!stateFormProps)
+        !stateFormProps && setStateFormProps(true)
     }, [stateFormProps, props.model])
     return { formGroups: formGroups.current };
 } 

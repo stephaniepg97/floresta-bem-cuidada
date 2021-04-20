@@ -14,14 +14,17 @@ export const OptionsDialog = <T extends Model>({
     listProps, 
     popoverProps,
     ...routeProps
-}: OptionsDialogProps<T> & RouteComponentProps) => {
+}: Omit<OptionsDialogProps<T>, 'children'> & RouteComponentProps) => {
     const model = useRef<T>({} as T);
     return (
         <IonPopover {...popoverProps} cssClass={`dialog ${popoverProps.cssClass}`}>
-            {popoverProps.children}
             {listProps && (
                 <>
-                    <List<T> model={model} key={`${routeProps.keyId}-dialog`} {...listProps} {...routeProps} />
+                    <List<T> 
+                        model={model}
+                        key={`${routeProps.keyId}-dialog`} 
+                        {...listProps} 
+                        {...routeProps} />
                     <Buttons 
                         buttons={[{
                             text: "OK",
