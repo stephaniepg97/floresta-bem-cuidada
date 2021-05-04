@@ -5,9 +5,8 @@ import { attach } from 'ionicons/icons';
 import './FileInput.scss'
 import { createRef } from "react";
 import { FormState } from "../../../types/FormProps";
-import { CommonInputProps } from "../../../types/InputProps";
 
-export const FileInput = <T extends Model> ({model, ...props}: React.ComponentProps<typeof IonInput> & FormState<T> & Pick<CommonInputProps<T>, 'inputRef'>) => {
+export const FileInput = <T extends Model> ({model, ...props}: React.ComponentProps<typeof IonInput> & FormState<T>) => {
     const fileInput = createRef<HTMLInputElement>(), textInput = createRef<HTMLIonInputElement>();
     return (
         <>

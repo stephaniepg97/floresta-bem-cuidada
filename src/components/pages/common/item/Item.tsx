@@ -15,7 +15,7 @@ export const Item = <T extends Model = {}, T1 extends Model = T>({itemProps, col
     colProps?: ComponentProps<typeof IonCol>;
     Children: (col : ColumnProps<T, T1>) => React.ReactElement;
     fields: Array<ColumnProps<T, T1>>;
-} & Pick<ListProps<T, T1>, 'fields'>) => (
+} & Pick<ListProps<T, {}, T1>, 'fields'>) => (
     <IonItem {...itemProps}>
         <IonGrid>
             <IonRow>

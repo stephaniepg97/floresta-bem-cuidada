@@ -7,24 +7,22 @@ import { Item } from '../../../models/Item';
 import { PurchaseDocument } from '../../../models/PurchaseDocument';
 import { DocumentForm } from "../DocumentForm";
 import { add } from 'ionicons/icons';
-
-import config from "../../../../config.json";
+import { TipoEntidade, Filial, Entidade, NomeEntidade, IDObra, NomeObra, PurchaseFamily, PurchaseDocType } from "../../../../config.json";
 
 const PurchaseDocumentForm: FunctionComponent<RouteComponentProps> = (props) => {
     const { token, fetchApi, setToken } = useContext(AppContext);
     const model = useRef<PurchaseDocument>({
-        ...config,
         Data: date(new Date()).slice(0, 10), 
         DataVencimento: date(new Date(), {days: -1, months: 1}).slice(0, 10),
         DescEntidade: 0,
         DescFinanceiro: 0,
-        Serie: config.PurchaseFamily,
-        TipoDoc: config.PurchaseDocType 
+        Serie: PurchaseFamily,
+        TipoDoc: PurchaseDocType,
+        TipoEntidade, Filial, Entidade, IDObra, NomeEntidade, NomeObra
     });
     useEffect(() => {
         if (!token) return props.history.push("/login")
     }, [props, token]);
-
     return (
         <PurchaseDocumentFormContextProvider value={{
             fetchApiOptions: {route: "document/create"},
@@ -40,7 +38,7 @@ const PurchaseDocumentForm: FunctionComponent<RouteComponentProps> = (props) => 
                     label: {color: "white"},
                     button: {
                         onClick: () => {
-                            console.log(model.current);
+                            console.log(model.current)
                             fetchApi({route: "Compras/IntegracaoCompras/Actualiza", body: model.current, method: "POST"})
                                 .then((result) => {
                                     if (result?.error?.status === 401) setToken(null) //Unauthorized
@@ -56,7 +54,8 @@ const PurchaseDocumentForm: FunctionComponent<RouteComponentProps> = (props) => 
                 }]
             },
             model,
-            keyId: "despesa"
+            keyId: "despesa",
+            history: props.history
         }}>
             <DocumentForm<Item, PurchaseDocument> FormConsumer={PurchaseDocumentFormContextConsumer} />
         </PurchaseDocumentFormContextProvider>

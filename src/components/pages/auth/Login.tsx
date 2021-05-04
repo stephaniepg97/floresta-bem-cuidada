@@ -31,7 +31,7 @@ const Login: FunctionComponent<RouteComponentProps> = props => {
         login({logIn: () => setShowLoading(false), ...data, ...config})
             .then(([_token, result]) => {
                 if (!!result?.error) alert(`Error\n${result.error.message}`); 
-                setToken(_token);
+                setToken(!!result?.error ? null :_token);
             })
     });
     const fields: Array<{name: keyof FormData, title: string, options?: RegisterOptions}> = [{
@@ -77,7 +77,7 @@ const Login: FunctionComponent<RouteComponentProps> = props => {
                                                         }
                                                         onIonChange={onChange}
                                                         name={name}
-                                                        value={value}
+                                                        value={value}   
                                                         placeholder={field.title}
                                                         clearOnEdit={false}
                                                     />

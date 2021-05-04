@@ -13,7 +13,7 @@ import { RouteComponentProps } from '../../../types/RouteComponentProps';
 import { ButtonProps } from '../../../types/ButtonProps';
 
 import { Header } from "../header/Header";
-import { Buttons } from '../buttons/Buttons';
+import { Buttons } from '../buttons/Buttons'; 
 import { FabButton } from '../buttons/FabButton';
 
 export const Page: FunctionComponent<Pick<RouteComponentProps, 'headerProps' | 'keyId'> & PageProps> = ({

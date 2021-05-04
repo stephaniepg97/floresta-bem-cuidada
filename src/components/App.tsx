@@ -160,17 +160,17 @@ const App = () => {
     if (!!stored_token && !_user) {
       me(stored_token).then(([_user, result]) => {
         if (!!result?.error) { //403: Forbidden / 401: Token expired 
-          alert(`Error\n${result.error.message}`); 
+          alert(`Error\n${result.error.message}`);
+          setToken(null); 
           return () => {
-            setToken(null);
             stored_token = null;
             stored_user = null;
             _user = null;
             result = null;
           };
         }
+        setUser(_user);
         return () => {
-          setUser(_user);
           stored_token = null;
           stored_user = null;
           _user = null;

@@ -1,41 +1,44 @@
+import { useRef } from 'react';
 import { add, pencilSharp } from 'ionicons/icons';
 import { List } from "../common/list/List"
 import { RouteComponentProps } from "../../types/RouteComponentProps"
 import { _Document } from "../../models/Document";
 import { Item } from "../../models/Item";
 import { Button } from '../common/buttons/Button';
-import { InternalDocument } from '../../models/InternalDocument';
-import { PurchaseDocument } from '../../models/PurchaseDocument';
 import { OptionsDialog } from '../common/options-dialog/OptionsDialog';
 import { Construction } from '../../models/Construction';
 import { Supplier } from '../../models/Supplier';
 import { DocumentFamily } from '../../models/DocumentFamily';
 import { DocumentType } from '../../models/DocumentType';
 import { ListPropsWithDetails } from '../../types/ListPropsWithDetails';
+import { SearchDocument } from '../../models/SearchDocument';
 import { FormContextProps } from '../../types/FormContextProps';
-import { useRef } from 'react';
-import { FormContentProps } from '../../types/FormProps';
+import { FormState } from '../../types/FormProps';
+import { SearchProps } from '../../types/SearchProps';
 
-export const DocumentList = <T extends _Document = InternalDocument | PurchaseDocument, D extends Item = Item> (props: RouteComponentProps & Pick<ListPropsWithDetails<T, D>, 'details'>) => (
-    <List<T, D> 
+export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFormProps, details, ...props}: RouteComponentProps & Pick<ListPropsWithDetails<T, SearchDocument, D>, 'details'> & {
+    searchFormProps: FormState<SearchDocument> & Pick<SearchProps, 'clean' | 'search'>
+}) => (
+    <List<T, SearchDocument, D> 
         {...props}
         model={useRef<T>({} as T)}
         searchForm={{
+            ...searchFormProps,
             formProps: {
+                ...searchFormProps,
                 keyId: props.keyId,
-                model: useRef<T>({} as T),
-                formGroups: [{
+                formGroups: useRef([{
                     fieldGroups: [
                         [{
                             label: "Data Início",
                             inputProps: {
-                                name: "Data",
+                                name: "dataIni",
                                 type: "date",
                             }
                         }, {
                             label: "Data Fim",
                             inputProps: {
-                                name: "Data",
+                                name: "dataFim",
                                 type: "date",
                             }
                         }]
@@ -45,10 +48,10 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                         [{
                             label: "Tipo de Documento",
                             inputProps: {
-                                name: "TipoDoc",
+                                name: "tipoDoc",
                             },
                             OptionsDialog: (popoverProps) => (
-                                <OptionsDialog<DocumentType> 
+                                <OptionsDialog<DocumentType, {}, T> 
                                     {...props} 
                                     key={`${props.keyId}-documentType`}
                                     headerProps={{ 
@@ -60,6 +63,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                     }}
                                     popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
                                     listProps={{
+                                        model: useRef({} as T),
                                         onClick: () => {},
                                         fields: [{
                                             label: "Código",
@@ -73,7 +77,9 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                             }
                                         }],
                                         searchForm: {
-                                            formProps: {} as FormContextProps<DocumentType>
+                                            search: () => {},
+                                            clean: () => {},
+                                            formProps: {} as FormContextProps<{}>
                                         }
                                     }}
                                 />
@@ -81,10 +87,10 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                         }, {
                             label: "Série de Documento",
                             inputProps: {
-                                name: "Serie",
+                                name: "serie",
                             },
                             OptionsDialog: (popoverProps) => (
-                                <OptionsDialog<DocumentFamily> 
+                                <OptionsDialog<DocumentFamily, {}, T> 
                                     {...props} 
                                     key={`${props.keyId}-documentFamily`}
                                     headerProps={{ 
@@ -96,6 +102,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                     }}
                                     popoverProps={{cssClass: "dialog-80x", ...popoverProps}}
                                     listProps={{
+                                        model: useRef({} as T),
                                         onClick: () => {},
                                         fields: [{
                                             label: "Tipo de Documento",
@@ -123,19 +130,23 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                                 name: "DataFinal",
                                             }
                                         }],
-                                        searchForm: {} as FormContentProps<DocumentFamily>
+                                        searchForm: {
+                                            search: () => {},
+                                            clean: () => {},
+                                            formProps: {} as FormContextProps<{}>
+                                        }
                                     }}
                                 />
                             ),
                         }, {
                             label: "Nº Inicial",
                             inputProps: {
-                                name: "NumDoc",
+                                name: "numDocIni",
                             },
                         }, {
                             label: "Nº Final",
                             inputProps: {
-                                name: "NumDoc",
+                                name: "numDocFim",
                             },
                         }]
                     ]
@@ -143,10 +154,10 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                     fields: [{
                         label: "Obra",
                         inputProps: {
-                            name: "Descricao",
+                            name: "nomeObra",
                         },
                         OptionsDialog: (popoverProps) => (
-                            <OptionsDialog<Construction> 
+                            <OptionsDialog<Construction, Construction> 
                                 {...props} 
                                 key={`${props.keyId}-construction`}
                                 headerProps={{ 
@@ -157,6 +168,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                 }}
                                 popoverProps={{cssClass: "dialog-80x", ...popoverProps}} 
                                 listProps={{
+                                    model: useRef({} as T),
                                     onClick: () => {},
                                     fields: [{
                                         label: "Código",
@@ -190,10 +202,12 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                         }
                                     }],
                                     searchForm: {
+                                        search: () => {},
+                                        clean: () => {},
                                         formProps: {
                                             keyId: `${props.keyId}-construction`,
                                             model: useRef({} as Construction),
-                                            formGroups: [{
+                                            formGroups: useRef([{
                                                 fieldGroups: [
                                                     [{
                                                         label: "Código",
@@ -226,7 +240,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                                         readonly: true,
                                                     }
                                                 }]
-                                            }]
+                                            }])
                                         }
                                     }
                                 }}
@@ -237,10 +251,10 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                     fields: [{
                         label: "Fornecedor",
                         inputProps: {
-                            name: "Entidade",
+                            name: "nomeEntidade",
                         },
                         OptionsDialog: (popoverProps) => (
-                            <OptionsDialog<Supplier> 
+                            <OptionsDialog<Supplier, Supplier, T> 
                                 {...props} 
                                 key={`${props.keyId}-supplier`}
                                 headerProps={{ 
@@ -251,6 +265,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                 }}
                                 popoverProps={{cssClass: "dialog-95x", ...popoverProps}} 
                                 listProps={{
+                                    model: useRef({} as T),
                                     onClick: () => {},
                                     fields: [{
                                         label: "Fornecedor",
@@ -302,10 +317,12 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                         }
                                     }],
                                     searchForm: {
+                                        search: () => {},
+                                        clean: () => {},
                                         formProps: {
                                             keyId: `${props.keyId}-supplier-search`,
                                             model: useRef({} as Supplier),
-                                            formGroups: [{
+                                            formGroups: useRef([{
                                                 fieldGroups: [
                                                     [{
                                                         label: "Código",
@@ -355,16 +372,16 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
                                                         name: "NomeModoExp",
                                                     }
                                                 }]
-                                            }]
+                                            }])
                                         }
                                     }
                                 }}
                             />
                         ),
                     }]
-                }]
-            }}
-        }
+                }])
+            }
+        }}
         key={props.keyId}
         contentProps={{className: "content"}}
         fields={[{
@@ -434,7 +451,7 @@ export const DocumentList = <T extends _Document = InternalDocument | PurchaseDo
             }
         }}
         details={{
-            ...props.details,
+            ...details,
             columns: [{
                 label: "Artigo",
                 xfield: "Artigo",

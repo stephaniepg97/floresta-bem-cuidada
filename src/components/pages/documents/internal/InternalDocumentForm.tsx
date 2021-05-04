@@ -7,23 +7,21 @@ import { InternalDocument } from '../../../models/InternalDocument';
 import { Item } from '../../../models/Item';
 import { DocumentForm } from "../DocumentForm";
 import { add } from 'ionicons/icons';
-
-import config from "../../../../config.json";
+import { TipoEntidade, Filial, Entidade, NomeEntidade, IDObra, NomeObra, InternalFamily, InternalDocType } from "../../../../config.json";
 
 const InternalDocumentForm: FunctionComponent<RouteComponentProps> = (props) => {
     const {token, fetchApi, setToken} = useContext(AppContext);
     useEffect(() => {
-        console.log(props)
         if (!token) props.history.push("/login");
     }, [props, token])
     const model = useRef<InternalDocument>({
-        ...config,
         Data: date(new Date()).slice(0, 10), 
         DataVencimento: date(new Date(), {days: -1, months: 1}).slice(0, 10),
         DescEntidade: 0,
         DescFinanceiro: 0,
-        Serie: config.InternalFamily,
-        TipoDoc: config.InternalDocType,
+        Serie: InternalFamily,
+        TipoDoc: InternalDocType,
+        TipoEntidade, Filial, Entidade, IDObra, NomeEntidade, NomeObra
     });
     return (
         <InternalDocumentFormContextProvider value={{
@@ -40,6 +38,7 @@ const InternalDocumentForm: FunctionComponent<RouteComponentProps> = (props) => 
                     label: {color: "white"},
                     button: {
                         onClick: () => {
+                            console.log(model.current)
                             fetchApi({route: "Internos/IntegracaoInternos/Actualiza", body: model.current, method: "POST"})
                                 .then((result) => {
                                     if (result?.error?.status === 401) setToken(null) //Unauthorized
@@ -56,7 +55,8 @@ const InternalDocumentForm: FunctionComponent<RouteComponentProps> = (props) => 
                 }]
             },
             model,
-            keyId: "encomenda"
+            keyId: "encomenda",
+            history: props.history
         }}>
             <DocumentForm<Item, InternalDocument> FormConsumer={InternalDocumentFormContextConsumer} />
         </InternalDocumentFormContextProvider>

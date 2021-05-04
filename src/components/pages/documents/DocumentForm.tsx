@@ -15,6 +15,6 @@ export const DocumentForm = <D extends Item = Item, T extends _Document<D> = _Do
 const DocumentFormContent = <D extends Item = Item, T extends _Document<D> = _Document<D>> ({pageProps, contentProps}: {contentProps: FormContentProps<T, D>, pageProps: FormContextProps<T, D>}) => (
     <Form<T, D> 
         {...contentProps}
-        key={pageProps.keyId}
+        key={pageProps.keyId} 
     />
 );

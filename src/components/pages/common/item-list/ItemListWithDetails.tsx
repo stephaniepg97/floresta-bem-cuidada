@@ -49,11 +49,10 @@ export const ItemListWithDetails = <T extends Model, D1 extends Model = {}, D2 e
         if (!showDetails || !!data) return;
         if (!data && details?.fetchApiOptions) {
             fetchApi(details.fetchApiOptions(xModel.current)).then((result) => {
+                setData(result?.response.Data || []);
                 if (result?.error?.status === 401) setToken(null) //Unauthorized
-                else setData(result?.response.Data || []);
                 return () => {
                     result = null;
-                    
                 };
             });
         }

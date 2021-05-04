@@ -1,27 +1,24 @@
-import React, { FunctionComponent, useContext, useEffect } from 'react';
+import { FunctionComponent } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { AppContext } from '../../../contexts/AppContext';
 import { InternalDocument } from "../../../models/InternalDocument";
 import { DocumentList } from '../DocumentList';
-
-import config from "../../../../config.json";
+import { InternalList, InternalDetailList } from "../../../../config.json";
+import { useListWithSearch } from '../../../hooks/ListWithSearch';
+import { Item } from '../../../models/Item';
+import { SearchDocument } from '../../../models/SearchDocument';
 
 const InternalDocumentList: FunctionComponent<RouteComponentProps> = (props) => {
-    const {token} = useContext(AppContext);
-    useEffect(() => {
-        console.log(props)
-        if (!token) return props.history.push("/login")
-    }, [props, token])
+    const { searchModel, fetchApiOptions, setSearchModel, clean } = useListWithSearch<SearchDocument>({listId: InternalList, ...props})
     return (
-        <DocumentList<InternalDocument> 
+        <DocumentList<Item, InternalDocument> 
             {...props}
+            fetchApiOptions={fetchApiOptions}
             keyId="despesas"
             key="despesas"
-            fetchApiOptions={{route: `Plataforma/Listas/CarregaLista/adhoc?listId=${config.InternalList}&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%`}}
             details={{
                 fetchApiOptions: (row) => {
                     return {
-                        route: `Plataforma/Listas/CarregaLista/adhoc?listId=${config.InternalDetailList}&listParameters=000,${row.NumDoc},${row.Serie},${row.TipoDoc}`,
+                        route: `Plataforma/Listas/CarregaLista/adhoc?listId=${InternalDetailList}&listParameters=000,${row.NumDoc},${row.Serie},${row.TipoDoc}`,
                     };
                 },
                 columns: []
@@ -35,6 +32,7 @@ const InternalDocumentList: FunctionComponent<RouteComponentProps> = (props) => 
                     },
                 }
             }}
+            searchFormProps={{model: searchModel, search: () => setSearchModel(searchModel), clean}}
         />
     );
 }

@@ -1,25 +1,27 @@
-import { FunctionComponent, useContext, useEffect } from 'react';
+import { FunctionComponent, useEffect } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { AppContext } from '../../../contexts/AppContext';
 import { PurchaseDocument } from '../../../models/PurchaseDocument';
 import { DocumentList } from '../DocumentList';
-
-import config from "../../../../config.json";
+import { PurchaseList, PurchaseDetailList } from "../../../../config.json";
+import { useListWithSearch } from '../../../hooks/ListWithSearch';
+import { Item } from '../../../models/Item';
+import { SearchDocument } from '../../../models/SearchDocument';
 
 const PurchaseDocumentList: FunctionComponent<RouteComponentProps> = (props) => {
-    const { token } = useContext(AppContext);
+    const { searchModel, fetchApiOptions, setSearchModel, clean, setFetchApiOptions } = useListWithSearch<SearchDocument>({listId: PurchaseList, ...props})
     useEffect(() => {
-        if (!token) props.history.push("/login")
-    }, [props.history, token])
+        console.log(fetchApiOptions)
+    }, [fetchApiOptions])
     return (
-        <DocumentList<PurchaseDocument> 
+        <DocumentList<Item, PurchaseDocument> 
+            {...props}
             keyId="encomendas"
             key="encomendas"
-            fetchApiOptions={{route: `Plataforma/Listas/CarregaLista/adhoc?listId=${config.PurchaseList}&listParameters=2999-12-12,1800-01-01,%%,%%,%%,99999,0,%%,%%,%%`}}
+            fetchApiOptions={fetchApiOptions}
             details={{
                 fetchApiOptions: (row) => {
                     return {
-                        route: `Plataforma/Listas/CarregaLista/adhoc?listId=${config.PurchaseDetailList}&listParameters=000,${row.NumDoc},${row.Serie},${row.TipoDoc}`,
+                        route: `Plataforma/Listas/CarregaLista/adhoc?listId=${PurchaseDetailList}&listParameters=000,${row.NumDoc},${row.Serie},${row.TipoDoc}`,
                     };
                 },
                 columns: []
@@ -28,11 +30,12 @@ const PurchaseDocumentList: FunctionComponent<RouteComponentProps> = (props) => 
                 title: "Encomendas", 
                 fabButton: {
                     button: {
-                        routerLink: "/encomendas/form",
+                        routerLink: "/encomendas/form", 
                         routerDirection: "root"
                     },
                 }
             }}
+            searchFormProps={{model: searchModel, search: () => setSearchModel(searchModel), clean}}
         />
     );
 }
