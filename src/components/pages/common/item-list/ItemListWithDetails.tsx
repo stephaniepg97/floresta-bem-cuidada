@@ -71,7 +71,9 @@ export const ItemListWithDetails = <T extends Model, D1 extends Model = {}, D2 e
                 {...props} 
                 itemProps={{detail: true, detailIcon: showDetails ? chevronDown : chevronForward}}
                 onClick={() => setShowDetails(!showDetails)}
-                xModel={xModel} selected={selected}>
+                xModel={xModel} 
+                selected={selected}
+            >
                 {data && showDetails &&
                     <>
                         <IonLabel className="ion-align-self-end">

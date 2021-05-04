@@ -14,9 +14,9 @@ import { FormGroupProps, FormState } from "../types/FormProps";
 import { InputProps } from "../types/InputProps";
 import { RouteComponentProps } from "../types/RouteComponentProps";
 import { add } from 'ionicons/icons';
-import { useListWithSearch } from "./ListWithSearch";
 import { SearchSupplier } from "../models/SearchSupplier";
-import { SupplierList } from "../../config.json"
+import { SupplierList, ConstructionList, ItemsList } from "../../config.json"
+import { SearchItems } from "../models/SearchItems";
 
 export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, keyId, history}: Pick<RouteComponentProps, 'keyId'> & Pick<RCP, 'history'> &  FormState<T>) => {
     const [ready, setupForm] = useState(false), 
@@ -41,9 +41,6 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                     key={`${keyId}-construction`}
                     headerProps={{ 
                         title: "Obras" 
-                    }}
-                    fetchApiOptions={{
-                        route: "/Plataforma/Listas/CarregaLista/adhoc?listId=C7EEB235-6C8F-EB11-81C2-BCE92FBF0A4F&listParameters=%%,%%,%%,%%,%%,%%,%%"
                     }}
                     popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
                     listProps={{
@@ -81,8 +78,8 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                             }
                         }],
                         searchForm: {
-                            search: () => {},
-                            clean: () => {},
+                            listId: ConstructionList,
+                            history,
                             formProps: {
                                 keyId: `${keyId}-construction-search`,
                                 model: useRef({} as Construction),
@@ -128,135 +125,131 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
         }, {
             label: "Fornecedor",
             inputProps: {
-                name: "NomeEntidade",
+                name: "NomeFornecedor",
                 maxlength: 8, 
             },
-            OptionsDialog: ({close, ...popoverProps}) => {
-                const { searchModel, fetchApiOptions, setSearchModel, clean } = useListWithSearch<SearchSupplier>({listId: SupplierList, history})
-                return (
-                    <OptionsDialog<Supplier, SearchSupplier, T> 
-                        keyId={keyId}
-                        key={`${keyId}-supplier`}
-                        headerProps={{ 
-                            title: "Fornecedores" 
-                        }}
-                        fetchApiOptions={fetchApiOptions}
-                        popoverProps={{cssClass: "dialog-95x", ...popoverProps}} 
-                        listProps={{
-                            model,
-                            onClick: row => close({...model.current, NomeEntidade: row.NomeFornecedor, Entidade: row.Fornecedor}),
-                            fields: [{
-                                label: "Fornecedor",
-                                inputProps: {
-                                    name: "Fornecedor",
-                                    readonly: true,
-                                }
-                            }, {
-                                label: "Nome",
-                                inputProps: {
-                                    name: "NomeFornecedor",
-                                    readonly: true,
-                                }
-                            }, {
-                                label: "NIF",
-                                inputProps: {
-                                    name: "NIF",
-                                    readonly: true,
-                                }
-                            }, {
-                                label: "País",
-                                inputProps: {
-                                    name: "NomePais",
-                                    readonly: true,
-                                }
-                            }, {
-                                label: "Distrito",
-                                inputProps: {
-                                    name: "NomeDistrito",
-                                    readonly: true,
-                                }
-                            }, {
-                                label: "Condição de Pagamento",
-                                inputProps: {
-                                    name: "NomeCondPag",
-                                    readonly: true,
-                                }
-                            }, {
-                                label: "Modo de Pagamento",
-                                inputProps: {
-                                    name: "NomeModoPag",
-                                    readonly: true,
-                                }
-                            }, {
-                                label: "Modo de Expedição",
-                                inputProps: {
-                                    name: "NomeModoExp",
-                                    readonly: true,
-                                }
-                            }],
-                            searchForm: {
-                                search: () => setSearchModel(searchModel),
-                                clean,
-                                formProps: {
-                                    keyId: `${keyId}-supplier-search`,
-                                    model: searchModel,
-                                    formGroups: useRef([{
-                                        fieldGroups: [
-                                            [{
-                                                label: "Código",
-                                                inputProps: {
-                                                    name: "nif", //todo
-                                                }
-                                            }, {
-                                                label: "NIF",
-                                                inputProps: {
-                                                    name: "nif",
-                                                }
-                                            }]
-                                        ]
-                                    }, {
-                                        fieldGroups: [
-                                            [{
-                                                label: "País",
-                                                inputProps: {
-                                                    name: "nomePais",
-                                                }
-                                            }, {
-                                                label: "Distrito",
-                                                inputProps: {
-                                                    name: "nomeDistrito",
-                                                }
-                                            }]
-                                        ]
-                                    }, {
-                                        fields: [{
-                                            label: "Nome",
+            OptionsDialog: ({close, ...popoverProps}) => (
+                <OptionsDialog<Supplier, SearchSupplier, T> 
+                    keyId={keyId}
+                    key={`${keyId}-supplier`}
+                    headerProps={{ 
+                        title: "Fornecedores" 
+                    }}
+                    popoverProps={{cssClass: "dialog-95x", ...popoverProps}} 
+                    listProps={{
+                        model,
+                        onClick: row => close({...model.current, NomeFornecedor: row.NomeFornecedor, Fornecedor: row.Fornecedor}),
+                        fields: [{
+                            label: "Fornecedor",
+                            inputProps: {
+                                name: "Fornecedor",
+                                readonly: true,
+                            }
+                        }, {
+                            label: "Nome",
+                            inputProps: {
+                                name: "NomeFornecedor",
+                                readonly: true,
+                            }
+                        }, {
+                            label: "NIF",
+                            inputProps: {
+                                name: "NIF",
+                                readonly: true,
+                            }
+                        }, {
+                            label: "País",
+                            inputProps: {
+                                name: "NomePais",
+                                readonly: true,
+                            }
+                        }, {
+                            label: "Distrito",
+                            inputProps: {
+                                name: "NomeDistrito",
+                                readonly: true,
+                            }
+                        }, {
+                            label: "Condição de Pagamento",
+                            inputProps: {
+                                name: "NomeCondPag",
+                                readonly: true,
+                            }
+                        }, {
+                            label: "Modo de Pagamento",
+                            inputProps: {
+                                name: "NomeModoPag",
+                                readonly: true,
+                            }
+                        }, {
+                            label: "Modo de Expedição",
+                            inputProps: {
+                                name: "NomeModoExp",
+                                readonly: true,
+                            }
+                        }],
+                        searchForm: {
+                            listId: SupplierList,
+                            history,
+                            formProps: {
+                                keyId: `${keyId}-supplier-search`,
+                                model: useRef({} as SearchSupplier),
+                                formGroups: useRef([{
+                                    fieldGroups: [
+                                        [{
+                                            label: "Código",
                                             inputProps: {
-                                                name: "nomePais", //todo
+                                                name: "nif", //todo
                                             }
                                         }, {
-                                            label: "Condição de Pagamento",
+                                            label: "NIF",
                                             inputProps: {
-                                                name: "nomeCondPag",
-                                            }
-                                        }, {
-                                            label: "Modo de Pagamento",
-                                            inputProps: {
-                                                name: "nomeModoPag",
-                                            }
-                                        }, {
-                                            label: "Modo de Expedição",
-                                            inputProps: {
-                                                name: "nomeModoExp",
+                                                name: "nif",
                                             }
                                         }]
-                                    }])
-                                }
+                                    ]
+                                }, {
+                                    fieldGroups: [
+                                        [{
+                                            label: "País",
+                                            inputProps: {
+                                                name: "nomePais",
+                                            }
+                                        }, {
+                                            label: "Distrito",
+                                            inputProps: {
+                                                name: "nomeDistrito",
+                                            }
+                                        }]
+                                    ]
+                                }, {
+                                    fields: [{
+                                        label: "Nome",
+                                        inputProps: {
+                                            name: "nomePais", //todo
+                                        }
+                                    }, {
+                                        label: "Condição de Pagamento",
+                                        inputProps: {
+                                            name: "nomeCondPag",
+                                        }
+                                    }, {
+                                        label: "Modo de Pagamento",
+                                        inputProps: {
+                                            name: "nomeModoPag",
+                                        }
+                                    }, {
+                                        label: "Modo de Expedição",
+                                        inputProps: {
+                                            name: "nomeModoExp",
+                                        }
+                                    }]
+                                }])
                             }
-                        }}
-                    />
-                );
-            }
+                        }
+                    }}
+                />
+            )
         }],
         fieldGroups: [
             [{
@@ -265,7 +258,6 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                     name: "TipoDoc",
                     maxlength: 10,
                     readonly: true,
-                    value: model.current.TipoDoc,
                 },
                 OptionsDialog: (popoverProps) => (
                     <OptionsDialog<DocumentType, DocumentType> 
@@ -273,9 +265,6 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                         key={`${keyId}-documentType`}
                         headerProps={{ 
                             title: "Tipos de Documento" 
-                        }}
-                        fetchApiOptions={{
-                            route: "types/all"
                         }}
                         popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
                         listProps={{
@@ -293,8 +282,8 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                                 }
                             }],
                             searchForm: {
-                                search: () => {},
-                                clean: () => {},
+                                listId: "",
+                                history,
                                 formProps: {} as FormContextProps<DocumentType>
                             }
                         }}
@@ -306,7 +295,6 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                     name: "Serie",
                     maxlength: 10,
                     readonly: true,
-                    value: model.current.Serie,
                 },
                 OptionsDialog: (popoverProps) => (
                     <OptionsDialog<DocumentFamily, DocumentFamily> 
@@ -314,9 +302,6 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                         key={`${keyId}-documentFamily`}
                         headerProps={{ 
                             title: "Séries" 
-                        }}
-                        fetchApiOptions={{
-                            route: "families/all"
                         }}
                         popoverProps={{cssClass: "dialog-80x", ...popoverProps}}
                         listProps={{
@@ -349,8 +334,8 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                                 }
                             }],
                             searchForm: {
-                                search: () => {},
-                                clean: () => {},
+                                listId: "",
+                                history,
                                 formProps: {} as FormContextProps<DocumentFamily>
                             }
                         }}
@@ -361,14 +346,12 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                 inputProps: {
                     name: "Data",
                     type: "date",
-                    value: model.current.Data,
                 }
             }, {
                 label: "Vencimento",
                 inputProps: {
                     name: "DataVencimento",
                     type: "date",
-                    value: model.current.DataVencimento,
                 }
             }], [{
                 label: "Desconto de Fornecedor",
@@ -376,7 +359,6 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                     name: "DescEntidade",
                     type: "number",
                     step: ".01",
-                    value: model.current.DescEntidade,
                 },
             }, {
                 label: "Desconto Financeiro",
@@ -384,7 +366,6 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                     name: "DescFinanceiro",
                     type: "number",
                     step: ".01",
-                    value: model.current.DescFinanceiro,
                 }
             }]
         ]
@@ -443,25 +424,16 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                 label: "Artigo",
                 inputProps: {
                     name: "Artigo",
-                    updateModel: (position, value, row) => {
-                        if (!model.current.Artigos) {
-                            model.current.Artigos = [{DataEntrega: date(new Date()).slice(0, 10)} as D];
-                            position = 0;
-                        } else if (position === model.current.Artigos.length) model.current.Artigos = [...model.current.Artigos, {DataEntrega: date(new Date()).slice(0, 10)} as D];
-                        row = {...model.current.Artigos[position], ...!!row ? row : { Artigo: value ?? ""}};
-                        model.current.Artigos.splice(position, position + 1, row);
-                        updateArtigo(row, position);
+                    updateModel: (position, value, xModel) => {
+                        updateArtigoOnModel({position, ...!!xModel ? { xModel } : { value: value ?? "", key: "Artigo"}})
                     }
                 },
                 OptionsDialog: ({close, ...popoverProps}) => (
-                    <OptionsDialog<D, D, T> 
+                    <OptionsDialog<D, SearchItems, T> 
                         keyId={keyId}
                         key={`${keyId}-artigos`}
                         headerProps={{ 
                             title: "Artigos" 
-                        }}
-                        fetchApiOptions={{
-                            route: "/Plataforma/Listas/CarregaLista/adhoc?listId=DBEEB01F-A49E-EB11-81D1-BCE92FBF0A4F&listParameters=1,1,%%,%%,%%,%%,%%,%%"
                         }}
                         popoverProps={{cssClass: "dialog-95x", ...popoverProps}} 
                         listProps={{
@@ -511,42 +483,51 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                                 }
                             }],
                             searchForm: {
-                                search: () => {},
-                                clean: () => {},
+                                listId: ItemsList,
+                                history,
                                 formProps: {
                                     keyId: `${keyId}-artigos-search`,
-                                    model: useRef({} as D),
+                                    model: useRef({} as SearchItems),
                                     formGroups: useRef([{
-                                        fieldGroups: [
-                                            [{
-                                                label: "Código",
-                                                inputProps: {
-                                                    name: "Artigo",
-                                                }
-                                            }, {
-                                                label: "Armazém Principal",
-                                                inputProps: {
-                                                    name: "ArmazemSugestao",
-                                                    readonly: true,
-                                                }
-                                            }]
-                                        ]
-                                    }, {
                                         fields: [{
+                                            label: "Código",
+                                            inputProps: {
+                                                name: "artigo",
+                                                updateModel: (_, value, __, model) => {
+                                                    if (model?.current.nomeArtigo === "%%" && !!value && value !== "") model.current = {...model.current, nomeArtigo: "NULL" }
+                                                    if (!!model && (!!value && value !== "")) model.current = {...model.current, artigo: `%${value}%` }
+                                                    else if (!!model) model.current = {...model.current, artigo: "%%", nomeArtigo: "%%" }
+                                                }
+                                            }
+                                        }, {
                                             label: "Nome",
                                             inputProps: {
-                                                name: "NomeArtigo",
-                                                readonly: true,
+                                                name: "nomeArtigo",
+                                                updateModel: (_, value, __, model) => {
+                                                    if (model?.current.artigo === "%%" && !!value && value !== "") model.current = {...model.current, artigo: "NULL" }
+                                                    if (!!model && (!!value && value !== "")) model.current = {...model.current, nomeArtigo: `%${value}%` }
+                                                    else if (!!model) model.current = {...model.current, artigo: "%%", nomeArtigo: "%%" }
+                                                }
                                             }
                                         }, {
                                             label: "Fornecedor Principal",
                                             inputProps: {
-                                                name: "NomeFornecedorPrincipal",
+                                                name: "nomeFornecedor",
+                                                updateModel: (_, value, __, model) => {
+                                                    if (model?.current.fornecedor === "%%" && !!value && value !== "") model.current = {...model.current, fornecedor: "NULL" }
+                                                    if (!!model && (!!value && value !== "")) model.current = {...model.current, nomeFornecedor: `%${value}%`, allFornecedores: "0" }
+                                                    else if (!!model) model.current = {...model.current, fornecedor: "%%", nomeFornecedor: "%%", allFornecedores: "1" }
+                                                }
                                             }
                                         }, {
                                             label: "Família",
                                             inputProps: {
-                                                name: "NomeFamilia",
+                                                name: "nomeFamilia",
+                                                updateModel: (_, value, __, model) => {
+                                                    if (model?.current.familia === "%%" && !!value && value !== "") model.current = {...model.current, familia: "NULL" }
+                                                    if (!!model && (!!value && value !== "")) model.current = {...model.current, nomeFamilia: `%${value}%`, allFamilias: "0" }
+                                                    else if (!!model) model.current = {...model.current, familia: "%%", nomeFamilia: "%%", allFamilias: "1" }
+                                                }
                                             }
                                         }]
                                     }])
@@ -560,60 +541,39 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                 inputProps: {
                     name: "Quantidade",
                     updateModel: (position, value) => {
-                        if (!model.current.Artigos) {
-                            model.current.Artigos = [{DataEntrega: date(new Date()).slice(0, 10)} as D];
-                            position = 0;
-                        } else if (position === model.current.Artigos.length) model.current.Artigos = [...model.current.Artigos, {DataEntrega: date(new Date()).slice(0, 10)} as D];
-                        const row : D = {...model.current.Artigos[position], Quantidade: Number(value ?? 0)};
-                        model.current.Artigos.splice(position, position + 1, row);
-                        updateArtigo(row, position);
+                        updateArtigoOnModel({position, value: Number(value ?? 0), key: "Quantidade"})
                     }
                 }
             }, {
                 label: "Custo Unitário",
                 inputProps: {
+                    name: "PrecUnit",
                     updateModel: (position, value) => {
-                        if (!model.current.Artigos) {
-                            model.current.Artigos = [{DataEntrega: date(new Date()).slice(0, 10)} as D];
-                            position = 0;
-                        } else if (position === model.current.Artigos.length) model.current.Artigos = [...model.current.Artigos, {DataEntrega: date(new Date()).slice(0, 10)} as D];
-                        const row : D = {...model.current.Artigos[position], PrecUnit: Number(value ?? 0)};
-                        model.current.Artigos.splice(position, position + 1, row);
-                        updateArtigo(row, position);
+                        updateArtigoOnModel({position, value: Number(value ?? 0), key: "PrecUnit"})
                     }
                 }
             }, {
                 label: "Desconto",
                 inputProps: {
+                    name: "Desconto",
                     updateModel: (position, value) => {
-                        if (!model.current.Artigos) {
-                            model.current.Artigos = [{DataEntrega: date(new Date()).slice(0, 10)} as D];
-                            position = 0;
-                        } else if (position === model.current.Artigos.length) model.current.Artigos = [...model.current.Artigos, {DataEntrega: date(new Date()).slice(0, 10)} as D];
-                        const row : D = {...model.current.Artigos[position], Desconto: Number(value ?? 0)};
-                        model.current.Artigos.splice(position, position + 1, row);
-                        updateArtigo(row, position);
+                        updateArtigoOnModel({position, value: Number(value ?? 0), key: "Desconto"})
                     }
                 },
             }, {
                 label: "Data de Entrega",
                 inputProps: {
+                    name: "DataEntrega",
                     updateModel: (position, value) => {
-                        if (!model.current.Artigos) {
-                            model.current.Artigos = [{DataEntrega: date(new Date()).slice(0, 10)} as D];
-                            position = 0;
-                        } else if (position === model.current.Artigos.length) model.current.Artigos = [...model.current.Artigos, {DataEntrega: date(new Date()).slice(0, 10)} as D];
-                        const row : D = {...model.current.Artigos[position], DataEntrega: value ?? date(new Date()).slice(0, 10)};
-                        model.current.Artigos.splice(position, position + 1, row);
-                        updateArtigo(row, position);
+                        updateArtigoOnModel({position, value: (value ?? date(new Date())), key: "DataEntrega"})
                     },
                     type: "date",
                     value: date(new Date()).slice(0, 10),
                 }
             }],
             searchForm: {
-                search: () => {},
-                clean: () => {},
+                listId: "",
+                history,
                 formProps: {} as FormContextProps<{}>
             }
         },
@@ -639,7 +599,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
             </div>
         ),
     }]);
-    const updateAnexo = useCallback((props: InputProps<T>, position?: number) => {
+    const updateAnexo = useCallback<(props: InputProps<T>, position?: number) => void>((props, position) => {
         const fieldGroup = formGroups.current.find(fg => fg.title === "Anexos") as FormGroupProps<T, {}, D>;
         if (position === undefined) {
             fieldGroup.fields = [...!!fieldGroup.fields ? fieldGroup.fields as InputProps<T>[] : [], props];
@@ -647,8 +607,8 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
         }
         if (!fieldGroup.fields) fieldGroup.fields = [props];
         else if (position < fieldGroup.fields.length) fieldGroup.fields[position] = props;
-    }, [formGroups])
-    const updateArtigo = useCallback((row: D, position?: number) => {
+    }, [formGroups]), 
+    updateArtigo = useCallback<(row: D, position?: number | undefined) => void>((row, position) => {
         const fieldGroup = formGroups.current.find(fg => fg.title === "Artigos") as FormGroupProps<T, {}, D>;
         if (!fieldGroup.listProps) return;
         if (position === undefined) {
@@ -659,7 +619,27 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
         if (!fieldGroup.listProps.data) fieldGroup.listProps.data = [row];
         else if (position < fieldGroup.listProps.data.length) fieldGroup.listProps.data[position] = row;
         console.log(fieldGroup.listProps.data)
-    }, [formGroups])
+    }, [formGroups]),
+    updateArtigoOnModel = useCallback<(_: {
+        position: number;
+    } & ({
+        value: Number | string | null;
+        key: keyof D;
+        xModel?: undefined;
+    } | {
+        xModel: D;
+        value?: undefined;
+        key?: undefined;
+    })) => void>(({position, value, xModel, key}) => {
+        if (!model.current.Artigos) {
+            model.current.Artigos = [{DataEntrega: date(new Date())} as D];
+            position = 0;
+        } else if (position === model.current.Artigos.length) model.current.Artigos = [...model.current.Artigos, {DataEntrega: date(new Date())} as D];
+        const row : D = {...model.current.Artigos[position], ...!!xModel ? xModel : { [String(key)]: value }};
+        model.current.Artigos.splice(position, position + 1, row);
+        updateArtigo(row, position);
+    }, [updateArtigo, model]);
+
     useEffect(() => {
         clickEvents.current = [{
             title: "Anexos", //"Anexos": add onClick event to add button

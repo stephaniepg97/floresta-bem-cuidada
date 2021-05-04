@@ -79,15 +79,7 @@ const FormPageContent = <T extends Model = {}, D extends Model = {}> ({formGroup
                                 </IonLabel>
                                 <Input<T> 
                                     {...{ ...i, position, model }} 
-                                    key={`${i.label} input-form`} 
-                                    /*setValue={(value, newValue) => {
-                                        const inputProps = (formGroups.current[index].fields as InputProps<T, T>[])[position].inputProps;
-                                        if (!!inputProps && !!value) {
-                                            inputProps.value = inputProps.type === "date" ? String(value).slice(0, 10) : inputProps.type === "number" ? Number(value) :  String(value);
-                                            model.current = newValue || model.current;
-                                        }
-                                        console.log(formGroups.current[index].fields)
-                                    }}*/
+                                    key={`${i.label} input-form`}   
                                 />
                             </IonItem>
                         ))}

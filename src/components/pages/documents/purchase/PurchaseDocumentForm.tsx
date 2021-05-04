@@ -12,13 +12,13 @@ import { TipoEntidade, Filial, Entidade, NomeEntidade, IDObra, NomeObra, Purchas
 const PurchaseDocumentForm: FunctionComponent<RouteComponentProps> = (props) => {
     const { token, fetchApi, setToken } = useContext(AppContext);
     const model = useRef<PurchaseDocument>({
-        Data: date(new Date()).slice(0, 10), 
-        DataVencimento: date(new Date(), {days: -1, months: 1}).slice(0, 10),
+        Data: date(new Date()), 
+        DataVencimento: date(new Date(), {days: -1, months: 1}),
         DescEntidade: 0,
         DescFinanceiro: 0,
         Serie: PurchaseFamily,
         TipoDoc: PurchaseDocType,
-        TipoEntidade, Filial, Entidade, IDObra, NomeEntidade, NomeObra
+        TipoEntidade, Filial, Fornecedor: Entidade, IDObra, NomeFornecedor: NomeEntidade, NomeObra
     });
     useEffect(() => {
         if (!token) return props.history.push("/login")

@@ -22,9 +22,10 @@ export const Input = <T extends Model, T1 extends Model = T> ({
     const modelValue = useCallback(() => value<T|T1>(inputProps?.name as keyof T & keyof T1 ?? xfield as keyof T, !!xModel?.current ? xModel.current : model.current), [inputProps?.name, model, xModel, xfield]);
     const getValue = useCallback(() => {
         return !inputProps ? {} : {
-            value: !!modelValue() ? inputProps.type === "date" ? String(modelValue()).slice(0, 10) : inputProps.type === "number" ? Number(modelValue()) :  String(modelValue()).replace("%%", "") : ""
+            value: !!modelValue() ? inputProps.type === "date" ? String(modelValue()).slice(0, 10) : inputProps.type === "number" ? Number(modelValue()) :  String(modelValue()).replaceAll("%", "").replace("NULL", "") : ""
         };
     }, [inputProps, modelValue]);
+    inputProps?.type === "date" && console.log(getValue(), inputProps?.value)
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const [fieldProps, setFieldProps] = useState<ComponentProps<typeof IonInput>>(inputProps ? {
         ...inputProps, 
@@ -32,15 +33,16 @@ export const Input = <T extends Model, T1 extends Model = T> ({
         placeholder: inputProps?.placeholder ?? label,
         clearOnEdit: false,
         onIonChange: event => {
-            if(!!xModel) {
+            if(!!xModel) 
                 xModel.current = inputProps.name 
                     ? {...xModel.current, [inputProps.name as keyof T]: inputProps.type === "date" ? event.detail.value + "T00:00:00Z" : event.detail.value} 
                     : xModel.current;
-            }
-            if (!!inputProps.updateModel) inputProps.updateModel(position, event.detail.value, xModel?.current)
-            else model.current = inputProps.name 
-                ? {...model.current, [inputProps.name as keyof T1]: inputProps.type === "date" ? event.detail.value + "T00:00:00Z" : event.detail.value} 
-                : model.current;
+            else 
+                model.current = inputProps.name 
+                    ? {...model.current, [inputProps.name as keyof T1]: inputProps.type === "date" ? event.detail.value + "T00:00:00Z" : event.detail.value} 
+                    : model.current;
+            if (!!inputProps.updateModel) inputProps.updateModel(position, event.detail.value, xModel?.current, model)
+            console.log(model.current, getValue())
             inputProps.onIonChange && inputProps.onIonChange(event);
             setFieldProps({...fieldProps, ...getValue()})
         }
@@ -49,8 +51,7 @@ export const Input = <T extends Model, T1 extends Model = T> ({
         if(!!xModel) xModel.current = newValue as T ?? xModel.current;
         else model.current = newValue as T1 ?? model.current;
         const value = modelValue();
-        if (!!inputProps?.updateModel) inputProps.updateModel(position, !!value ? String(value) : null, xModel?.current)
-        console.log(xModel?.current, model, getValue())
+        if (!!inputProps?.updateModel) inputProps.updateModel(position, !!value ? String(value) : null, xModel?.current, model)
         setFieldProps({...fieldProps, ...getValue()})
         setShowDialog(false)
     }, [setShowDialog, fieldProps, getValue, xModel, model, inputProps, modelValue, position]);

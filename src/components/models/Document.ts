@@ -13,8 +13,8 @@ export interface _Document<D extends Item = Item> extends Model {
     DataVencimento:string;
     IDObra:string;
     NomeObra?:string;
-    NomeEntidade?:string;
-    Entidade:string;
+    NomeFornecedor?:string;
+    Fornecedor:string;
     DescEntidade:number;
     DescFinanceiro:number;
     Data:string;

@@ -64,7 +64,7 @@ const App = () => {
       };
       console.log(options)
       try {
-        const response = await fetch(`/api/${restOptions.route}`, options);
+        const response = await fetch(encodeURI(`/api/${restOptions.route}`), options);
         console.log(response)
         if (!response.ok) {
           result.error = {
@@ -138,20 +138,6 @@ const App = () => {
     }
     return [_token, result];
   }, [fetchApi]);
-  /*const callerApi = useCallback<(options: OptionsFetchApi) => Promise<[string | null, ResultFetchApi]>>(async (options : OptionsFetchApi) => {
-    let result = await fetchApi(options), _token: string | null = null;
-    if (result.error?.status === 401) { //expired token
-      let stored_user : string | null = sessionStorage.getItem("user_session"),
-      _user: User | null = !!stored_user ? JSON.parse(stored_user) : null;
-      if (user !== _user) setUser(_user);
-      if (!!_user) {
-        [_token, result] = await login({..._user as User, ...config});
-        if (!!result.error) alert(`Error\n${result.error.message}`); 
-        result = await fetchApi(options);
-      }
-    }
-    return [_token, result];
-  }, [login, user, setUser, fetchApi]);*/
   useEffect(() => {
     if (!!user && !!token) return;
     let stored_token : string | null = sessionStorage.getItem("access_token"),

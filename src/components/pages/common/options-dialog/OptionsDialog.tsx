@@ -5,14 +5,14 @@ import { List } from "../list/List";
 import { RouteComponentProps } from '../../../types/RouteComponentProps';
 import { Buttons } from '../buttons/Buttons';
 import { add, remove } from 'ionicons/icons';
-import "./OptionsDialog.scss"
 import { SearchType } from '../../../models/Search';
+import "./OptionsDialog.scss"
 
 export const OptionsDialog = <T extends Model, SearchT extends SearchType, T1 extends Model = T>({
     listProps, 
     popoverProps,
     ...routeProps
-}: Omit<OptionsDialogProps<T, SearchT, T1>, 'children'> & RouteComponentProps) => (
+}: Omit<OptionsDialogProps<T, SearchT, T1>, 'children'> & Omit<RouteComponentProps, 'fetchApiOptions'>) => (
     <IonPopover {...popoverProps} cssClass={`dialog ${popoverProps.cssClass}`}>
         {listProps && (
             <>

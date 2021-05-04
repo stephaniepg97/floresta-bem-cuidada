@@ -1,15 +1,14 @@
-//import { useState } from 'react';
 import { search as iconSearch, add, removeOutline, trashBinOutline } from 'ionicons/icons';
 import { FormContent } from "../form/Form"
-import { Model } from "../../../models/Model"
 import { IonItemDivider, IonLabel } from '@ionic/react';
 import { Button } from '../buttons/Button';
 import { Buttons } from '../buttons/Buttons';
 import { FormContentProps } from '../../../types/FormProps';
 import { FormContextProps } from '../../../types/FormContextProps';
+import { SearchType } from '../../../models/Search';
 import { SearchProps } from '../../../types/SearchProps';
 
-export const Search = <T extends Model = {}> ({FormConsumer, formProps, ...searchProps} : FormContentProps<T> & SearchProps) => (
+export const Search = <T extends SearchType = {}> ({FormConsumer, formProps, ...searchProps} : FormContentProps<T> & Omit<SearchProps<T>, 'fetchApiOptions' | 'setFetchApiOptions'>) => (
     !!FormConsumer 
         ? <FormConsumer>
             {contextProps => <SearchContent<T> {...contextProps} {...searchProps} />}
@@ -17,7 +16,7 @@ export const Search = <T extends Model = {}> ({FormConsumer, formProps, ...searc
         : <SearchContent<T> {...formProps as FormContextProps<T>} {...searchProps} />
 );
 
-const SearchContent = <T extends Model = {}> ({search, setShowSearch, showSearch, clean, ...formProps} : FormContextProps<T> & SearchProps) => (
+const SearchContent = <T extends SearchType = {}> ({searchModel, fetchApiOptions, setSearchModel, clean, showSearch, setShowSearch, ...formProps} : FormContextProps<T> & Omit<SearchProps<T>, 'fetchApiOptions' | 'setFetchApiOptions'>) => (
     <>
         <IonItemDivider>
             <IonLabel className="ion-text-uppercase">
@@ -51,7 +50,7 @@ const SearchContent = <T extends Model = {}> ({search, setShowSearch, showSearch
                     },
                     label: {color: "white"},
                     button: {
-                        onClick: () => search(),
+                        onClick: () => setSearchModel(searchModel),
                         color: "medium",
                     },
                 }, {
@@ -69,4 +68,4 @@ const SearchContent = <T extends Model = {}> ({search, setShowSearch, showSearch
             </>
         }
     </>
-)
+);

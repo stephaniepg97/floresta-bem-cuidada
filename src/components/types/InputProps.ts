@@ -15,7 +15,7 @@ export type CommonInputProps<T extends Model = {}, T1 extends Model = T> = {
 export type InputProps<T extends Model = {}, T1 extends Model = T> = (CommonInputProps<T, T1> & {
     inputProps: React.ComponentProps<typeof IonInput> & ({
         name?: keyof T1 | keyof T;
-        updateModel?: (position: number, value?: string | null, xModel?: T) => void;
+        updateModel?: (position: number, value?: string | null, xModel?: T, model?: MutableRefObject<T1>) => void;
     });
     Field?: undefined;
     xfield?: undefined;

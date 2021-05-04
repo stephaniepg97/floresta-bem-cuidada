@@ -15,13 +15,13 @@ const InternalDocumentForm: FunctionComponent<RouteComponentProps> = (props) => 
         if (!token) props.history.push("/login");
     }, [props, token])
     const model = useRef<InternalDocument>({
-        Data: date(new Date()).slice(0, 10), 
-        DataVencimento: date(new Date(), {days: -1, months: 1}).slice(0, 10),
+        Data: date(new Date()), 
+        DataVencimento: date(new Date(), {days: -1, months: 1}),
         DescEntidade: 0,
         DescFinanceiro: 0,
         Serie: InternalFamily,
         TipoDoc: InternalDocType,
-        TipoEntidade, Filial, Entidade, IDObra, NomeEntidade, NomeObra
+        TipoEntidade, Filial, Fornecedor: Entidade, IDObra, NomeFornecedor: NomeEntidade, NomeObra
     });
     return (
         <InternalDocumentFormContextProvider value={{

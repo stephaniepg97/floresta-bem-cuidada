@@ -10,31 +10,41 @@ import { ListContentProps } from '../../../types/ListContentProps';
 import { AppContext } from '../../../contexts/AppContext';
 import { ItemListWithDetails } from '../item-list/ItemListWithDetails'; 
 import { DetailProps } from '../../../types/DetailProps';
-import { OptionsFetchApi } from '../../../types/OptionsFetchApi';
-import "./List.scss";
 import { SearchType } from '../../../models/Search';
+import { useListWithSearch } from '../../../hooks/ListWithSearch';
+import "./List.scss";
+import { FormState } from '../../../types/FormProps';
 
-export const List = <T extends Model, SearchT extends SearchType, D1 extends Model = {}, D2 extends Model = {}, T1 extends Model = T>({searchForm, ...props}: Omit<ListContentProps<T, SearchT, D1, D2, T1>, 'setButtons' | 'data'> & RouteComponentProps) => {
+export const List = <T extends Model, SearchT extends SearchType, D1 extends Model = {}, D2 extends Model = {}, T1 extends Model = T>({searchForm, ...props}: Omit<ListContentProps<T, SearchT, D1, D2, T1>, 'setButtons' | 'data'> & Omit<RouteComponentProps, 'fetchApiOptions'>) => (
+    !!searchForm.FormConsumer 
+        ? <searchForm.FormConsumer>
+            {({model}) => <ListPage<T, SearchT, D1, D2, T1> {...{searchForm, ...props}} searchModel={{model}} />}
+        </searchForm.FormConsumer>
+        : <ListPage<T, SearchT, D1, D2, T1> {...{searchForm, ...props}} searchModel={{model: searchForm.formProps.model}} />
+);
+
+export const ListPage = <T extends Model, SearchT extends SearchType, D1 extends Model = {}, D2 extends Model = {}, T1 extends Model = T>({searchForm, searchModel, ...props}: Omit<ListContentProps<T, SearchT, D1, D2, T1>, 'setButtons' | 'data'> & Omit<RouteComponentProps, 'fetchApiOptions'> & {
+    searchModel: FormState<SearchT>
+}) => {
     const { fetchApi, setToken } = useContext(AppContext);
     const [showLoading, setShowLoading] = useState<boolean>(true);
     const [showSearch, setShowSearch] = useState(false);
-    const [fetchApiOptions, setFetchApiOptions] = useState<OptionsFetchApi | null | undefined>(props.fetchApiOptions);
+    const {fetchApiOptions, setFetchApiOptions, ...searchProps } = useListWithSearch<SearchT>({...searchForm, ...searchModel})
     const [data, setData] = useReducer<Reducer<Array<T> | null, Array<T> | null>>((_, newValue) => {
         !!newValue && showLoading && setShowLoading(false);
         return newValue;
     }, null);
     useEffect(() => {
-        if (!!props.fetchApiOptions) {
-            if (props.fetchApiOptions !== fetchApiOptions) setFetchApiOptions(props.fetchApiOptions)
-            else fetchApi(props.fetchApiOptions).then((result) => {
+        console.log(fetchApiOptions)
+        if (!!fetchApiOptions) 
+            fetchApi(fetchApiOptions).then((result) => {
                 setData(result?.response?.Data || []);
                 if (result?.error?.status === 401) setToken(null) //Unauthorized
                 return () => {
                     result = null;
                 };
             });
-        }
-    }, [props.fetchApiOptions, fetchApiOptions, fetchApi, setToken, setData]);
+    }, [fetchApiOptions, fetchApi, setToken, setData]);
     return (
         <Page {...props}
             key={props.keyId}
@@ -42,7 +52,7 @@ export const List = <T extends Model, SearchT extends SearchType, D1 extends Mod
                 <>
                     <Loading isOpen={showLoading} />
                     <Search<SearchT>
-                        {...{showSearch, setShowSearch}}
+                        {...{...searchProps, showSearch, setShowSearch}}
                         {...searchForm}
                         key={`${props.keyId}`}
                     />
@@ -51,7 +61,7 @@ export const List = <T extends Model, SearchT extends SearchType, D1 extends Mod
             )}
         />
     );
-}
+};
 
 export const ListContent = <T extends Model, SearchT extends SearchType, D1 extends Model = {}, D2 extends Model = {}, T1 extends Model = T> ({data, ...props}: Omit<ListContentProps<T, SearchT, D1, D2, T1>, 'searchForm'>) => {
     const Items = ({ model, position }: {

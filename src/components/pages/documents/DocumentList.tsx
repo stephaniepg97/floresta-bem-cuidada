@@ -13,19 +13,18 @@ import { DocumentType } from '../../models/DocumentType';
 import { ListPropsWithDetails } from '../../types/ListPropsWithDetails';
 import { SearchDocument } from '../../models/SearchDocument';
 import { FormContextProps } from '../../types/FormContextProps';
-import { FormState } from '../../types/FormProps';
-import { SearchProps } from '../../types/SearchProps';
+import { ListWithSearchProps } from '../../types/SearchProps';
+import { SupplierList, ConstructionList } from "../../../config.json"
 
-export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFormProps, details, ...props}: RouteComponentProps & Pick<ListPropsWithDetails<T, SearchDocument, D>, 'details'> & {
-    searchFormProps: FormState<SearchDocument> & Pick<SearchProps, 'clean' | 'search'>
-}) => (
-    <List<T, SearchDocument, D> 
+export const DocumentList = <D extends Item, T extends _Document<D>>({ details, listId, history, ...props }: Pick<ListPropsWithDetails<T, SearchDocument, D>, 'details'> & Omit<ListWithSearchProps<SearchDocument>, 'model'> & Omit<RouteComponentProps, 'fetchApiOptions'>) => (
+    <List<T, SearchDocument, D>
         {...props}
         model={useRef<T>({} as T)}
         searchForm={{
-            ...searchFormProps,
+            listId,
+            history,
             formProps: {
-                ...searchFormProps,
+                model: useRef({} as SearchDocument),
                 keyId: props.keyId,
                 formGroups: useRef([{
                     fieldGroups: [
@@ -33,12 +32,18 @@ export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFor
                             label: "Data Início",
                             inputProps: {
                                 name: "dataIni",
+                                updateModel: (_, value, __, model) => {
+                                    if (!!model) model.current.dataIni = value?.slice(0, 10);
+                                },
                                 type: "date",
                             }
                         }, {
                             label: "Data Fim",
                             inputProps: {
                                 name: "dataFim",
+                                updateModel: (_, value, __, model) => {
+                                    if (!!model) model.current.dataFim = value?.slice(0, 10);
+                                },
                                 type: "date",
                             }
                         }]
@@ -49,22 +54,23 @@ export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFor
                             label: "Tipo de Documento",
                             inputProps: {
                                 name: "tipoDoc",
+                                updateModel: (_, value, __, model) => {
+                                    if (!!model && (!!value && value !== "")) model.current = { ...model.current, tipoDoc: `%${value}%` }
+                                    else if (!!model) model.current = { ...model.current, tipoDoc: "%%" }
+                                }
                             },
                             OptionsDialog: (popoverProps) => (
-                                <OptionsDialog<DocumentType, {}, T> 
-                                    {...props} 
+                                <OptionsDialog<DocumentType, {}, T>
+                                    {...props}
                                     key={`${props.keyId}-documentType`}
-                                    headerProps={{ 
+                                    headerProps={{
                                         ...props,
-                                        title: "Tipos de Documento" 
+                                        title: "Tipos de Documento"
                                     }}
-                                    fetchApiOptions={{
-                                        route: "types/all"
-                                    }}
-                                    popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
+                                    popoverProps={{ cssClass: "dialog-50x", ...popoverProps }}
                                     listProps={{
                                         model: useRef({} as T),
-                                        onClick: () => {},
+                                        onClick: () => { },
                                         fields: [{
                                             label: "Código",
                                             inputProps: {
@@ -77,8 +83,8 @@ export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFor
                                             }
                                         }],
                                         searchForm: {
-                                            search: () => {},
-                                            clean: () => {},
+                                            listId: "",
+                                            history,
                                             formProps: {} as FormContextProps<{}>
                                         }
                                     }}
@@ -88,22 +94,23 @@ export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFor
                             label: "Série de Documento",
                             inputProps: {
                                 name: "serie",
+                                updateModel: (_, value, __, model) => {
+                                    if (!!model && (!!value && value !== "")) model.current = { ...model.current, serie: `%${value}%` }
+                                    else if (!!model) model.current = { ...model.current, serie: "%%" }
+                                }
                             },
                             OptionsDialog: (popoverProps) => (
-                                <OptionsDialog<DocumentFamily, {}, T> 
-                                    {...props} 
+                                <OptionsDialog<DocumentFamily, {}, T>
+                                    {...props}
                                     key={`${props.keyId}-documentFamily`}
-                                    headerProps={{ 
+                                    headerProps={{
                                         ...props,
-                                        title: "Séries" 
+                                        title: "Séries"
                                     }}
-                                    fetchApiOptions={{
-                                        route: "families/all"
-                                    }}
-                                    popoverProps={{cssClass: "dialog-80x", ...popoverProps}}
+                                    popoverProps={{ cssClass: "dialog-80x", ...popoverProps }}
                                     listProps={{
                                         model: useRef({} as T),
-                                        onClick: () => {},
+                                        onClick: () => { },
                                         fields: [{
                                             label: "Tipo de Documento",
                                             inputProps: {
@@ -131,8 +138,8 @@ export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFor
                                             }
                                         }],
                                         searchForm: {
-                                            search: () => {},
-                                            clean: () => {},
+                                            listId: "",
+                                            history,
                                             formProps: {} as FormContextProps<{}>
                                         }
                                     }}
@@ -150,26 +157,28 @@ export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFor
                             },
                         }]
                     ]
-                }, { 
+                }, {
                     fields: [{
                         label: "Obra",
                         inputProps: {
                             name: "nomeObra",
+                            updateModel: (_, value, __, model) => {
+                                if (model?.current.obra === "%%" && !!value && value !== "") model.current = {...model.current, obra: "NULL" }
+                                if (!!model && (!!value && value !== "")) model.current = {...model.current, nomeObra: `%${value}%` }
+                                else if (!!model) model.current = {...model.current, obra: "%%", nomeObra: "%%" }
+                            }
                         },
                         OptionsDialog: (popoverProps) => (
-                            <OptionsDialog<Construction, Construction> 
-                                {...props} 
+                            <OptionsDialog<Construction, Construction>
+                                {...props}
                                 key={`${props.keyId}-construction`}
-                                headerProps={{ 
-                                    title: "Obras" 
-                                }} 
-                                fetchApiOptions={{
-                                    route: "/Plataforma/Listas/CarregaLista/adhoc?listId=C7EEB235-6C8F-EB11-81C2-BCE92FBF0A4F&listParameters=%%,%%,%%,%%,%%,%%,%%"
+                                headerProps={{
+                                    title: "Obras"
                                 }}
-                                popoverProps={{cssClass: "dialog-80x", ...popoverProps}} 
+                                popoverProps={{ cssClass: "dialog-80x", ...popoverProps }}
                                 listProps={{
                                     model: useRef({} as T),
-                                    onClick: () => {},
+                                    onClick: () => { },
                                     fields: [{
                                         label: "Código",
                                         inputProps: {
@@ -202,8 +211,8 @@ export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFor
                                         }
                                     }],
                                     searchForm: {
-                                        search: () => {},
-                                        clean: () => {},
+                                        listId: ConstructionList,
+                                        history,
                                         formProps: {
                                             keyId: `${props.keyId}-construction`,
                                             model: useRef({} as Construction),
@@ -247,26 +256,28 @@ export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFor
                             />
                         ),
                     }]
-                }, { 
+                }, {
                     fields: [{
                         label: "Fornecedor",
                         inputProps: {
                             name: "nomeEntidade",
+                            updateModel: (_, value, __, model) => {
+                                if (model?.current.entidade === "%%" && !!value && value !== "") model.current = {...model.current, entidade: "NULL" }
+                                if (!!model && (!!value && value !== "")) model.current = {...model.current, nomeEntidade: `%${value}%` }
+                                else if (!!model) model.current = {...model.current, entidade: "%%", nomeEntidade: "%%" }
+                            }
                         },
                         OptionsDialog: (popoverProps) => (
-                            <OptionsDialog<Supplier, Supplier, T> 
-                                {...props} 
+                            <OptionsDialog<Supplier, Supplier, T>
+                                {...props}
                                 key={`${props.keyId}-supplier`}
-                                headerProps={{ 
-                                    title: "Fornecedores" 
+                                headerProps={{
+                                    title: "Fornecedores"
                                 }}
-                                fetchApiOptions={{
-                                    route: "/Plataforma/Listas/CarregaLista/adhoc?listId=34F8318B-9E9E-EB11-81D1-BCE92FBF0A4F&listParameters=1,1,1,1,1,1,1,%%,%%,%%,%%,%%,%%,%%,%%,%%,%%,%%,%%"
-                                }}
-                                popoverProps={{cssClass: "dialog-95x", ...popoverProps}} 
+                                popoverProps={{ cssClass: "dialog-95x", ...popoverProps }}
                                 listProps={{
                                     model: useRef({} as T),
-                                    onClick: () => {},
+                                    onClick: () => { },
                                     fields: [{
                                         label: "Fornecedor",
                                         inputProps: {
@@ -317,8 +328,8 @@ export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFor
                                         }
                                     }],
                                     searchForm: {
-                                        search: () => {},
-                                        clean: () => {},
+                                        listId: SupplierList,
+                                        history,
                                         formProps: {
                                             keyId: `${props.keyId}-supplier-search`,
                                             model: useRef({} as Supplier),
@@ -383,7 +394,7 @@ export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFor
             }
         }}
         key={props.keyId}
-        contentProps={{className: "content"}}
+        contentProps={{ className: "content" }}
         fields={[{
             label: "Data ",
             inputProps: {
@@ -406,7 +417,7 @@ export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFor
         }, {
             label: "Fornecedor",
             inputProps: {
-                name: "Entidade",
+                name: "NomeFornecedor",
                 readonly: true
             },
         }, {
@@ -425,7 +436,7 @@ export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFor
                     }}
                     button={{
                         fill: "clear",
-                        onClick: () => {}, //edit
+                        onClick: () => { }, //edit
                     }}
                 />
             ),
@@ -455,23 +466,23 @@ export const DocumentList = <D extends Item, T extends _Document<D>> ({searchFor
             columns: [{
                 label: "Artigo",
                 xfield: "Artigo",
-                Field: ({value}) => <small className="ion-text-center">{value}</small>,
+                Field: ({ value }) => <small className="ion-text-center">{value}</small>,
             }, {
                 label: "Descrição",
                 xfield: "NomeArtigo",
-                Field: ({value}) => <small className="ion-text-center">{value}</small>,
+                Field: ({ value }) => <small className="ion-text-center">{value}</small>,
             }, {
                 label: "Quantidade",
                 xfield: "Quantidade",
-                Field: ({value}) => <small className="ion-text-center">{value}</small>,
+                Field: ({ value }) => <small className="ion-text-center">{value}</small>,
             }, {
                 label: "Data de Entrega",
                 xfield: "DataEntrega",
-                Field: ({value}) => <small className="ion-text-center">{value}</small>,
+                Field: ({ value }) => <small className="ion-text-center">{value}</small>,
             }, {
                 label: "Custo Unitário",
                 xfield: "PrecUnit",
-                Field: ({value}) => <small className="ion-text-center">{value}</small>,
+                Field: ({ value }) => <small className="ion-text-center">{value}</small>,
             }]
         }}
         getModel={(model, details) => {
