@@ -80,7 +80,7 @@ const FormPageContent = <T extends Model = {}, D extends Model = {}, T1 extends 
                                     <small>{`${i.label}${!i.required ? "" : "*"}`}</small>
                                 </IonLabel>
                                 <Input<T, T1> 
-                                    {...{ ...i, position, xModel, model } as InputProps<T, T1>} 
+                                    {...{ ...i, position, xModel } as InputProps<T, T1>} 
                                     model={model}
                                     key={`${i.label} input-form`}   
                                 />

@@ -30,20 +30,22 @@ export const Input = <T extends Model, T1 extends Model = T> ({
         placeholder: inputProps?.placeholder ?? label,
         clearOnEdit: false,
         onIonChange: event => {
+            let text = event.detail.value?.replaceAll(",", "").replaceAll("%", "");
             if(!!xModel) 
                 xModel.current = inputProps.name 
-                    ? {...xModel.current, [inputProps.name as keyof T]: inputProps.type === "date" ? event.detail.value + "T00:00:00Z" : event.detail.value} 
+                    ? {...xModel.current, [inputProps.name as keyof T]: inputProps.type === "date" ? text + "T00:00:00Z" : text} 
                     : xModel.current;
             else 
                 model.current = inputProps.name 
-                    ? {...model.current, [inputProps.name as keyof T1]: inputProps.type === "date" ? event.detail.value + "T00:00:00Z" : event.detail.value} 
+                    ? {...model.current, [inputProps.name as keyof T1]: inputProps.type === "date" ? text + "T00:00:00Z" : text} 
                     : model.current;
-            if (!!inputProps.updateModel) inputProps.updateModel(position, event.detail.value, xModel, model)
+            if (!!inputProps.updateModel) inputProps.updateModel(position, text, xModel, model)
             inputProps.onIonChange && inputProps.onIonChange(event);
             setFieldProps({...fieldProps, ...getValue()})
         }
     } : {});
     const close = useCallback<(newValue?: T|T1) => void>(newValue => {
+        console.log(xModel, model)
         if(!!xModel) xModel.current = newValue as T ?? xModel.current;
         else model.current = newValue as T1 ?? model.current;
         const value = modelValue();

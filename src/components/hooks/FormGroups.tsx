@@ -42,7 +42,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                     popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
                     listProps={{
                         model,
-                        onClick: row => close({...model.current, NomeObra: row.Descricao, IDObra: row.Codigo }),
+                        onClick: row => close({...model.current, NomeObra: row.Descricao?.split(",")[0], IDObra: row.Codigo }),
                         fields: [{
                             label: "Código",
                             inputProps: {
@@ -149,7 +149,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                     popoverProps={{cssClass: "dialog-95x", ...popoverProps}} 
                     listProps={{
                         model,
-                        onClick: row => close({...model.current, NomeFornecedor: row.NomeFornecedor, Fornecedor: row.Fornecedor}),
+                        onClick: row => close({...model.current, NomeFornecedor: row.NomeFornecedor?.split(",")[0], Fornecedor: row.Fornecedor}),
                         fields: [{
                             label: "Fornecedor",
                             inputProps: {
