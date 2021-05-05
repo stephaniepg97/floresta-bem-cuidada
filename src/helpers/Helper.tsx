@@ -1,3 +1,6 @@
+import { MutableRefObject } from "react";
+import { SearchType } from "../components/models/Search";
+
 export const value: (<C>(_: keyof C, __: C) => object) = (key, object) => !!object && Object.entries(object).find(([k, _]) => key === k)?.[1];
 export const date: ((date: Date, diff?: { 
     years?: number
@@ -13,4 +16,9 @@ export const date: ((date: Date, diff?: {
         date = new Date(date.setHours((date.getDate() + days + 1) * 24 + date.getHours() + hours, date.getMinutes() + minutes, date.getSeconds() + seconds));
     }
     return date.toISOString();
+}
+export const updateSearchModel = <TSearch extends SearchType>(model: MutableRefObject<TSearch>, primary: keyof TSearch, newValue?: string | null, secondary?: keyof TSearch, nullable?: keyof TSearch) => {
+    if (!!secondary && String(value(secondary, model.current)) === "%%" && !!newValue && newValue !== "") model.current = {...model.current, [secondary]: "NULL" }
+    if (!!newValue && newValue !== "") model.current = {...model.current, [primary]: `%${newValue}%`, ...!!nullable && {[nullable]: "0"} }
+    else model.current = {...model.current, [primary]: "%%", ...!!secondary && {[secondary]: "%%"}, ...!!nullable && {[nullable]: "1"} }
 }

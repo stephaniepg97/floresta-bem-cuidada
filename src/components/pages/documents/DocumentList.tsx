@@ -15,16 +15,19 @@ import { SearchDocument } from '../../models/SearchDocument';
 import { FormContextProps } from '../../types/FormContextProps';
 import { ListWithSearchProps } from '../../types/SearchProps';
 import { SupplierList, ConstructionList } from "../../../config.json"
+import { SearchConstruction } from '../../models/SearchConstruction';
+import { updateSearchModel } from '../../../helpers/Helper';
 
 export const DocumentList = <D extends Item, T extends _Document<D>>({ details, listId, history, ...props }: Pick<ListPropsWithDetails<T, SearchDocument, D>, 'details'> & Omit<ListWithSearchProps<SearchDocument>, 'model'> & Omit<RouteComponentProps, 'fetchApiOptions'>) => (
-    <List<T, SearchDocument, D>
+    <List<T, SearchDocument, D, {}, T>
         {...props}
         model={useRef<T>({} as T)}
         searchForm={{
             listId,
             history,
             formProps: {
-                model: useRef({} as SearchDocument),
+                model: useRef<T>({} as T),
+                xModel: useRef({} as SearchDocument),
                 keyId: props.keyId,
                 formGroups: useRef([{
                     fieldGroups: [
@@ -32,7 +35,7 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                             label: "Data Início",
                             inputProps: {
                                 name: "dataIni",
-                                updateModel: (_, value, __, model) => {
+                                updateModel: (_, value, model) => {
                                     if (!!model) model.current.dataIni = value?.slice(0, 10);
                                 },
                                 type: "date",
@@ -41,7 +44,7 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                             label: "Data Fim",
                             inputProps: {
                                 name: "dataFim",
-                                updateModel: (_, value, __, model) => {
+                                updateModel: (_, value, model) => {
                                     if (!!model) model.current.dataFim = value?.slice(0, 10);
                                 },
                                 type: "date",
@@ -85,7 +88,7 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                                         searchForm: {
                                             listId: "",
                                             history,
-                                            formProps: {} as FormContextProps<{}>
+                                            formProps: {} as FormContextProps<{}, {}, T>
                                         }
                                     }}
                                 />
@@ -140,7 +143,7 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                                         searchForm: {
                                             listId: "",
                                             history,
-                                            formProps: {} as FormContextProps<{}>
+                                            formProps: {} as FormContextProps<{}, {}, T>
                                         }
                                     }}
                                 />
@@ -162,23 +165,23 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                         label: "Obra",
                         inputProps: {
                             name: "nomeObra",
-                            updateModel: (_, value, __, model) => {
+                            updateModel: (_, value, model) => {
                                 if (model?.current.obra === "%%" && !!value && value !== "") model.current = {...model.current, obra: "NULL" }
                                 if (!!model && (!!value && value !== "")) model.current = {...model.current, nomeObra: `%${value}%` }
                                 else if (!!model) model.current = {...model.current, obra: "%%", nomeObra: "%%" }
                             }
                         },
-                        OptionsDialog: (popoverProps) => (
-                            <OptionsDialog<Construction, Construction>
-                                {...props}
+                        OptionsDialog: ({close, model, ...popoverProps}) => (
+                            <OptionsDialog<Construction, SearchConstruction, T> 
+                                keyId={props.keyId}
                                 key={`${props.keyId}-construction`}
-                                headerProps={{
-                                    title: "Obras"
+                                headerProps={{ 
+                                    title: "Obras" 
                                 }}
-                                popoverProps={{ cssClass: "dialog-80x", ...popoverProps }}
+                                popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
                                 listProps={{
-                                    model: useRef({} as T),
-                                    onClick: () => { },
+                                    model,
+                                    onClick: row => close({...model.current, NomeObra: row.Descricao, IDObra: row.Codigo }),
                                     fields: [{
                                         label: "Código",
                                         inputProps: {
@@ -214,44 +217,58 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                                         listId: ConstructionList,
                                         history,
                                         formProps: {
-                                            keyId: `${props.keyId}-construction`,
-                                            model: useRef({} as Construction),
+                                            keyId: `${props.keyId}-construction-search`,
+                                            model: useRef<T>({} as T),
+                                            xModel: useRef({} as Construction),
                                             formGroups: useRef([{
                                                 fieldGroups: [
                                                     [{
-                                                        label: "Código",
+                                                        label: "Cód. Obra",
                                                         inputProps: {
-                                                            name: "Codigo",
+                                                            name: "codigo",
+                                                            updateModel: (_, value, model) => {
+                                                                if (!!model) updateSearchModel(model, "codigo", value);             
+                                                            }
                                                         }
                                                     }, {
                                                         label: "Estado",
                                                         inputProps: {
-                                                            name: "NomeEstado",
+                                                            name: "nomeEstado",
+                                                            updateModel: (_, value, model) => {
+                                                                if (!!model) updateSearchModel(model, "nomeEstado", value, "estado", "allEstados");             
+                                                            }
                                                         }
                                                     }, {
                                                         label: "Entidade A",
                                                         inputProps: {
-                                                            name: "EntidadeA",
+                                                            name: "entidadeA",
+                                                            updateModel: (_, value, model) => {
+                                                                if (!!model) updateSearchModel(model, "entidadeA", value);             
+                                                            }
                                                         }
                                                     }]
                                                 ]
                                             }, {
                                                 fields: [{
-                                                    label: "Descrição",
+                                                    label: "Nome da Obra",
                                                     inputProps: {
-                                                        name: "Descricao",
-                                                        readonly: true,
+                                                        name: "descricao",
+                                                        updateModel: (_, value, model) => {
+                                                            if (!!model) updateSearchModel(model, "descricao", value);             
+                                                        }
                                                     }
                                                 }, {
                                                     label: "Armazém Principal",
                                                     inputProps: {
-                                                        name: "NomeArmazemObra",
-                                                        readonly: true,
+                                                        name: "nomeArmazemObra",
+                                                        updateModel: (_, value, model) => {
+                                                            if (!!model) updateSearchModel(model, "nomeArmazemObra", value, "armazemObra", "allArmazensObra");             
+                                                        }
                                                     }
                                                 }]
                                             }])
                                         }
-                                    }
+                                    },
                                 }}
                             />
                         ),
@@ -261,7 +278,7 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                         label: "Fornecedor",
                         inputProps: {
                             name: "nomeEntidade",
-                            updateModel: (_, value, __, model) => {
+                            updateModel: (_, value, model) => {
                                 if (model?.current.entidade === "%%" && !!value && value !== "") model.current = {...model.current, entidade: "NULL" }
                                 if (!!model && (!!value && value !== "")) model.current = {...model.current, nomeEntidade: `%${value}%` }
                                 else if (!!model) model.current = {...model.current, entidade: "%%", nomeEntidade: "%%" }
@@ -332,7 +349,8 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                                         history,
                                         formProps: {
                                             keyId: `${props.keyId}-supplier-search`,
-                                            model: useRef({} as Supplier),
+                                            model: useRef<T>({} as T),
+                                            xModel: useRef({} as Supplier),
                                             formGroups: useRef([{
                                                 fieldGroups: [
                                                     [{

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 import { RouteComponentProps as RCP } from "react-router";
-import { date } from "../../helpers/Helper";
+import { date, updateSearchModel } from "../../helpers/Helper";
 import { Construction } from "../models/Construction";
 import { _Document } from "../models/Document";
 import { DocumentFamily } from "../models/DocumentFamily";
@@ -17,6 +17,7 @@ import { add } from 'ionicons/icons';
 import { SearchSupplier } from "../models/SearchSupplier";
 import { SupplierList, ConstructionList, ItemsList } from "../../config.json"
 import { SearchItems } from "../models/SearchItems";
+import { SearchConstruction } from "../models/SearchConstruction";
 
 export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, keyId, history}: Pick<RouteComponentProps, 'keyId'> & Pick<RCP, 'history'> &  FormState<T>) => {
     const [ready, setupForm] = useState(false), 
@@ -30,13 +31,9 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
             label: "Obra",
             inputProps: {
                 name: "NomeObra",
-                updateModel: (_, value) => {
-                    model.current.IDObra = value ?? model.current.IDObra
-                },
-                value: model.current.IDObra,
             },
-            OptionsDialog: (popoverProps) => (
-                <OptionsDialog<Construction, Construction, T> 
+            OptionsDialog: ({close, ...popoverProps}) => (
+                <OptionsDialog<Construction, SearchConstruction, T> 
                     keyId={keyId}
                     key={`${keyId}-construction`}
                     headerProps={{ 
@@ -45,7 +42,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                     popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
                     listProps={{
                         model,
-                        onClick: () => {},
+                        onClick: row => close({...model.current, NomeObra: row.Descricao, IDObra: row.Codigo }),
                         fields: [{
                             label: "Código",
                             inputProps: {
@@ -82,38 +79,52 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                             history,
                             formProps: {
                                 keyId: `${keyId}-construction-search`,
-                                model: useRef({} as Construction),
+                                model,
+                                xModel: useRef({} as SearchConstruction),
                                 formGroups: useRef([{
                                     fieldGroups: [
                                         [{
-                                            label: "Código",
+                                            label: "Cód. Obra",
                                             inputProps: {
-                                                name: "Codigo",
+                                                name: "codigo",
+                                                updateModel: (_, value, model) => {
+                                                    if (!!model) updateSearchModel(model, "codigo", value);             
+                                                }
                                             }
                                         }, {
                                             label: "Estado",
                                             inputProps: {
-                                                name: "NomeEstado",
+                                                name: "nomeEstado",
+                                                updateModel: (_, value, model) => {
+                                                    if (!!model) updateSearchModel(model, "nomeEstado", value, "estado", "allEstados");             
+                                                }
                                             }
                                         }, {
                                             label: "Entidade A",
                                             inputProps: {
-                                                name: "EntidadeA",
+                                                name: "entidadeA",
+                                                updateModel: (_, value, model) => {
+                                                    if (!!model) updateSearchModel(model, "entidadeA", value);             
+                                                }
                                             }
                                         }]
                                     ]
                                 }, {
                                     fields: [{
-                                        label: "Descrição",
+                                        label: "Nome da Obra",
                                         inputProps: {
-                                            name: "Descricao",
-                                            readonly: true,
+                                            name: "descricao",
+                                            updateModel: (_, value, model) => {
+                                                if (!!model) updateSearchModel(model, "descricao", value);             
+                                            }
                                         }
                                     }, {
                                         label: "Armazém Principal",
                                         inputProps: {
-                                            name: "NomeArmazemObra",
-                                            readonly: true,
+                                            name: "nomeArmazemObra",
+                                            updateModel: (_, value, model) => {
+                                                if (!!model) updateSearchModel(model, "nomeArmazemObra", value, "armazemObra", "allArmazensObra");             
+                                            }
                                         }
                                     }]
                                 }])
@@ -170,6 +181,12 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                                 readonly: true,
                             }
                         }, {
+                            label: "Localidade",
+                            inputProps: {
+                                name: "Localidade",
+                                readonly: true,
+                            }
+                        }, {
                             label: "Condição de Pagamento",
                             inputProps: {
                                 name: "NomeCondPag",
@@ -193,55 +210,90 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                             history,
                             formProps: {
                                 keyId: `${keyId}-supplier-search`,
-                                model: useRef({} as SearchSupplier),
+                                model,
+                                xModel: useRef({} as SearchSupplier),
                                 formGroups: useRef([{
                                     fieldGroups: [
                                         [{
-                                            label: "Código",
+                                            label: "Cód. Fornecedor",
                                             inputProps: {
-                                                name: "nif", //todo
+                                                name: "fornecedor",
+                                                updateModel: (_, value, model) => {
+                                                    if (!!model) updateSearchModel(model, "fornecedor", value);             
+                                                }
                                             }
                                         }, {
                                             label: "NIF",
                                             inputProps: {
                                                 name: "nif",
+                                                updateModel: (_, value, model) => {
+                                                    if (!!model) updateSearchModel(model, "nif", value, undefined, "allNifs");             
+                                                }
                                             }
                                         }]
                                     ]
+                                }, {
+                                    fields: [{
+                                        label: "Nome do Fornecedor",
+                                        inputProps: {
+                                            name: "nomeFornecedor",
+                                            updateModel: (_, value, model) => {
+                                                if (!!model) updateSearchModel(model, "nomeFornecedor", value);             
+                                            }
+                                        }
+                                    }],
                                 }, {
                                     fieldGroups: [
                                         [{
                                             label: "País",
                                             inputProps: {
                                                 name: "nomePais",
+                                                updateModel: (_, value, model) => {
+                                                    if (!!model) updateSearchModel(model, "nomePais", value, "pais", "allPaises");             
+                                                }
                                             }
                                         }, {
                                             label: "Distrito",
                                             inputProps: {
                                                 name: "nomeDistrito",
+                                                updateModel: (_, value, model) => {
+                                                    if (!!model) updateSearchModel(model, "nomeDistrito", value, "distrito", "allDistritos");             
+                                                }
+                                            }
+                                        }, {
+                                            label: "Localidade",
+                                            inputProps: {
+                                                name: "localidade",
+                                                updateModel: (_, value, model) => {
+                                                    if (!!model) updateSearchModel(model, "localidade", value, undefined, "allLocalidades");             
+                                                }
                                             }
                                         }]
                                     ]
                                 }, {
                                     fields: [{
-                                        label: "Nome",
-                                        inputProps: {
-                                            name: "nomePais", //todo
-                                        }
-                                    }, {
                                         label: "Condição de Pagamento",
                                         inputProps: {
                                             name: "nomeCondPag",
+                                            updateModel: (_, value, model) => {
+                                                if (!!model) updateSearchModel(model, "nomeCondPag", value, "condPag", "allCondPag");             
+                                            }
                                         }
                                     }, {
                                         label: "Modo de Pagamento",
                                         inputProps: {
                                             name: "nomeModoPag",
+                                            updateModel: (_, value, model) => {
+                                                if (!!model) updateSearchModel(model, "nomeModoPag", value, "modoPag", "allModosPag");             
+                                            }
                                         }
                                     }, {
                                         label: "Modo de Expedição",
                                         inputProps: {
                                             name: "nomeModoExp",
+                                            updateModel: (_, value, model) => {
+                                                if (!!model) updateSearchModel(model, "nomeModoExp", value, "modoExp", "allModosExp");             
+                                            }
                                         }
                                     }]
                                 }])
@@ -375,9 +427,10 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
             return {
                 label: `Ficheiro ${index + 1}`,
                 inputProps: {
-                    updateModel: (index, _) => {
+                    updateModel: (position, _) => {
+                        if (!position) return;
                         model.current.Anexos = [...model.current.Anexos ?? []];
-                        model.current.Anexos.splice(index, index + 1, "")
+                        model.current.Anexos.splice(position, position + 1, "")
                     },
                     value: filename,
                     accept: "*"
@@ -387,9 +440,10 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
             label: "Novo ficheiro",
             inputProps: {
                 accept: "*",
-                updateModel: (index, _) => {
+                updateModel: (position, _) => {
+                    if (!position) return;
                     model.current.Anexos = [...model.current.Anexos ?? []];
-                    model.current.Anexos.splice(index, index + 1, "");
+                    model.current.Anexos.splice(position, position + 1, "")
                 },
             }
         }],
@@ -418,14 +472,14 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
         title: "Artigos",
         listProps: {
             keyId,
-            model: useRef({} as T),
+            model,
             data: model.current.Artigos || null,
             fields: [{
                 label: "Artigo",
                 inputProps: {
                     name: "Artigo",
                     updateModel: (position, value, xModel) => {
-                        updateArtigoOnModel({position, ...!!xModel ? { xModel } : { value: value ?? "", key: "Artigo"}})
+                        if (position !== undefined) updateArtigoOnModel({position, ...!!xModel ? { xModel } : { value: value ?? "", key: "Artigo"}})
                     }
                 },
                 OptionsDialog: ({close, ...popoverProps}) => (
@@ -487,46 +541,39 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                                 history,
                                 formProps: {
                                     keyId: `${keyId}-artigos-search`,
-                                    model: useRef({} as SearchItems),
+                                    model,
+                                    xModel: useRef({} as SearchItems),
                                     formGroups: useRef([{
                                         fields: [{
                                             label: "Código",
                                             inputProps: {
                                                 name: "artigo",
-                                                updateModel: (_, value, __, model) => {
-                                                    if (model?.current.nomeArtigo === "%%" && !!value && value !== "") model.current = {...model.current, nomeArtigo: "NULL" }
-                                                    if (!!model && (!!value && value !== "")) model.current = {...model.current, artigo: `%${value}%` }
-                                                    else if (!!model) model.current = {...model.current, artigo: "%%", nomeArtigo: "%%" }
+                                                updateModel: (_, value, model) => {
+                                                    if (!!model) updateSearchModel(model, "artigo", value);                                   
                                                 }
                                             }
                                         }, {
                                             label: "Nome",
                                             inputProps: {
                                                 name: "nomeArtigo",
-                                                updateModel: (_, value, __, model) => {
-                                                    if (model?.current.artigo === "%%" && !!value && value !== "") model.current = {...model.current, artigo: "NULL" }
-                                                    if (!!model && (!!value && value !== "")) model.current = {...model.current, nomeArtigo: `%${value}%` }
-                                                    else if (!!model) model.current = {...model.current, artigo: "%%", nomeArtigo: "%%" }
+                                                updateModel: (_, value, model) => {
+                                                    if (!!model) updateSearchModel(model, "nomeArtigo", value);             
                                                 }
                                             }
                                         }, {
                                             label: "Fornecedor Principal",
                                             inputProps: {
                                                 name: "nomeFornecedor",
-                                                updateModel: (_, value, __, model) => {
-                                                    if (model?.current.fornecedor === "%%" && !!value && value !== "") model.current = {...model.current, fornecedor: "NULL" }
-                                                    if (!!model && (!!value && value !== "")) model.current = {...model.current, nomeFornecedor: `%${value}%`, allFornecedores: "0" }
-                                                    else if (!!model) model.current = {...model.current, fornecedor: "%%", nomeFornecedor: "%%", allFornecedores: "1" }
+                                                updateModel: (_, value, model) => {
+                                                    if (!!model) updateSearchModel(model, "nomeFornecedor", value, "fornecedor", "allFornecedores");             
                                                 }
                                             }
                                         }, {
                                             label: "Família",
                                             inputProps: {
                                                 name: "nomeFamilia",
-                                                updateModel: (_, value, __, model) => {
-                                                    if (model?.current.familia === "%%" && !!value && value !== "") model.current = {...model.current, familia: "NULL" }
-                                                    if (!!model && (!!value && value !== "")) model.current = {...model.current, nomeFamilia: `%${value}%`, allFamilias: "0" }
-                                                    else if (!!model) model.current = {...model.current, familia: "%%", nomeFamilia: "%%", allFamilias: "1" }
+                                                updateModel: (_, value, model) => {
+                                                    if (!!model) updateSearchModel(model, "nomeFamilia", value, "familia", "allFamilias");             
                                                 }
                                             }
                                         }]
@@ -541,7 +588,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                 inputProps: {
                     name: "Quantidade",
                     updateModel: (position, value) => {
-                        updateArtigoOnModel({position, value: Number(value ?? 0), key: "Quantidade"})
+                        if (position !== undefined) updateArtigoOnModel({position, value: Number(value ?? 0), key: "Quantidade"})
                     }
                 }
             }, {
@@ -549,7 +596,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                 inputProps: {
                     name: "PrecUnit",
                     updateModel: (position, value) => {
-                        updateArtigoOnModel({position, value: Number(value ?? 0), key: "PrecUnit"})
+                        if (position !== undefined) updateArtigoOnModel({position, value: Number(value ?? 0), key: "PrecUnit"})
                     }
                 }
             }, {
@@ -557,7 +604,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                 inputProps: {
                     name: "Desconto",
                     updateModel: (position, value) => {
-                        updateArtigoOnModel({position, value: Number(value ?? 0), key: "Desconto"})
+                        if (position !== undefined) updateArtigoOnModel({position, value: Number(value ?? 0), key: "Desconto"})
                     }
                 },
             }, {
@@ -565,7 +612,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                 inputProps: {
                     name: "DataEntrega",
                     updateModel: (position, value) => {
-                        updateArtigoOnModel({position, value: (value ?? date(new Date())), key: "DataEntrega"})
+                        if (position !== undefined) updateArtigoOnModel({position, value: (value ?? date(new Date())), key: "DataEntrega"})
                     },
                     type: "date",
                     value: date(new Date()).slice(0, 10),
@@ -574,7 +621,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
             searchForm: {
                 listId: "",
                 history,
-                formProps: {} as FormContextProps<{}>
+                formProps: {} as FormContextProps<{}, {}, T>
             }
         },
         Button: ({buttonProps, refresh}) => (
@@ -627,15 +674,16 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
         key: keyof D;
         xModel?: undefined;
     } | {
-        xModel: D;
+        xModel: MutableRefObject<D>;
         value?: undefined;
         key?: undefined;
     })) => void>(({position, value, xModel, key}) => {
+        console.log(model)
         if (!model.current.Artigos) {
             model.current.Artigos = [{DataEntrega: date(new Date())} as D];
             position = 0;
         } else if (position === model.current.Artigos.length) model.current.Artigos = [...model.current.Artigos, {DataEntrega: date(new Date())} as D];
-        const row : D = {...model.current.Artigos[position], ...!!xModel ? xModel : { [String(key)]: value }};
+        const row : D = {...model.current.Artigos[position], ...!!xModel ? xModel.current : { [String(key)]: value }};
         model.current.Artigos.splice(position, position + 1, row);
         updateArtigo(row, position);
     }, [updateArtigo, model]);

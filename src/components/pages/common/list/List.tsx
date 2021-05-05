@@ -18,9 +18,9 @@ import { FormState } from '../../../types/FormProps';
 export const List = <T extends Model, SearchT extends SearchType, D1 extends Model = {}, D2 extends Model = {}, T1 extends Model = T>({searchForm, ...props}: Omit<ListContentProps<T, SearchT, D1, D2, T1>, 'setButtons' | 'data'> & Omit<RouteComponentProps, 'fetchApiOptions'>) => (
     !!searchForm.FormConsumer 
         ? <searchForm.FormConsumer>
-            {({model}) => <ListPage<T, SearchT, D1, D2, T1> {...{searchForm, ...props}} searchModel={{model}} />}
+            {({xModel}) => !xModel ? <></> : <ListPage<T, SearchT, D1, D2, T1> {...{searchForm, ...props}} searchModel={{model: xModel}} />}
         </searchForm.FormConsumer>
-        : <ListPage<T, SearchT, D1, D2, T1> {...{searchForm, ...props}} searchModel={{model: searchForm.formProps.model}} />
+        : !searchForm.formProps.xModel ? <></> : <ListPage<T, SearchT, D1, D2, T1> {...{searchForm, ...props}} searchModel={{model: searchForm.formProps.xModel}} />
 );
 
 export const ListPage = <T extends Model, SearchT extends SearchType, D1 extends Model = {}, D2 extends Model = {}, T1 extends Model = T>({searchForm, searchModel, ...props}: Omit<ListContentProps<T, SearchT, D1, D2, T1>, 'setButtons' | 'data'> & Omit<RouteComponentProps, 'fetchApiOptions'> & {
@@ -51,7 +51,7 @@ export const ListPage = <T extends Model, SearchT extends SearchType, D1 extends
             Content={({setButtons}) => (
                 <>
                     <Loading isOpen={showLoading} />
-                    <Search<SearchT>
+                    <Search<SearchT, T1>
                         {...{...searchProps, showSearch, setShowSearch}}
                         {...searchForm}
                         key={`${props.keyId}`}
@@ -66,7 +66,7 @@ export const ListPage = <T extends Model, SearchT extends SearchType, D1 extends
 export const ListContent = <T extends Model, SearchT extends SearchType, D1 extends Model = {}, D2 extends Model = {}, T1 extends Model = T> ({data, ...props}: Omit<ListContentProps<T, SearchT, D1, D2, T1>, 'searchForm'>) => {
     const Items = ({ model, position }: {
         model: T;
-        position: number;
+        position?: number;
     }) => { 
         const item = useRef<T>(model);
         return !!props.details ? (

@@ -16,30 +16,31 @@ import { FormContextProps } from '../../../types/FormContextProps';
 import { ComponentProps, useEffect, useState } from 'react';
 import "./Form.scss";
 import { FormPageContentProps } from '../../../types/FormPageContentProps';
+import { InputProps } from '../../../types/InputProps';
 
-export const Form = <T extends Model = {}, D extends Model = {}> ({FormConsumer, formProps}: FormContentProps<T, D>) => (
+export const Form = <T extends Model = {}, D extends Model = {}, T1 extends Model = T> ({FormConsumer, formProps}: FormContentProps<T, D, T1>) => (
     !!FormConsumer 
         ? <FormConsumer>
-            {formContext => <FormPage<T, D> pageProps={formContext} contentProps={{FormConsumer, formProps} as FormContentProps<T, D>} /> }
+            {formContext => <FormPage<T, D, T1> pageProps={formContext} contentProps={{FormConsumer, formProps} as FormContentProps<T, D, T1>} /> }
         </FormConsumer>
-        : <FormPage<T, D> pageProps={formProps as FormContextProps<T, D>} contentProps={{FormConsumer, formProps} as FormContentProps<T, D>} />
+        : <FormPage<T, D, T1> pageProps={formProps as FormContextProps<T, D, T1>} contentProps={{FormConsumer, formProps} as FormContentProps<T, D, T1>} />
 );
-const FormPage = <T extends Model = {}, D extends Model = {}> ({pageProps, contentProps}: {contentProps: FormContentProps<T, D>, pageProps: ComponentProps<typeof Page>}) => (
+const FormPage = <T extends Model = {}, D extends Model = {}, T1 extends Model = T> ({pageProps, contentProps}: {contentProps: FormContentProps<T, D, T1>, pageProps: ComponentProps<typeof Page>}) => (
     <Page {...pageProps} 
         key={pageProps.keyId}
-        Content={() => <FormContent<T, D> key={pageProps.keyId} {...contentProps} /> }
+        Content={() => <FormContent<T, D, T1> key={pageProps.keyId} {...contentProps} /> }
     />
 );
-export const FormContent = <T extends Model = {}, D extends Model = {}> ({FormConsumer, formProps} : FormContentProps<T, D>) => (
+export const FormContent = <T extends Model = {}, D extends Model = {}, T1 extends Model = T> ({FormConsumer, formProps} : FormContentProps<T, D, T1>) => (
     !!FormConsumer 
         ? <FormConsumer>
-            {contextProps => <FormPageContent<T, D> {...contextProps} />}
+            {contextProps => <FormPageContent<T, D, T1> {...contextProps} />}
         </FormConsumer>
-        : <FormPageContent<T, D> {...formProps as FormContextProps<T, D>} />
+        : <FormPageContent<T, D, T1> {...formProps as FormContextProps<T, D, T1>} />
 );
-const FormPageContent = <T extends Model = {}, D extends Model = {}> ({formGroups, model, keyId}: FormPageContentProps<T, D>) => {
+const FormPageContent = <T extends Model = {}, D extends Model = {}, T1 extends Model = T> ({formGroups, xModel, model, keyId}: FormPageContentProps<T, D, T1>) => {
     const [initialize, refresh] = useState(true);
-    useEffect(() => console.log(model), [model]);
+    useEffect(() => console.log(model, xModel), [model, xModel, initialize]);
     return (
         <>
             {!!formGroups && formGroups.current.map(({Button, fieldGroups, fields, listProps, title}, index) => (
@@ -62,8 +63,9 @@ const FormPageContent = <T extends Model = {}, D extends Model = {}> ({formGroup
                                                 <small>{`${i.label}${!i.required ? "" : "*"}`}</small>
                                             </IonLabel>
                                             <div className="input">
-                                                <Input<T> 
-                                                    {...{ ...i, position, model }} 
+                                                <Input<T, T1> 
+                                                    {...{ ...i, position, xModel } as InputProps<T, T1>} 
+                                                    model={model}
                                                     key={`${i.label} input-form`} 
                                                 />
                                             </div>
@@ -77,14 +79,15 @@ const FormPageContent = <T extends Model = {}, D extends Model = {}> ({formGroup
                                 <IonLabel className="ion-label ion-text-wrap">
                                     <small>{`${i.label}${!i.required ? "" : "*"}`}</small>
                                 </IonLabel>
-                                <Input<T> 
-                                    {...{ ...i, position, model }} 
+                                <Input<T, T1> 
+                                    {...{ ...i, position, xModel, model } as InputProps<T, T1>} 
+                                    model={model}
                                     key={`${i.label} input-form`}   
                                 />
                             </IonItem>
                         ))}
                     </IonItemGroup>
-                    {!!listProps && <ListContent<D, {}, {}, {}, T> key={`detail-list-${keyId}`} {...{...listProps, model } as ListContentProps<D, {}, {}, {}, T>} />}
+                    {!!listProps && <ListContent<D, {}, {}, {}, T1> key={`detail-list-${keyId}`} {...{...listProps, model } as ListContentProps<D, {}, {}, {}, T1>} />}
                     {Button && <Button refresh={() => refresh(!initialize)} />}
                 </div>
             ))} 

@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { Model } from "../../../models/Model";
 import { ButtonProps } from "../../../types/ButtonProps";
 import { ColumnProps } from "../../../types/ColumnProps";
+import { FormState } from "../../../types/FormProps";
 import { ItemListChildProps } from "../../../types/ItemListProps";
 import { Input } from "../inputs/Input";
 
@@ -20,7 +21,7 @@ export const ItemListChild = <T extends Model, T1 extends Model> ({
     setButtons,
     buttons,
     ...props 
-}: ColumnProps<T, T1> & Pick<ItemListChildProps<T, T1>, 'position' | 'onClick' | 'selected' | 'setButtons' | 'buttons' | 'model'>) => {
+}: ColumnProps<T, T1> & FormState<T1> & Pick<ItemListChildProps<T, T1>, 'onClick' | 'selected' | 'setButtons' | 'buttons'>) => {
     const setEndButtons = useCallback<(titles: Array<string>, visible: boolean) => void>((titles, visible) => setButtons && !!buttons && setButtons(buttons.map<ButtonProps>(buttonProps => buttonProps?.button?.title && titles.includes(buttonProps.button.title) ? {...buttonProps, visible: visible} : buttonProps)), [setButtons, buttons]);
     return (
         <IonItem lines="none" color="transparent" onClick={() => {

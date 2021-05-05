@@ -7,16 +7,17 @@ import { FormContentProps } from '../../../types/FormProps';
 import { FormContextProps } from '../../../types/FormContextProps';
 import { SearchType } from '../../../models/Search';
 import { SearchProps } from '../../../types/SearchProps';
+import { Model } from '../../../models/Model';
 
-export const Search = <T extends SearchType = {}> ({FormConsumer, formProps, ...searchProps} : FormContentProps<T> & Omit<SearchProps<T>, 'fetchApiOptions' | 'setFetchApiOptions'>) => (
+export const Search = <T extends SearchType = {}, T1 extends Model = T> ({FormConsumer, formProps, ...searchProps} : FormContentProps<T, {}, T1> & Omit<SearchProps<T>, 'fetchApiOptions' | 'setFetchApiOptions'>) => (
     !!FormConsumer 
         ? <FormConsumer>
-            {contextProps => <SearchContent<T> {...contextProps} {...searchProps} />}
+            {contextProps => <SearchContent<T, T1> {...contextProps} {...searchProps} />}
         </FormConsumer>
-        : <SearchContent<T> {...formProps as FormContextProps<T>} {...searchProps} />
+        : <SearchContent<T, T1> {...formProps as FormContextProps<T, {}, T1>} {...searchProps} />
 );
 
-const SearchContent = <T extends SearchType = {}> ({searchModel, fetchApiOptions, setSearchModel, clean, showSearch, setShowSearch, ...formProps} : FormContextProps<T> & Omit<SearchProps<T>, 'fetchApiOptions' | 'setFetchApiOptions'>) => (
+const SearchContent = <T extends SearchType = {}, T1 extends Model = T> ({searchModel, fetchApiOptions, setSearchModel, clean, showSearch, setShowSearch, ...formProps} : FormContextProps<T, {}, T1> & Omit<SearchProps<T>, 'fetchApiOptions' | 'setFetchApiOptions'>) => (
     <>
         <IonItemDivider>
             <IonLabel className="ion-text-uppercase">
@@ -38,7 +39,7 @@ const SearchContent = <T extends SearchType = {}> ({searchModel, fetchApiOptions
         </IonItemDivider>
         {showSearch &&
             <>
-                <FormContent<T> 
+                <FormContent<T, {}, T1> 
                     {...{ formProps }}
                     key={`${formProps.keyId}-search-form`}
                 />

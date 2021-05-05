@@ -20,4 +20,6 @@ export interface SearchSupplier extends SearchType {
     nomeModoPag?:string;
     nomePais?:string;
     pais?:string;
+    nomeFornecedor?:string;
+    fornecedor?:string;
 }

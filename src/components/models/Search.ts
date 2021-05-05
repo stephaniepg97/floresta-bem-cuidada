@@ -1,2 +1,4 @@
-export interface SearchType {
+import { Model } from "./Model";
+
+export interface SearchType extends Model {
 }

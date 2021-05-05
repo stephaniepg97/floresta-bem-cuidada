@@ -8,5 +8,5 @@ import { SearchType } from "../models/Search";
 
 export type ListProps<T extends Model, SearchT extends SearchType = {}, T1 extends Model = T> = PageProps & Pick<ItemListChildProps<T, T1>, 'onClick' | 'model'> & {
     fields: Array<ColumnProps<T, T1>>;
-    searchForm: FormContentProps<SearchT> & Omit<ListWithSearchProps<SearchT>, 'model'>;
+    searchForm: FormContentProps<SearchT, {}, T1> & Omit<ListWithSearchProps<SearchT>, 'model'>;
 };

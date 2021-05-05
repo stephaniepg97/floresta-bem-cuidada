@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useReducer, Reducer, useContext } from 'react';
+import { useState, useEffect, useRef, useReducer, Reducer, useContext, MutableRefObject } from 'react';
 import { IonLabel } from '@ionic/react';
 import { Item } from "../item/Item";
 import { Loading } from "../Loading"
@@ -21,7 +21,7 @@ export const ItemListWithDetails = <T extends Model, D1 extends Model = {}, D2 e
     const { fetchApi, setToken } = useContext(AppContext);
     const [showLoading, setShowLoading] = useState<boolean>(false);
     const [data, setData] = useReducer<Reducer<Array<D1> | undefined, Array<D1> | undefined>>((_, newValue) => {
-        if (!!newValue) {
+        if (!!newValue && !!xModel) {
             xModel.current = getModel ? getModel(xModel.current, newValue) : xModel.current;
             showLoading && setShowLoading(false);
         }
@@ -41,13 +41,13 @@ export const ItemListWithDetails = <T extends Model, D1 extends Model = {}, D2 e
             <Item<D1, T>
                 fields={fields}
                 itemProps={{className: "ion-detail-item ion-margin-top", detail: false, color: 'light'}} 
-                Children={(col) => <ItemListChild<D1, T> {...col} {...props} onClick={() => {}} model={xModel} xModel={item} position={position}  /> }
+                Children={(col) => <ItemListChild<D1, T> {...col} {...props} onClick={() => {}} model={xModel as MutableRefObject<T>} xModel={item} position={position}  /> }
             />
         );
     };
     useEffect(() => {
         if (!showDetails || !!data) return;
-        if (!data && details?.fetchApiOptions) {
+        if (!data && details?.fetchApiOptions && !!xModel) {
             fetchApi(details.fetchApiOptions(xModel.current)).then((result) => {
                 setData(result?.response.Data || []);
                 if (result?.error?.status === 401) setToken(null) //Unauthorized

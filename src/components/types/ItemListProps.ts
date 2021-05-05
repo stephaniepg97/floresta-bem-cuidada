@@ -12,11 +12,9 @@ export type ItemListPropsWithDetails<T extends Model, D1 extends Model = {}, D2 
 
 export type ItemListProps<T extends Model, T1 extends Model = T> = Omit<ListProps<T, {}, T1>, 'searchForm'> & ItemListChildProps<T, T1>;
 
-export type ItemListChildProps<T extends Model, T1 extends Model = T> = RouteComponentProps & FormState<T1> & {
+export type ItemListChildProps<T extends Model, T1 extends Model = T> = RouteComponentProps & FormState<T1> & Pick<CommonInputProps<T, T1>, 'xModel' | 'position'> & {
     setButtons?: (value: Array<ButtonProps> | undefined) => void;
     buttons?: Array<ButtonProps>;
-    xModel: MutableRefObject<T>;
-    position: number;
     onClick?: (row: T) => void;
     itemProps?: Pick<ComponentProps<typeof IonItem>, 'detail' | 'detailIcon'>;
     selected?: React.MutableRefObject<Array<T>>;
