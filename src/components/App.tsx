@@ -2,7 +2,7 @@ import {
   useCallback, 
   useEffect, 
   useReducer, 
-  Reducer, 
+  Reducer,
 } from 'react';
 import { IonApp, IonContent } from '@ionic/react';
 import { ResultFetchApi } from "./types/ResultFetchApi";
@@ -17,8 +17,10 @@ import { MenuPage } from './pages/common/menu/MenuPage';
 
 import config from "../config.json";
 import './App.scss';
+import { useDialog } from './hooks/Dialog';
 
 const App = () => {
+  const {Dialog, showDialog} = useDialog();
   const [user, setUser] = useReducer<Reducer<User | null, User | null>>((_, newValue) => {
     sessionStorage.setItem("user_session", JSON.stringify(newValue))
     return newValue;
@@ -58,35 +60,42 @@ const App = () => {
               Object.entries(body).map(([key, value]) => `${key}=${value}`).join("&")
             : JSON.stringify(body) 
           : body}
-      }, result : ResultFetchApi = {
-        response: null,
+      }, result: ResultFetchApi  = {
+        status: false,
+        statusCode: -1,
+        statusMessage: null,
         error: null,
       };
       console.log(options)
       try {
         const response = await fetch(encodeURI(`/api/${restOptions.route}`), options);
+        result = {
+          status: response.ok,
+          statusCode: response.status,
+          statusMessage: `${response.status}: ${response.statusText}`,
+          ...response.ok ? { response } : { error: response }
+        }
         console.log(response)
-        if (!response.ok) {
-          result.error = {
-            status: response.status,
-            message: `${response.status}: ${response.statusText}`,
-          };
-        } else if (response.status === 204) { //204: no content
-          result.response = response;
-        } else {
+        if (response.status !== 204) { //204: no content
           let contentType: string | null = response.headers.get("Content-Type");
           if (contentType && contentType.startsWith('application/json')) {
-            result.response = await response.json();
+            result = {status: result.status, statusMessage: result.statusMessage, statusCode: result.statusCode, ...!!result.error 
+              ? { error: {response: await response.json() } } 
+              : { response: await response.json() }
+            };
           }
           if (contentType && contentType.startsWith('text/plain')) {
-            result.response = await response.text();
+            result = {status: result.status, statusMessage: result.statusMessage, statusCode: result.statusCode, ...!!result.error 
+              ? { error: {response: await response.text() } } 
+              : { response: await response.text() }
+            };
           }
         }
       } catch (e) {
         console.log(e)
         result.error = {
           ...e,
-          message: e.stack,
+          statusMessage: e.stack,
         };
         console.error(result.error)
       }
@@ -102,37 +111,29 @@ const App = () => {
     logIn?: () => void;
   }) => Promise<[string | null, ResultFetchApi | null]>>(async ({ logIn, Line, Instance, Company, Password, Username, grant_type }) => {
     let result : ResultFetchApi | null = {
-      error: {
-        message: null
-      },
-      response: null,
-    }, _token: string | null = null, opened: boolean | null = null; 
+      status: false,
+      statusCode: -1,
+      statusMessage: null,
+      error: null,
+    }, _token: string | null = null; 
     if ((!Username) && !!result.error) {
-      result.error.message = `${result.error?.message || ''}\nMissing values: username`;
+      result.error = { response: { Message: `${result.error?.response?.Message || ''}\nMissing values: username` } };
     }
     if (!Password && !!result.error) {
-      result.error.message = `${result.error?.message || ''}\nMissing values: password`;
+      result.error = { response: { Message: `${result.error?.response?.Message || ''}\nMissing values: password` } };
     }
-    if (!result.error?.message) {
+    if (!result.error?.response) {
       const getToken: (_ : AuthBody) => Promise<[string | null, ResultFetchApi | null]> = async body => {
         let result : ResultFetchApi | null = await fetchApi({route: "token", method: "POST", body, contentType: "application/x-www-form-urlencoded"});
         return [!!result?.response ? result?.response.access_token as string : null, result];
       };
-      const openPlatform: (_: {_token: string | null; body: OpenPlatformBody}) => Promise<[boolean | null, ResultFetchApi | null]> = async rest => {
-        let result : ResultFetchApi | null = await fetchApi({route: 'Auth/Open', method: "POST", credentials: 'include', ...rest});
-        return [!!result?.response ? result?.response as boolean : null, result];
-      };
+      const openPlatform: (_: {_token: string | null; body: OpenPlatformBody}) => Promise<ResultFetchApi | null> = async rest => await fetchApi({route: 'Auth/Open', method: "POST", credentials: 'include', ...rest});
       [_token, result] = await getToken({Username, Password, Company, Line, Instance, grant_type});
-      if (!!result?.error?.message) {
+      if (!result?.status) {
         [_token, result] = await getToken({Username, Password, Instance, grant_type});
       }
-      if (!result?.error?.message) {
-        [opened, result] = await openPlatform({_token: result?.response?.access_token ?? null, body: {Username, Password, ...config}})
-        if (!opened && !!result)
-          result.error = {
-            message: `${result.error?.message}\nOcorreu um erro na abertura da plataforma.`, 
-            ...result.error
-          }; 
+      if (result?.status) {
+        result = await openPlatform({_token: result?.response?.access_token ?? null, body: {Username, Password, ...config}})
       }
       !!logIn && logIn();
     }
@@ -146,7 +147,7 @@ const App = () => {
     if (!!stored_token && !_user) {
       me(stored_token).then(([_user, result]) => {
         if (!!result?.error) { //403: Forbidden / 401: Token expired 
-          alert(`Error\n${result.error.message}`);
+          showDialog(result);
           setToken(null); 
           return () => {
             stored_token = null;
@@ -169,22 +170,23 @@ const App = () => {
       stored_user = null;
       _user = null;
     };
-  }, [token, me, login, user]);
+  }, [token, me, login, user, showDialog]);
   return (
       <AppContext.Provider value={{
-        fetchApi: fetchApi,
-        token: token,
-        setToken: setToken,
+        fetchApi,
+        token,
+        setToken,
         employee: user,
-        logout: logout,
+        logout,
         history: createBrowserHistory(),
-        me: me,
-        login: login,
+        me,
+        login,
       }}>
         <IonApp>
           <IonReactRouter>
             <IonContent>
               <MenuPage />
+              <Dialog />
             </IonContent>
           </IonReactRouter>
         </IonApp>

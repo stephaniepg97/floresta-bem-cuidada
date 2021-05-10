@@ -1,6 +1,6 @@
 import { Model } from "./Model"
 
 export interface DocumentType extends Model {
-    TipoDoc?:string;
+    Documento?:string;
     Descricao?:string;
 }

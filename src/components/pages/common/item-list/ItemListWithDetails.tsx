@@ -10,6 +10,7 @@ import { ItemListChild } from './ItemListChild';
 import { ItemList } from './ItemList';
 import { chevronDown, chevronForward } from 'ionicons/icons';
 import "./ItemList.scss";
+import { useDialog } from '../../../hooks/Dialog';
 
 export const ItemListWithDetails = <T extends Model, D1 extends Model = {}, D2 extends Model = {}, T1 extends Model = T> ({    
     details,
@@ -19,6 +20,7 @@ export const ItemListWithDetails = <T extends Model, D1 extends Model = {}, D2 e
     ...props
 } : ItemListPropsWithDetails<T, D1, D2, T1>) => {
     const { fetchApi, setToken } = useContext(AppContext);
+    const { Dialog, showDialog } = useDialog();
     const [showLoading, setShowLoading] = useState<boolean>(false);
     const [data, setData] = useReducer<Reducer<Array<D1> | undefined, Array<D1> | undefined>>((_, newValue) => {
         if (!!newValue && !!xModel) {
@@ -50,7 +52,8 @@ export const ItemListWithDetails = <T extends Model, D1 extends Model = {}, D2 e
         if (!data && details?.fetchApiOptions && !!xModel) {
             fetchApi(details.fetchApiOptions(xModel.current)).then((result) => {
                 setData(result?.response.Data || []);
-                if (result?.error?.status === 401) setToken(null) //Unauthorized
+                if (!!result && !result?.status) showDialog(result);
+                if (result?.statusCode === 401) setToken(null) //Unauthorized
                 return () => {
                     result = null;
                 };
@@ -62,7 +65,8 @@ export const ItemListWithDetails = <T extends Model, D1 extends Model = {}, D2 e
         showDetails, 
         fetchApi,
         xModel,
-        setToken
+        setToken,
+        showDialog
     ]);
     return (
         <>
@@ -92,6 +96,7 @@ export const ItemListWithDetails = <T extends Model, D1 extends Model = {}, D2 e
                     </>
                 }
             </ItemList>
+            <Dialog />
         </>
     );
 }

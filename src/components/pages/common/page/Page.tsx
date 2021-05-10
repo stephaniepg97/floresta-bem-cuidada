@@ -1,4 +1,4 @@
-import React, { useReducer, Reducer, FunctionComponent } from 'react';
+import { useReducer, Reducer, FunctionComponent } from 'react';
 import {
     IonContent,
     IonFooter,
@@ -6,7 +6,7 @@ import {
     IonRefresherContent,
 } from '@ionic/react';
 
-import { chevronDownCircleOutline, arrowUp } from 'ionicons/icons';
+import { chevronDownCircleOutline } from 'ionicons/icons';
 
 import { PageProps } from '../../../types/PageProps';
 import { RouteComponentProps } from '../../../types/RouteComponentProps';
@@ -14,7 +14,6 @@ import { ButtonProps } from '../../../types/ButtonProps';
 
 import { Header } from "../header/Header";
 import { Buttons } from '../buttons/Buttons'; 
-import { FabButton } from '../buttons/FabButton';
 
 export const Page: FunctionComponent<Pick<RouteComponentProps, 'headerProps' | 'keyId'> & PageProps> = ({
     buttonsProps, 
@@ -42,19 +41,22 @@ export const Page: FunctionComponent<Pick<RouteComponentProps, 'headerProps' | '
                     <Buttons {...buttonsProps}/>
                 </IonFooter>
             }
-            <FabButton
-                fab={{
-                    vertical: "bottom",
-                    horizontal: "end"
-                }}
-                icon={{
-                    icon: arrowUp
-                }}
-                button={{
-                    color: "white",
-                    onClick: () => {} //scrollTo({top: 0})
-                }}
-            />
         </IonContent>
     );
 }
+
+/*
+<FabButton
+    fab={{
+        vertical: "bottom",
+        horizontal: "end"
+    }}
+    icon={{
+        icon: arrowUp
+    }}
+    button={{
+        color: "white",
+        onClick: () => {} //scrollTo({top: 0})
+    }}
+/>
+*/

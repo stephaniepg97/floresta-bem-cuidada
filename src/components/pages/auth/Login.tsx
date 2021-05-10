@@ -20,18 +20,20 @@ import { User } from '../../models/User';
 import config from "../../../config.json";
 import { AppContext } from '../../contexts/AppContext';
 import { RouteComponentProps, withRouter } from 'react-router';
+import { useDialog } from '../../hooks/Dialog';
 
 type FormData = Pick<User, 'Username' | 'Password'>
-const Login: FunctionComponent<RouteComponentProps> = props => {
+const Login: FunctionComponent<RouteComponentProps> = ({history}) => {
     const { login, token, setToken } = useContext(AppContext);
     const [showLoading, setShowLoading] = useState<boolean>(false);
+    const { Dialog, showDialog } = useDialog(setShowLoading);
     const { handleSubmit, errors, getValues, control } = useForm<FormData>();
     const submit = handleSubmit(data => {
         setShowLoading(true)
         login({logIn: () => setShowLoading(false), ...data, ...config})
             .then(([_token, result]) => {
-                if (!!result?.error) alert(`Error\n${result.error.message}`); 
-                setToken(!!result?.error ? null :_token);
+                if (result?.status) setToken(_token);
+                else if (!!result) showDialog(result)
             })
     });
     const fields: Array<{name: keyof FormData, title: string, options?: RegisterOptions}> = [{
@@ -48,9 +50,11 @@ const Login: FunctionComponent<RouteComponentProps> = props => {
         }
     }];
     useEffect(() => {
-        if (token) props.history.push("/encomendas/all")
-    }, [props.history, token])
+        if (token) history.push("/encomendas/all")
+    }, [history, token])
     return (
+        <>
+        <Dialog />
         <IonPage key="login">
             <Loading isOpen={showLoading} />
             <IonContent>
@@ -115,6 +119,7 @@ const Login: FunctionComponent<RouteComponentProps> = props => {
                 </IonToolbar>
             </IonFooter>
         </IonPage>
+        </>
     );
 };
 export default withRouter(Login);

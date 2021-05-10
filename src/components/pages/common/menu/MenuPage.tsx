@@ -22,11 +22,10 @@ import { MenuItemProps } from "../../../types/MenuItemProps";
 import logoMenu from "../../../../assets/img/logo74.png"
 import { Button } from "../buttons/Button";
 import { AppContext } from "../../../contexts/AppContext";
-import { logOut, archive, card, key } from 'ionicons/icons';
+import { logOut, archive, card } from 'ionicons/icons';
 import { Redirect, Route } from "react-router";
 import Login from "../../auth/Login";
 import Logout from "../../auth/Logout";
-import Password from "../../Password";
 import PurchaseDocumentList from "../../documents/purchase/PurchaseDocumentList";
 import InternalDocumentList from "../../documents/internal/InternalDocumentList";
 import InternalDocumentForm from "../../documents/internal/InternalDocumentForm";
@@ -81,13 +80,6 @@ export const MenuPage: FunctionComponent = (props) => {
       ]}, {
         header: employee?.Nome,
         items: [{
-          routerLink: "/password/reset",
-          routerDirection: "root",
-          title: "Alterar palavra-passe",
-          icon: {
-            icon: key,
-          },
-        }, {
           routerLink: "/logout",
           routerDirection: "root",
           title: "Terminar sessão",
@@ -151,10 +143,6 @@ export const MenuPage: FunctionComponent = (props) => {
             <Route path="/logout" render={(props) => !token 
               ? <Redirect to="/login"/>
               : <Logout {...props} /> 
-            } />
-            <Route path="/password/reset" render={(props) => !token 
-              ? <Redirect to="/login"/>
-              : <Password {...props} /> 
             } />
             <Route path="/encomendas/all" render={(props) => !token 
               ? <Redirect to="/login"/>

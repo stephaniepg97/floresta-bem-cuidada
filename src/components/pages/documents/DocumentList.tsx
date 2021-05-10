@@ -5,21 +5,25 @@ import { RouteComponentProps } from "../../types/RouteComponentProps"
 import { _Document } from "../../models/Document";
 import { Item } from "../../models/Item";
 import { Button } from '../common/buttons/Button';
-import { OptionsDialog } from '../common/options-dialog/OptionsDialog';
+import { OptionsDialog } from '../common/dialogs/options-dialog/OptionsDialog';
 import { Construction } from '../../models/Construction';
 import { Supplier } from '../../models/Supplier';
 import { DocumentFamily } from '../../models/DocumentFamily';
 import { DocumentType } from '../../models/DocumentType';
 import { ListPropsWithDetails } from '../../types/ListPropsWithDetails';
 import { SearchDocument } from '../../models/SearchDocument';
-import { FormContextProps } from '../../types/FormContextProps';
 import { ListWithSearchProps } from '../../types/SearchProps';
 import { SupplierList, ConstructionList } from "../../../config.json"
 import { SearchConstruction } from '../../models/SearchConstruction';
 import { updateSearchModel } from '../../../helpers/Helper';
 import { SearchSupplier } from '../../models/SearchSupplier';
+import { SearchDocumentType } from '../../models/SearchDocumentType';
+import { SearchDocumentFamily } from '../../models/SearchDocumentFamily';
 
-export const DocumentList = <D extends Item, T extends _Document<D>>({ details, listId, history, keyId, ...props }: Pick<ListPropsWithDetails<T, SearchDocument, D>, 'details'> & Omit<ListWithSearchProps<SearchDocument>, 'model'> & Omit<RouteComponentProps, 'fetchApiOptions'>) => {
+export const DocumentList = <D extends Item, T extends _Document<D>>({ details, listId, history, keyId, listIdDocTypes, listIdDocFamilies, ...props }: Pick<ListPropsWithDetails<T, SearchDocument, D>, 'details'> & Omit<ListWithSearchProps<SearchDocument>, 'model'> & Omit<RouteComponentProps, 'fetchApiOptions'> & {
+    listIdDocFamilies: string;
+    listIdDocTypes: string;
+}) => {
     const model = useRef({} as SearchDocument);
     return (
         <List<T, SearchDocument, D, {}, SearchDocument>
@@ -67,8 +71,8 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                                         if (!!model) updateSearchModel(model, "tipoDoc", value);   
                                     }
                                 },
-                                OptionsDialog: ({close, model, ...popoverProps}) => (
-                                    <OptionsDialog<DocumentType, {}, SearchDocument>
+                                OptionsDialog: ({close, model, popoverProps}) => (
+                                    <OptionsDialog<DocumentType, SearchDocumentType, SearchDocument>
                                         keyId={keyId}
                                         key={`${keyId}-documentType`}
                                         headerProps={{
@@ -78,22 +82,49 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                                         popoverProps={{ cssClass: "dialog-50x", ...popoverProps }}
                                         listProps={{
                                             model,
-                                            onClick: () => { },
+                                            onClick: row => close({...model.current, tipoDoc: row.Documento }),
                                             fields: [{
                                                 label: "Código",
                                                 inputProps: {
-                                                    name: "TipoDoc",
+                                                    name: "Documento",
+                                                    readonly: true,
                                                 }
                                             }, {
                                                 label: "Descrição",
                                                 inputProps: {
                                                     name: "Descricao",
+                                                    readonly: true,
                                                 }
                                             }],
                                             searchForm: {
-                                                listId: "",
+                                                listId: listIdDocTypes,
                                                 history,
-                                                formProps: {} as FormContextProps<{}, {}, SearchDocument>
+                                                formProps: {
+                                                    keyId: `${keyId}-documentType-search`,
+                                                    model,
+                                                    xModel: useRef({} as SearchDocumentType),
+                                                    formGroups: useRef([{
+                                                        fieldGroups: [
+                                                            [{
+                                                                label: "Código",
+                                                                inputProps: {
+                                                                    name: "codigo",
+                                                                    updateModel: (_, value, model) => {
+                                                                        if (!!model) updateSearchModel(model, "codigo", value);             
+                                                                    }
+                                                                }
+                                                            }, {
+                                                                label: "Nome",
+                                                                inputProps: {
+                                                                    name: "descricao",
+                                                                    updateModel: (_, value, model) => {
+                                                                        if (!!model) updateSearchModel(model, "descricao", value);             
+                                                                    }
+                                                                }
+                                                            }]
+                                                        ]
+                                                    }])
+                                                }
                                             }
                                         }}
                                     />
@@ -106,8 +137,8 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                                         if (!!model) updateSearchModel(model, "serie", value);   
                                     }
                                 },
-                                OptionsDialog: ({close, model, ...popoverProps}) => (
-                                    <OptionsDialog<DocumentFamily, {}, SearchDocument>
+                                OptionsDialog: ({close, model, popoverProps}) => (
+                                    <OptionsDialog<DocumentFamily, SearchDocumentFamily, SearchDocument>
                                         keyId={keyId}
                                         key={`${keyId}-documentFamily`}
                                         headerProps={{
@@ -117,37 +148,83 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                                         popoverProps={{ cssClass: "dialog-80x", ...popoverProps }}
                                         listProps={{
                                             model,
-                                            onClick: () => { },
+                                            onClick: row => close({...model.current, serie: row.Serie }),
                                             fields: [{
                                                 label: "Tipo de Documento",
                                                 inputProps: {
                                                     name: "TipoDoc",
+                                                    readonly: true,
                                                 }
                                             }, {
                                                 label: "Série",
                                                 inputProps: {
                                                     name: "Serie",
+                                                    readonly: true,
                                                 }
                                             }, {
                                                 label: "Descrição",
                                                 inputProps: {
                                                     name: "Descricao",
+                                                    readonly: true,
                                                 }
                                             }, {
                                                 label: "Data Inicial",
                                                 inputProps: {
                                                     name: "DataInicial",
+                                                    readonly: true,
                                                 }
                                             }, {
                                                 label: "Data Final",
                                                 inputProps: {
                                                     name: "DataFinal",
+                                                    readonly: true,
                                                 }
                                             }],
                                             searchForm: {
-                                                listId: "",
+                                                listId: listIdDocFamilies,
                                                 history,
-                                                formProps: {} as FormContextProps<{}, {}, SearchDocument>
+                                                formProps: {
+                                                    keyId: `${keyId}-documentFamily-search`,
+                                                    model,
+                                                    xModel: useRef({} as SearchDocumentFamily),
+                                                    formGroups: useRef([{
+                                                        fieldGroups: [
+                                                            [{
+                                                                label: "Série",
+                                                                inputProps: {
+                                                                    name: "serie",
+                                                                    updateModel: (_, value, model) => {
+                                                                        if (!!model) updateSearchModel(model, "serie", value);             
+                                                                    }
+                                                                }
+                                                            }, {
+                                                                label: "Nome da Série",
+                                                                inputProps: {
+                                                                    name: "nomeSerie",
+                                                                    updateModel: (_, value, model) => {
+                                                                        if (!!model) updateSearchModel(model, "nomeSerie", value);             
+                                                                    }
+                                                                }
+                                                            }, {
+                                                                label: "Tipo",
+                                                                inputProps: {
+                                                                    name: "tipo",
+                                                                    updateModel: (_, value, model) => {
+                                                                        if (!!model) updateSearchModel(model, "tipo", value);             
+                                                                    }
+                                                                }
+                                                            }, {
+                                                                label: "Nome do Tipo",
+                                                                inputProps: {
+                                                                    name: "nomeTipo",
+                                                                    updateModel: (_, value, model) => {
+                                                                        if (!!model) updateSearchModel(model, "nomeTipo", value);             
+                                                                    }
+                                                                }
+                                                            }]
+                                                        ]
+                                                    }])
+                                                }
                                             }
                                         }}
                                     />
@@ -171,10 +248,10 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                                 name: "nomeObra",
                                 updateModel: (_, value, model) => {
                                     console.log(model)
-                                    if (!!model) updateSearchModel(model, "nomeObra", value, "obra");   
+                                    if (!!model) updateSearchModel(model, "nomeObra", value, "obra", "allObras");   
                                 }
                             },
-                            OptionsDialog: ({close, model, ...popoverProps}) => (
+                            OptionsDialog: ({close, model, popoverProps}) => (
                                 <OptionsDialog<Construction, SearchConstruction, SearchDocument> 
                                     keyId={keyId}
                                     key={`${keyId}-construction`}
@@ -281,10 +358,10 @@ export const DocumentList = <D extends Item, T extends _Document<D>>({ details, 
                                 name: "nomeEntidade",
                                 maxlength: 8, 
                                 updateModel: (_, value, model) => {
-                                    if (!!model) updateSearchModel(model, "nomeEntidade", value, "entidade");   
+                                    if (!!model) updateSearchModel(model, "nomeEntidade", value, "entidade", "allEntidades");   
                                 }
                             },
-                            OptionsDialog: ({close, model, ...popoverProps}) => (
+                            OptionsDialog: ({close, model, popoverProps}) => (
                                 <OptionsDialog<Supplier, SearchSupplier, SearchDocument> 
                                     keyId={keyId}
                                     key={`${keyId}-supplier`}

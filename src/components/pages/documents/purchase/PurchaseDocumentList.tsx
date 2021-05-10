@@ -2,12 +2,14 @@ import { FunctionComponent } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { PurchaseDocument } from '../../../models/PurchaseDocument';
 import { DocumentList } from '../DocumentList';
-import { PurchaseList, PurchaseDetailList } from "../../../../config.json";
+import { PurchaseList, PurchaseDetailList, PurchaseDocFamilyList, PurchaseDocTypeList } from "../../../../config.json";
 import { Item } from '../../../models/Item';
 
 const PurchaseDocumentList: FunctionComponent<RouteComponentProps> = (props) => (
     <DocumentList<Item, PurchaseDocument> 
         {...props}
+        listIdDocFamilies={PurchaseDocFamilyList}
+        listIdDocTypes={PurchaseDocTypeList}
         listId={PurchaseList}
         keyId="encomendas"
         key="encomendas"

@@ -1,7 +1,13 @@
 export type ResultFetchApi = {
-    response: Response | any;
+    status: boolean;
+    statusCode: number;
+    statusMessage: string | null;
+} & ({
+    response: Response | any | string;
+    error?: undefined;
+} | {
     error: {
-        status?: number;
-        message?: string | null;
+        response?: Response | any | string;
     } | null;
-};
+    response?: undefined;
+});

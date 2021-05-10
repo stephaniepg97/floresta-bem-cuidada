@@ -30,18 +30,14 @@ export const Input = <T extends Model, T1 extends Model = T> ({
         placeholder: inputProps?.placeholder ?? label,
         clearOnEdit: false,
         onIonChange: event => {
-            let text = event.detail.value?.replaceAll(",", "").replaceAll("%", "");
-            if(!!xModel) 
-                xModel.current = inputProps.name 
-                    ? {...xModel.current, [inputProps.name as keyof T]: inputProps.type === "date" ? text + "T00:00:00Z" : text} 
-                    : xModel.current;
-            else 
-                model.current = inputProps.name 
-                    ? {...model.current, [inputProps.name as keyof T1]: inputProps.type === "date" ? text + "T00:00:00Z" : text} 
-                    : model.current;
-            if (!!inputProps.updateModel) inputProps.updateModel(position, text, xModel, model)
+            let value = event.detail.value?.replaceAll("%", ""), splited = value?.split(",");
+            if (!!inputProps.name) {
+                if (!!xModel) xModel.current = {...xModel.current, [inputProps.name as keyof T]: inputProps.type === "date" ? value + "T00:00:00Z" : !splited ? "" : splited[0]};
+                else model.current = {...model.current, [inputProps.name as keyof T1]: inputProps.type === "date" ? value + "T00:00:00Z" : !splited ? "" : splited[0]};
+            }
+            if (!!inputProps.updateModel) inputProps.updateModel(position, value, xModel, model)
             inputProps.onIonChange && inputProps.onIonChange(event);
-            setFieldProps({...fieldProps, ...getValue()})
+            setFieldProps({...fieldProps, ...!!inputProps.name ? getValue() : { value: !splited ? "" : splited[0] } });
         }
     } : {});
     const close = useCallback<(newValue?: T|T1) => void>(newValue => {
@@ -64,7 +60,7 @@ export const Input = <T extends Model, T1 extends Model = T> ({
             {OptionsDialog && (
                 <>
                     <IonIcon size="small" color="medium" slot="end" className="ion-icon" icon={add} onClick={() => setShowDialog(true)}/> 
-                    <OptionsDialog {...{ close, model, isOpen: showDialog, onDidDismiss: () => setShowDialog(false) }} />
+                    <OptionsDialog {...{close, model, popoverProps: { isOpen: showDialog, onDidDismiss: () => setShowDialog(false) }}} />
                 </>
             )}
         </>

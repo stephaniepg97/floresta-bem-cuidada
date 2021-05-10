@@ -12,4 +12,6 @@ export interface SearchDocument extends SearchType {
     obra?:string;
     serie?:string;
     tipoDoc?:string;
+    allObras?:string;
+    allEntidades?:string;
 }

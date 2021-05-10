@@ -14,6 +14,7 @@ import { SearchType } from '../../../models/Search';
 import { useListWithSearch } from '../../../hooks/ListWithSearch';
 import "./List.scss";
 import { FormState } from '../../../types/FormProps';
+import { useDialog } from '../../../hooks/Dialog';
 
 export const List = <T extends Model, SearchT extends SearchType, D1 extends Model = {}, D2 extends Model = {}, T1 extends Model = T>({searchForm, ...props}: Omit<ListContentProps<T, SearchT, D1, D2, T1>, 'setButtons' | 'data'> & Omit<RouteComponentProps, 'fetchApiOptions'>) => (
     !!searchForm.FormConsumer 
@@ -29,22 +30,26 @@ export const ListPage = <T extends Model, SearchT extends SearchType, D1 extends
     const { fetchApi, setToken } = useContext(AppContext);
     const [showLoading, setShowLoading] = useState<boolean>(true);
     const [showSearch, setShowSearch] = useState(false);
-    const {fetchApiOptions, setFetchApiOptions, ...searchProps } = useListWithSearch<SearchT>({...searchForm, ...searchModel})
+    const { Dialog, showDialog } = useDialog(setShowLoading);
+    const {fetchApiOptions, setFetchApiOptions, ...searchProps } = useListWithSearch<SearchT>({...searchForm, ...searchModel, showDialog})
     const [data, setData] = useReducer<Reducer<Array<T> | null, Array<T> | null>>((_, newValue) => {
         !!newValue && showLoading && setShowLoading(false);
         return newValue;
     }, null);
     useEffect(() => {
-        console.log(fetchApiOptions)
         if (!!fetchApiOptions) 
             fetchApi(fetchApiOptions).then((result) => {
                 setData(result?.response?.Data || []);
-                if (result?.error?.status === 401) setToken(null) //Unauthorized
+                if (!!result && !result?.status) {
+                    showDialog(result);
+                    if (showLoading) setShowLoading(false);
+                }
+                if (result?.statusCode === 401) setToken(null) //Unauthorized
                 return () => {
                     result = null;
                 };
             });
-    }, [fetchApiOptions, fetchApi, setToken, setData]);
+    }, [fetchApiOptions, fetchApi, setToken, setData, showDialog, showLoading]);
     return (
         <Page {...props}
             key={props.keyId}
@@ -57,6 +62,7 @@ export const ListPage = <T extends Model, SearchT extends SearchType, D1 extends
                         key={`${props.keyId}`}
                     />
                     <ListContent<T, SearchT, D1, D2, T1> {...props} data={data} setButtons={setButtons} />
+                    <Dialog />
                 </>
             )}
         />

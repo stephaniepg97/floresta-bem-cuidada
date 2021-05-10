@@ -7,8 +7,9 @@ import { SearchParametersList } from "../../config.json";
 import { OptionsFetchApi } from "../types/OptionsFetchApi";
 import { SearchType } from "../models/Search";
 import { ListWithSearchProps, SearchProps } from "../types/SearchProps";
+import { ResultFetchApi } from "../types/ResultFetchApi";
 
-export const useListWithSearch = <TSearch extends SearchType> ({listId, history, model}: ListWithSearchProps<TSearch>) => {
+export const useListWithSearch = <TSearch extends SearchType> ({listId, history, model, showDialog}: ListWithSearchProps<TSearch> & {showDialog: (result: ResultFetchApi) => void}) => {
     const {token, fetchApi, setToken} = useContext(AppContext);
     const [fetchApiOptions, setFetchApiOptions] = useState<OptionsFetchApi | null>(null);
     const [searchModel, setSearchModel] = useReducer<Reducer<MutableRefObject<TSearch>, MutableRefObject<TSearch>>>((_, newValue) => {
@@ -17,9 +18,9 @@ export const useListWithSearch = <TSearch extends SearchType> ({listId, history,
     }, model);
     const clean = useCallback(() => fetchApi({route: `Plataforma/Listas/CarregaLista/adhoc?listId=${SearchParametersList}&listParameters=${listId}`})
         .then((result) => {
-            if (result?.error?.status === 401) setToken(null) //Unauthorized
-            else if (!!result?.error?.message) alert(result?.error?.message);
-            else {
+            if (!!result && !result?.status) showDialog(result);
+            if (result?.statusCode === 401) setToken(null) //Unauthorized
+            else if (result?.status) {
                 searchModel.current = {
                     ...(result?.response?.Data as Array<SearchParameters<TSearch>>)?.map(item => {
                         return { [String(item.Nome)]: item.ValorFixo };
@@ -27,7 +28,7 @@ export const useListWithSearch = <TSearch extends SearchType> ({listId, history,
                 } as unknown as TSearch; 
                 setSearchModel(searchModel);
             }
-        }), [searchModel, fetchApi, setToken, listId, setSearchModel]);
+        }), [searchModel, fetchApi, setToken, listId, setSearchModel, showDialog]);
     useEffect(() => {
         if (!token) history.push("/login")
         else if (!fetchApiOptions) clean();

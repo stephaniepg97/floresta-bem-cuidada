@@ -9,6 +9,14 @@
     margin-left: -50% !important;
 }
 
+.success {
+    --background: lightcyan;
+}
+
+.error {
+    --background: lightsalmon;
+}
+
 .dialog-50x {
     --min-width: 50%;
 }

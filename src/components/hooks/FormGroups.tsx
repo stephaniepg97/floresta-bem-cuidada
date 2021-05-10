@@ -8,7 +8,7 @@ import { DocumentType } from "../models/DocumentType";
 import { Item } from "../models/Item";
 import { Supplier } from "../models/Supplier";
 import { Button } from "../pages/common/buttons/Button";
-import { OptionsDialog } from "../pages/common/options-dialog/OptionsDialog";
+import { OptionsDialog } from "../pages/common/dialogs/options-dialog/OptionsDialog";
 import { FormContextProps } from "../types/FormContextProps";
 import { FormGroupProps, FormState } from "../types/FormProps";
 import { InputProps } from "../types/InputProps";
@@ -18,8 +18,13 @@ import { SearchSupplier } from "../models/SearchSupplier";
 import { SupplierList, ConstructionList, ItemsList } from "../../config.json"
 import { SearchItems } from "../models/SearchItems";
 import { SearchConstruction } from "../models/SearchConstruction";
+import { SearchDocumentType } from "../models/SearchDocumentType";
+import { SearchDocumentFamily } from "../models/SearchDocumentFamily";
 
-export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, keyId, history}: Pick<RouteComponentProps, 'keyId'> & Pick<RCP, 'history'> &  FormState<T>) => {
+export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, keyId, history, listIdDocFamilies, listIdDocTypes}: Pick<RouteComponentProps, 'keyId'> & Pick<RCP, 'history'> &  FormState<T> & {
+    listIdDocFamilies: string;
+    listIdDocTypes: string;
+}) => {
     const [ready, setupForm] = useState(false), 
     clickEvents = useRef<Array<{
             title: string;
@@ -32,7 +37,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
             inputProps: {
                 name: "NomeObra",
             },
-            OptionsDialog: ({close, ...popoverProps}) => (
+            OptionsDialog: ({close, popoverProps}) => (
                 <OptionsDialog<Construction, SearchConstruction, T> 
                     keyId={keyId}
                     key={`${keyId}-construction`}
@@ -139,7 +144,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                 name: "NomeFornecedor",
                 maxlength: 8, 
             },
-            OptionsDialog: ({close, ...popoverProps}) => (
+            OptionsDialog: ({close, popoverProps}) => (
                 <OptionsDialog<Supplier, SearchSupplier, T> 
                     keyId={keyId}
                     key={`${keyId}-supplier`}
@@ -311,8 +316,8 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                     maxlength: 10,
                     readonly: true,
                 },
-                OptionsDialog: (popoverProps) => (
-                    <OptionsDialog<DocumentType, DocumentType> 
+                OptionsDialog: ({close, popoverProps}) => (
+                    <OptionsDialog<DocumentType, SearchDocumentType, T> 
                         keyId={keyId}
                         key={`${keyId}-documentType`}
                         headerProps={{ 
@@ -321,22 +326,49 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                         popoverProps={{cssClass: "dialog-50x", ...popoverProps}} 
                         listProps={{
                             model,
-                            onClick: () => {},
+                            onClick: row => close({...model.current, TipoDoc: row.Documento}),
                             fields: [{
                                 label: "Código",
                                 inputProps: {
-                                    name: "TipoDoc",
+                                    name: "Documento",
+                                    readonly: true,
                                 }
                             }, {
                                 label: "Descrição",
                                 inputProps: {
                                     name: "Descricao",
+                                    readonly: true,
                                 }
                             }],
                             searchForm: {
-                                listId: "",
+                                listId: listIdDocTypes,
                                 history,
-                                formProps: {} as FormContextProps<DocumentType>
+                                formProps: {
+                                    keyId: `${keyId}-documentType-search`,
+                                    model,
+                                    xModel: useRef({} as SearchDocumentType),
+                                    formGroups: useRef([{
+                                        fieldGroups: [
+                                            [{
+                                                label: "Código",
+                                                inputProps: {
+                                                    name: "codigo",
+                                                    updateModel: (_, value, model) => {
+                                                        if (!!model) updateSearchModel(model, "codigo", value);             
+                                                    }
+                                                }
+                                            }, {
+                                                label: "Nome",
+                                                inputProps: {
+                                                    name: "descricao",
+                                                    updateModel: (_, value, model) => {
+                                                        if (!!model) updateSearchModel(model, "descricao", value);             
+                                                    }
+                                                }
+                                            }]
+                                        ]
+                                    }])
+                                }
                             }
                         }}
                     />
@@ -348,8 +380,8 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                     maxlength: 10,
                     readonly: true,
                 },
-                OptionsDialog: (popoverProps) => (
-                    <OptionsDialog<DocumentFamily, DocumentFamily> 
+                OptionsDialog: ({close, popoverProps}) => (
+                    <OptionsDialog<DocumentFamily, SearchDocumentFamily, T> 
                         keyId={keyId}
                         key={`${keyId}-documentFamily`}
                         headerProps={{ 
@@ -358,37 +390,83 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                         popoverProps={{cssClass: "dialog-80x", ...popoverProps}}
                         listProps={{
                             model,
-                            onClick: () => {},
+                            onClick: row => close({...model.current, Serie: row.Serie, TipoDoc: row.TipoDoc }),
                             fields: [{
                                 label: "Tipo de Documento",
                                 inputProps: {
                                     name: "TipoDoc",
+                                    readonly: true,
                                 }
                             }, {
                                 label: "Série",
                                 inputProps: {
                                     name: "Serie",
+                                    readonly: true,
                                 }
                             }, {
                                 label: "Descrição",
                                 inputProps: {
                                     name: "Descricao",
+                                    readonly: true,
                                 }
                             }, {
                                 label: "Data Inicial",
                                 inputProps: {
                                     name: "DataInicial",
+                                    readonly: true,
                                 }
                             }, {
                                 label: "Data Final",
                                 inputProps: {
                                     name: "DataFinal",
+                                    readonly: true,
                                 }
                             }],
                             searchForm: {
-                                listId: "",
+                                listId: listIdDocFamilies,
                                 history,
-                                formProps: {} as FormContextProps<DocumentFamily>
+                                formProps: {
+                                    keyId: `${keyId}-documentFamily-search`,
+                                    model,
+                                    xModel: useRef({} as SearchDocumentFamily),
+                                    formGroups: useRef([{
+                                        fieldGroups: [
+                                            [{
+                                                label: "Série",
+                                                inputProps: {
+                                                    name: "serie",
+                                                    updateModel: (_, value, model) => {
+                                                        if (!!model) updateSearchModel(model, "serie", value);             
+                                                    }
+                                                }
+                                            }, {
+                                                label: "Nome da Série",
+                                                inputProps: {
+                                                    name: "nomeSerie",
+                                                    updateModel: (_, value, model) => {
+                                                        if (!!model) updateSearchModel(model, "nomeSerie", value);             
+                                                    }
+                                                }
+                                            }, {
+                                                label: "Tipo",
+                                                inputProps: {
+                                                    name: "tipo",
+                                                    updateModel: (_, value, model) => {
+                                                        if (!!model) updateSearchModel(model, "tipo", value);             
+                                                    }
+                                                }
+                                            }, {
+                                                label: "Nome do Tipo",
+                                                inputProps: {
+                                                    name: "nomeTipo",
+                                                    updateModel: (_, value, model) => {
+                                                        if (!!model) updateSearchModel(model, "nomeTipo", value);             
+                                                    }
+                                                }
+                                            }]
+                                        ]
+                                    }])
+                                }
                             }
                         }}
                     />
@@ -423,27 +501,37 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
         ]
     }, {
         title: "Anexos",
-        fields: [...model.current.Anexos?.map((filename, index) => {
+        fields: [...model.current.Anexos?.map((file, index) => {
             return {
                 label: `Ficheiro ${index + 1}`,
                 inputProps: {
-                    updateModel: (position, _) => {
-                        if (!position) return;
+                    accept: "*",
+                    updateModel: (position, value) => {
+                        if (position === undefined) return;
+                        let anexo = {
+                            Base64: value?.split(",")[1] ?? "",
+                            Filename: value?.split(",")[0] ?? "",
+                        };
                         model.current.Anexos = [...model.current.Anexos ?? []];
-                        model.current.Anexos.splice(position, position + 1, "")
+                        model.current.Anexos.splice(position, position + 1, anexo)
+                        updateAnexo({position});
                     },
-                    value: filename,
-                    accept: "*"
+                    value: file.Filename,
                 }
             } as InputProps<T>;
         }) ?? [], {
             label: "Novo ficheiro",
             inputProps: {
                 accept: "*",
-                updateModel: (position, _) => {
-                    if (!position) return;
+                updateModel: (position, value) => {
+                    if (position === undefined) return;
+                    let anexo = {
+                        Base64: value?.split(",")[1] ?? "",
+                        Filename: value?.split(",")[0] ?? "",
+                    };
                     model.current.Anexos = [...model.current.Anexos ?? []];
-                    model.current.Anexos.splice(position, position + 1, "")
+                    model.current.Anexos.splice(position, position + 1, anexo)
+                    updateAnexo({position});
                 },
             }
         }],
@@ -482,7 +570,7 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
                         if (position !== undefined) updateArtigoOnModel({position, ...!!xModel ? { xModel } : { value: value ?? "", key: "Artigo"}})
                     }
                 },
-                OptionsDialog: ({close, ...popoverProps}) => (
+                OptionsDialog: ({close, popoverProps}) => (
                     <OptionsDialog<D, SearchItems, T> 
                         keyId={keyId}
                         key={`${keyId}-artigos`}
@@ -646,15 +734,28 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
             </div>
         ),
     }]);
-    const updateAnexo = useCallback<(props: InputProps<T>, position?: number) => void>((props, position) => {
+    const updateAnexo = useCallback<(_: {
+        props: InputProps<T>;
+        position?: undefined;
+    } | {
+        props?: undefined;
+        position: number;
+    }) => void>(({props, position}) => {
         const fieldGroup = formGroups.current.find(fg => fg.title === "Anexos") as FormGroupProps<T, {}, D>;
-        if (position === undefined) {
-            fieldGroup.fields = [...!!fieldGroup.fields ? fieldGroup.fields as InputProps<T>[] : [], props];
-            return;
-        }
-        if (!fieldGroup.fields) fieldGroup.fields = [props];
-        else if (position < fieldGroup.fields.length) fieldGroup.fields[position] = props;
-    }, [formGroups]), 
+        if (!!props) fieldGroup.fields = [...!!fieldGroup?.fields ? fieldGroup.fields : [], props];
+        else if (position !== undefined 
+            && !!fieldGroup?.fields
+            && position < fieldGroup.fields.length
+            && model.current?.Anexos?.length === fieldGroup.fields.length) 
+            fieldGroup.fields[position] = {
+                ...fieldGroup.fields[position], 
+                label: `Ficheiro ${position + 1}`,
+                inputProps: {
+                    ...fieldGroup.fields[position].inputProps,
+                    value: model.current.Anexos[position].Filename,
+                }
+            };
+    }, [formGroups, model]), 
     updateArtigo = useCallback<(row: D, position?: number | undefined) => void>((row, position) => {
         const fieldGroup = formGroups.current.find(fg => fg.title === "Artigos") as FormGroupProps<T, {}, D>;
         if (!fieldGroup.listProps) return;
@@ -678,7 +779,6 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
         value?: undefined;
         key?: undefined;
     })) => void>(({position, value, xModel, key}) => {
-        console.log(model)
         if (!model.current.Artigos) {
             model.current.Artigos = [{DataEntrega: date(new Date())} as D];
             position = 0;
@@ -693,12 +793,21 @@ export const useFormGroups = <D extends Item, T extends _Document<D>> ({model, k
             title: "Anexos", //"Anexos": add onClick event to add button
             onClick: refresh => {
                 updateAnexo({
-                    label: "Novo ficheiro" , 
-                    inputProps: {
-                        accept: "*",
-                        updateModel: (_, value) => {
-                            model.current = {...model.current, Anexos: [...model.current.Anexos || [], value]}
-                        },
+                    props : {
+                        label: "Novo ficheiro",
+                        inputProps: {
+                            accept: "*",
+                            updateModel: (position, value) => {
+                                if (position === undefined) return;
+                                let anexo = {
+                                    Base64: value?.split(",")[1] ?? "",
+                                    Filename: value?.split(",")[0] ?? "",
+                                };
+                                model.current.Anexos = [...model.current.Anexos ?? []];
+                                model.current.Anexos.splice(position, position + 1, anexo)
+                                updateAnexo({position});
+                            },
+                        }
                     }
                 });
                 refresh();

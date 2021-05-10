@@ -2,12 +2,14 @@ import { FunctionComponent } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InternalDocument } from "../../../models/InternalDocument";
 import { DocumentList } from '../DocumentList';
-import { InternalList, InternalDetailList } from "../../../../config.json";
+import { InternalList, InternalDetailList, InternalDocFamilyList, InternalDocTypeList } from "../../../../config.json";
 import { Item } from '../../../models/Item';
 
 const InternalDocumentList: FunctionComponent<RouteComponentProps> = (props) => (
     <DocumentList<Item, InternalDocument> 
         {...props}
+        listIdDocFamilies={InternalDocFamilyList}
+        listIdDocTypes={InternalDocTypeList}
         listId={InternalList}
         keyId="despesas"
         key="despesas"

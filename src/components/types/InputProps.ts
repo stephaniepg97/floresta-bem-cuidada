@@ -1,14 +1,12 @@
 import { IonInput } from "@ionic/react";
-import { ComponentProps, ComponentType, MutableRefObject } from "react";
+import { ComponentType, MutableRefObject } from "react";
 import { Model } from "../models/Model";
-import { FormState } from "./FormProps";
-import { PopoverProps } from "./PopoverProps";
+import { DialogProps } from "./DialogProps";
+import { FormState } from "./FormProps"; 
 
 export type CommonInputProps<T extends Model = {}, T1 extends Model = T> = {
-    OptionsDialog?: ComponentType<Omit<PopoverProps, 'children'> & FormState<T1> & {
-        close: (newValue?: T | T1) => void
-    }>;
-    label:string;
+    OptionsDialog?: ComponentType<DialogProps<T, T1> & FormState<T1>>;
+    label:string; 
     required?:boolean;
     xModel?: MutableRefObject<T>;
     position?: number;
